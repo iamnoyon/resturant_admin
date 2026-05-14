@@ -1,49 +1,98 @@
 import { siteConfig } from "@/config/siteConfig";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-// Base query
+// ── Refresh lock ──────────────────────────────
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+const subscribeTokenRefresh = (callback) => {
+  refreshSubscribers.push(callback);
+};
+
+const resolveSubscribers = (success) => {
+  refreshSubscribers.forEach((cb) => cb(success));
+  refreshSubscribers = [];
+};
+
+// ── Base query ────────────────────────────────
 const baseQuery = fetchBaseQuery({
   baseUrl: siteConfig?.baseUrl,
-  credentials: "include", // send cookies automatically
+  credentials: "include",
   prepareHeaders: (headers) => {
-    headers.set("Content-Type", "application/json");
+    // ✅ Removed global Content-Type (breaks file uploads)
+    headers.set("Accept", "application/json");
     return headers;
   },
 });
 
-// Wrapper query with auto refresh
+// ── Wrapper with re-auth ──────────────────────
 const baseQueryWithReauth = async (args, api, extraOptions) => {
-  // First request
+  // ✅ Guard: skip refresh logic for refresh endpoint itself (prevents infinite loop)
+  const isRefreshCall =
+    typeof args === "string"
+      ? args === "/auth/token-refresh"
+      : args?.url === "/auth/token-refresh";
+
   let result = await baseQuery(args, api, extraOptions);
 
-  // If access token expired
-  if (result?.error?.status === 401) {
-    console.log("Access token expired. Refreshing...");
+  if (result?.error?.status === 401 && !isRefreshCall) {
+    // ✅ If already refreshing, wait for it to finish then retry
+    if (isRefreshing) {
+      return new Promise((resolve) => {
+        subscribeTokenRefresh(async (success) => {
+          if (success) {
+            resolve(await baseQuery(args, api, extraOptions));
+          } else {
+            resolve(result);
+          }
+        });
+      });
+    }
 
-    // Call refresh token endpoint
-    const refreshResult = await baseQuery(
-      {
-        url: "/auth/token-refresh", // your refresh endpoint
-        method: "POST",
-      },
-      api,
-      extraOptions
-    );
+    // ✅ Acquire refresh lock
+    isRefreshing = true;
 
-    // If refresh successful, retry original request
-    if (refreshResult?.data?.success) {
-      console.log("Token refreshed successfully.");
+    try {
+      const refreshResult = await baseQuery(
+        { url: "/auth/token-refresh", method: "POST" },
+        api,
+        extraOptions
+      );
 
-      result = await baseQuery(args, api, extraOptions);
-    } else {
-      console.log("Refresh token expired.");
+      if (refreshResult?.data?.success) {
+        // ✅ Notify queued requests and retry
+        resolveSubscribers(true);
+        result = await baseQuery(args, api, extraOptions);
+      } else {
+        // ✅ Logout properly — dispatch + redirect
+        resolveSubscribers(false);
+        api.dispatch(logout());
 
-      // Optional: clear user state / redirect login
-      // api.dispatch(logout());
+        await baseQuery(
+          { url: "/auth/logout", method: "POST" },
+          api,
+          extraOptions
+        );
+
+        if (typeof window !== "undefined") {
+          // ✅ replace() prevents back-navigation to protected page
+          window.location.replace("/");
+        }
+
+        return result;
+      }
+    } catch {
+      // ✅ Network failure during refresh
+      resolveSubscribers(false);
 
       if (typeof window !== "undefined") {
-        window.location.href = "/";
+        window.location.replace("/");
       }
+
+      return result;
+    } finally {
+      // ✅ Always release the lock
+      isRefreshing = false;
     }
   }
 
