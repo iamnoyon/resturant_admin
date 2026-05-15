@@ -18,7 +18,7 @@ export default function CardLayout({
 
     return (
         <div
-            className={`w-full border border-gray-200 rounded-lg bg-white ${className}`}
+            className={`w-full border min-h-full border-gray-200 rounded-lg bg-white ${className}`}
         >
             {/* Header */}
             <div className="flex items-center justify-between bg-[#043570] px-4 py-3 border-b rounded-t-lg">

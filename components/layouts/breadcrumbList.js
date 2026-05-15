@@ -5,6 +5,6 @@ export const breadcrumbList = {
   ],
   userCreate: [
     { label: "User Management", href: "#" },
-    { label: "Create", href: "/user-management/users/create" }
+    { label: "Add", href: "/user-management/users/create" }
   ]
 };
