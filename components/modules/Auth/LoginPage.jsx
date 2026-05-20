@@ -15,17 +15,18 @@ export default function LoginPage() {
     // api call
     const [Login] = useLoginMutation()
 
-    const handleLogin = async (e) => {
+    const handleLogin =  (e) => {
         e.preventDefault();
-
-        try {
-            const res = await Login({ email, password }).unwrap();
-            if (res?.success || res?.status_code === 200) {
-                router.replace("/dashboard");
-            }
-        } catch (err) {
-            console.log("LOGIN ERROR:", err?.data || err?.message);
-        }
+        Login({ email, password })
+            .unwrap()
+            .then((res)=>{
+                if(res?.success){
+                    router.replace('/dashboard')
+                }
+            })
+            .catch((err)=>{
+                console.error("Login failed:", err);
+            });
     };
 
     return (
