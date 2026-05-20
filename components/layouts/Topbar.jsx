@@ -1,7 +1,7 @@
 // components/layout/Topbar.jsx
 "use client";
 
-import { Bell, ChevronDown, LogOut, Settings, User } from "lucide-react";
+import { Bell, LogOut, User } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -18,17 +18,18 @@ export default function Topbar() {
 
     // api
     const [Logout] = useLogoutMutation()
-    const handleLogout = ()=>{
+    const handleLogout = () => {
         Logout()
-        .unwrap()
-        .then((res)=>{
-            if(res?.status_code == 200 || success == true){
-                window.location.reload();
-            }
-        })
-        .catch(err=>{
-            console.log(err.message);
-        })
+            .unwrap()
+            .then((res) => {
+                if (res?.status_code == 200 || success == true) {
+                    setOpen(false);
+                    window.location.reload();
+                }
+            })
+            .catch(err => {
+                console.log(err.message);
+            })
     }
 
     const dropdownRef = useRef(null);
@@ -58,7 +59,7 @@ export default function Topbar() {
         <header className="flex h-16 items-center justify-between border-b bg-white px-6 shadow-sm">
             {/* Left */}
             <div>
-                <Breadcurmb items={breadcurmb?.items}/>
+                <Breadcurmb items={breadcurmb?.items} />
             </div>
 
             {/* Right */}
@@ -106,7 +107,7 @@ export default function Topbar() {
 
                             {/* Menu */}
                             <div className="p-2 flex items-center justify-between">
-                                <NextLink href="/profile" className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 transition-all duration-200 hover:cursor-pointer hover:bg-gray-100 active:scale-[0.98]">
+                                <NextLink href="/profile" onClick={() => setOpen(false)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-gray-700 transition-all duration-200 hover:cursor-pointer hover:bg-gray-100 active:scale-[0.98]">
                                     <User size={18} />
                                     <span>Profile</span>
                                 </NextLink>
