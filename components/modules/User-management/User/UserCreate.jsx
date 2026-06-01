@@ -10,12 +10,13 @@ import { userSchema } from './schema';
 import Formwrapper from '@/Forms/Formwrapper';
 import FormInput from '@/Forms/FormInput';
 import { useForm } from 'react-hook-form';
-import FormSelect from '@/Forms/FormSelect';
 import { useCreateUserMutation } from '@/components/store/admin/user-management';
 import { useRouter } from 'next/navigation';
+import useToaster from '@/components/hooks/useToaster';
 
 const UserCreate = () => {
     const router = useRouter()
+    const { errorToaster, successToaster } = useToaster();
     useBreadcrumb(breadcrumbList?.userCreate);
     //api
     const [Create] = useCreateUserMutation()
@@ -25,13 +26,22 @@ const UserCreate = () => {
         defaultValues: {
             name: '',
             email: '',
-            nid: '',
-            role: ''
         }
     });
 
     const onSubmit = (data) => {
         Create(data)
+            .unwrap()
+            .then((res) => {
+                if (res?.success || res?.status_code === 201) {
+                    successToaster("User created successfully!");
+                    router.push("/user-management/users");
+                }
+            })
+            .catch((err) => {
+                errorToaster(err?.data?.message || "Failed to create user.");
+                console.log(err);
+            })
     }
 
     return (
@@ -56,24 +66,9 @@ const UserCreate = () => {
                         placeholder='example@gmail.com'
                         required
                     />
-                    <FormInput
-                        name="nid"
-                        label="NID no."
-                        placeholder='123XXXXXXXX'
-                        required
-                    />
-                    <FormSelect
-                        name="role"
-                        label="Role"
-                        options={[
-                            { label: 'Super Admin', id: 'superadmin' },
-                            { label: 'Admin', id: 'admin' },
-                        ]}
-                        required
-                    />
                 </div>
                 <div className='flex items-center justify-center gap-10 mt-20'>
-                    <button type='button' onClick={()=>router.push("/user-management/users")} className='w-40 hover:cursor-pointer hover:bg-[#0A4D99] rounded font-semibold py-2 border text-[#0A4D99] hover:text-white border-[#0A4D99]'>Cancel</button>
+                    <button type='button' onClick={() => router.push("/user-management/users")} className='w-40 hover:cursor-pointer hover:bg-[#0A4D99] rounded font-semibold py-2 border text-[#0A4D99] hover:text-white border-[#0A4D99]'>Cancel</button>
                     <button type="submit" className='w-40 hover:cursor-pointer hover:bg-[#053872] rounded font-semibold py-2  bg-[#0A4D99]'>Save</button>
                 </div>
             </Formwrapper>

@@ -3,8 +3,7 @@
 
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
-
-
+import { ToastContainer } from 'react-toastify';
 
 export default function AdminLayout({ children }) {
     return (
@@ -20,6 +19,12 @@ export default function AdminLayout({ children }) {
                 {/* Page Content */}
                 <main className="flex-1 overflow-y-auto px-3 py-5">{children}</main>
             </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+            />
         </div>
     );
 }
