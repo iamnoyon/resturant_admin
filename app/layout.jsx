@@ -1,6 +1,7 @@
 import { Manrope } from "next/font/google";
 import "./globals.css";
 import ReduxProvider from "@/components/providers/ReduxProvider";
+import { ToastContainer } from "react-toastify";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -17,6 +18,12 @@ export default function RootLayout({ children }) {
     <html lang="en" className={manrope.variable}>
       <body className={manrope.className}>
         <ReduxProvider>{children}</ReduxProvider>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+        />
       </body>
     </html>
   );

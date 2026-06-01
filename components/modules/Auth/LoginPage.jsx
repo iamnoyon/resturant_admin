@@ -5,12 +5,14 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import { useLoginMutation } from "@/components/store/public/index";
 import { useRouter } from 'next/navigation';
+import useToaster from '@/components/hooks/useToaster';
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const router = useRouter();
+    const {errorToaster, successToaster} = useToaster();
 
     // api call
     const [Login] = useLoginMutation()
@@ -21,10 +23,12 @@ export default function LoginPage() {
             .unwrap()
             .then((res)=>{
                 if(res?.success){
+                    successToaster(res?.message || "Login successful!");
                     router.replace('/dashboard')
                 }
             })
             .catch((err)=>{
+                errorToaster(err?.data?.message || "Login failed.");
                 console.error("Login failed:", err);
             });
     };

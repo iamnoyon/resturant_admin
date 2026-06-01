@@ -1,5 +1,6 @@
 "use client";
 
+import useToaster from "@/components/hooks/useToaster";
 import { useChangePasswordMutation, useUpdateProfileMutation, useUploadProfilePhotoMutation } from "@/components/store/auth";
 import {
     User,
@@ -19,6 +20,7 @@ import { useSelector } from "react-redux";
 export default function ProfilePage() {
     const user = useSelector((state) => state?.user);
     const [fileUrl, setFileUrl] = useState(null);
+    const { errorToaster, successToaster } = useToaster();
 
     const fileRef = useRef(null);
     const [preview, setPreview] = useState(null);
@@ -57,9 +59,11 @@ export default function ProfilePage() {
                 }
             })
             .catch(err => {
+                errorToaster(err?.data?.message || "Failed to upload profile photo.");
                 console.log(err.message);
             })
         }catch (err) {
+            errorToaster("An unexpected error occurred.");
             console.log(err.message);
         }
     };
@@ -68,7 +72,7 @@ export default function ProfilePage() {
         UpdateProfile({fileName: fileUrl})
         .then(res => {
             if (res?.success == true || res?.status_code == 200) {
-                alert('Profile photo updated.')
+                successToaster("Profile photo updated.");
                 window.location.reload()
             }
         })
@@ -84,15 +88,16 @@ export default function ProfilePage() {
                 .unwrap()
                 .then(res => {
                     if (res?.success == true || res?.status_code == 200) {
-                        alert('Password changed.')
+                        successToaster("Password changed.");
                         window.location.reload()
                     }
                 })
                 .catch(err => {
+                    errorToaster(err?.data?.message || "Failed to change password.");
                     console.log(err.message);
                 })
         } else {
-            alert("New & Confirm password are not same")
+            errorToaster("New & Confirm password are not same");
         }
     };
 
