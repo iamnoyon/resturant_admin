@@ -6,6 +6,7 @@ import { Plus, List } from "lucide-react";
 import useBreadcrumb from '@/components/hooks/useBreadcurmb';
 import { breadcrumbList } from '@/components/layouts/breadcrumbList';
 import { useLazyGetUserListQuery } from '@/components/store/admin/user-management';
+import ReactTable from '@/components/common/ReactTable/ReactTable';
 
 const UserList = () => {
     useBreadcrumb(breadcrumbList?.userList);
@@ -27,7 +28,20 @@ const UserList = () => {
             buttonIcon={Plus}
             buttonHref="/user-management/users/create"
         >
-            Hi
+            <ReactTable
+                columns={[
+                    {
+                        header: "Name",
+                        accessorKey: "name"
+                    },
+                    {
+                        header: "Email",
+                        accessorKey: "email"
+                    }
+                ]}
+                dataSource={userData?.data || []}
+                totalRecords={userData?.total || 0}
+            />
         </CardLayout>
     )
 }
