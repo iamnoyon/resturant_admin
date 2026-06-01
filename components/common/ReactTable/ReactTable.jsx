@@ -1,262 +1,261 @@
 'use client';
 
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
+    ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    useReactTable,
 } from '@tanstack/react-table';
 import {
-  ArrowUpDown,
-  ChevronFirst,
-  ChevronLast,
-  ChevronLeft,
-  ChevronRight,
-  Search,
+    ArrowUpDown,
+    ChevronFirst,
+    ChevronLast,
+    ChevronLeft,
+    ChevronRight,
+    Search,
 } from 'lucide-react';
 import React, { useState } from 'react';
 
-const ReactTable =({
-  columns,
-  dataSource,
-  defaultSearch = true,
-  showPageSizeDropdown = true,
-  allowRowSelect = false,
-  onRowSelectionChange,
-  pageAndLimit,
-  onPageLimitChange,
-  paginationOn,
-  totalRecords,
-  searchQuery,
-  onSearchChange,
+const ReactTable = ({
+    columns,
+    dataSource,
+    defaultSearch = true,
+    showPageSizeDropdown = true,
+    allowRowSelect = false,
+    onRowSelectionChange,
+    pageAndLimit,
+    onPageLimitChange,
+    paginationOn,
+    totalRecords,
+    searchQuery,
+    onSearchChange,
 }) => {
-  const [sorting, setSorting] = useState([]);
-  const [globalFilter, setGlobalFilter] = useState('');
-  const [rowSelection, setRowSelection] = useState({});
+    const [sorting, setSorting] = useState([]);
+    const [globalFilter, setGlobalFilter] = useState('');
+    const [rowSelection, setRowSelection] = useState({});
 
-  const table = useReactTable({
-    data: dataSource,
-    columns: columns,
-    pageCount: totalRecords ? Math.ceil(totalRecords / (pageAndLimit?.limit ?? 10)) : -1,
-    state: {
-      sorting,
-      globalFilter,
-      rowSelection,
-      pagination: {
-        pageIndex: pageAndLimit?.page ?? 0, // <-- controlled from parent
-        pageSize: pageAndLimit?.limit ?? 10, // <-- controlled from parent
-      },
-    },
-    manualPagination: paginationOn ?? false,
-    enableRowSelection: allowRowSelect,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    onRowSelectionChange: setRowSelection,
-  });
+    const table = useReactTable({
+        data: dataSource,
+        columns: columns,
+        pageCount: totalRecords ? Math.ceil(totalRecords / (pageAndLimit?.limit ?? 10)) : -1,
+        state: {
+            sorting,
+            globalFilter,
+            rowSelection,
+            pagination: {
+                pageIndex: pageAndLimit?.page ?? 0, // <-- controlled from parent
+                pageSize: pageAndLimit?.limit ?? 10, // <-- controlled from parent
+            },
+        },
+        manualPagination: paginationOn ?? false,
+        enableRowSelection: allowRowSelect,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        onSortingChange: setSorting,
+        onGlobalFilterChange: setGlobalFilter,
+        onRowSelectionChange: setRowSelection,
+    });
 
-  React.useEffect(() => {
-    if (allowRowSelect && onRowSelectionChange) {
-      const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original);
-      onRowSelectionChange(selectedRows);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rowSelection]);
+    React.useEffect(() => {
+        if (allowRowSelect && onRowSelectionChange) {
+            const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original);
+            onRowSelectionChange(selectedRows);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [rowSelection]);
 
-  const updatePageLimit = (page, limit) => {
-    // Notify parent
-    onPageLimitChange?.({ page, limit });
-  };
+    const updatePageLimit = (page, limit) => {
+        // Notify parent
+        onPageLimitChange?.({ page, limit });
+    };
 
-  return (
-    <div className="mx-auto pb-3">
-      <div className="overflow-x-auto">
-        {/* Global Search */}
-        {defaultSearch && (
-          <div className="mb-4 flex justify-end">
-            <div className="relative w-[250px]">
-              <Search
-                className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-400"
-                size={18}
-              />
-              {onSearchChange ? (
-                <input
-                  type="text"
-                  value={searchQuery ?? ''}
-                  onChange={(e) => onSearchChange(e.target.value)}
-                  placeholder="Search"
-                  className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 font-['DM_Sans',sans-serif] text-[0.875rem] focus:border-gray-300 focus:ring-1 focus:ring-gray-300 focus:outline-none"
-                />
-              ) : (
-                <input
-                  type="text"
-                  value={globalFilter ?? ''}
-                  onChange={(e) => setGlobalFilter(e.target.value)}
-                  placeholder="Search"
-                  className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 font-['DM_Sans',sans-serif] text-[0.875rem] focus:border-gray-300 focus:ring-1 focus:ring-gray-300 focus:outline-none"
-                />
-              )}
+    return (
+        <div className="mx-auto pb-3">
+            <div className="overflow-x-auto">
+                {/* Global Search */}
+                {defaultSearch && (
+                    <div className="mb-4 flex justify-end">
+                        <div className="relative w-[250px]">
+                            <Search
+                                className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-400"
+                                size={18}
+                            />
+                            {onSearchChange ? (
+                                <input
+                                    type="text"
+                                    value={searchQuery ?? ''}
+                                    onChange={(e) => onSearchChange(e.target.value)}
+                                    placeholder="Search"
+                                    className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 font-['DM_Sans',sans-serif] text-[0.875rem] focus:border-gray-300 focus:ring-1 focus:ring-gray-300 focus:outline-none"
+                                />
+                            ) : (
+                                <input
+                                    type="text"
+                                    value={globalFilter ?? ''}
+                                    onChange={(e) => setGlobalFilter(e.target.value)}
+                                    placeholder="Search"
+                                    className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 font-['DM_Sans',sans-serif] text-[0.875rem] focus:border-gray-300 focus:ring-1 focus:ring-gray-300 focus:outline-none"
+                                />
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Table */}
+                <div className="bg-white px-4">
+                    <table className="w-full border-collapse">
+                        <thead>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <tr key={headerGroup.id} className="border-b-[0.5px] border-[#d9d9d9]">
+                                    {allowRowSelect && (
+                                        <th className="w-[43px]">{/* Checkbox removed from header */}</th>
+                                    )}
+                                    {headerGroup.headers.map((header) => {
+                                        const isSortable = header.column.columnDef.enableSorting;
+                                        return (
+                                            <th
+                                                key={header.id}
+                                                onClick={isSortable ? header.column.getToggleSortingHandler() : undefined}
+                                                className={`px-1.5 py-3 text-left sm:px-2.5 sm:py-4.5 ${isSortable ? 'cursor-pointer select-none' : ''}`}
+                                            >
+                                                <span className="flex items-center gap-1 font-['Figtree',sans-serif] text-[0.75rem] leading-[1.2] font-semibold text-[#42000e] uppercase sm:text-[0.875rem]">
+                                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                                    {isSortable && <ArrowUpDown className="h-3 w-3 sm:h-4 sm:w-4" />}
+                                                </span>
+                                            </th>
+                                        );
+                                    })}
+                                </tr>
+                            ))}
+                        </thead>
+                        <tbody>
+                            {table.getRowModel().rows.length === 0 ? (
+                                <tr>
+                                    <td
+                                        colSpan={columns.length + (allowRowSelect ? 1 : 0)}
+                                        className="pt-4 text-center font-['DM_Sans',sans-serif] text-sm text-[#595959] sm:text-[1rem]"
+                                    >
+                                        No data available.
+                                    </td>
+                                </tr>
+                            ) : (
+                                table.getRowModel().rows.map((row, index) => {
+                                    const isSelected = row.getIsSelected();
+                                    return (
+                                        <tr
+                                            className={`border-b-[0.3px] border-[#d9d9d9] ${isSelected ? 'bg-slate-100' : index % 2 === 0 ? 'bg-[#fcfcfc]' : 'bg-white'
+                                                }`}
+                                            key={row.id}
+                                        >
+                                            {allowRowSelect && (
+                                                <td className="px-1.5 py-3 sm:px-2.5 sm:py-4.5">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={row.getIsSelected()}
+                                                        onChange={row.getToggleSelectedHandler()}
+                                                        className="h-4 w-4 cursor-pointer rounded accent-(--bbp-red)"
+                                                    />
+                                                </td>
+                                            )}
+                                            {row.getVisibleCells().map((cell) => (
+                                                <td
+                                                    className="px-1.5 py-3 font-['DM_Sans',sans-serif] text-xs font-normal text-black sm:px-2.5 sm:py-4.5 sm:text-sm md:text-[1rem]"
+                                                    key={cell.id}
+                                                >
+                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                </td>
+                                            ))}
+                                        </tr>
+                                    );
+                                })
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pagination */}
+                <div
+                    className={`flex flex-col gap-3 sm:flex-row sm:gap-0 ${showPageSizeDropdown ? 'sm:justify-between' : 'sm:justify-end'} mt-4 items-center`}
+                >
+                    {/* Page Size Dropdown */}
+                    {showPageSizeDropdown && (
+                        <div className="flex items-center gap-2">
+                            <label
+                                htmlFor="pageSizeSelect"
+                                className="font-['DM_Sans',sans-serif] text-xs font-normal text-[#595959] sm:text-[0.875rem]"
+                            >
+                                Items per page
+                            </label>
+                            <select
+                                id="pageSizeSelect"
+                                value={pageAndLimit?.limit ?? 10}
+                                onChange={(e) => onPageLimitChange?.({ page: 0, limit: Number(e.target.value) })}
+                                className="rounded border border-[#d9d9d9] px-2 py-1 font-['DM_Sans',sans-serif] text-xs focus:ring-2 focus:ring-(--bbp-red) focus:outline-none sm:text-[0.875rem]"
+                            >
+                                {[10, 20, 30, 50].map((item) => (
+                                    <option key={item} value={item}>
+                                        {item}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    {/* Pagination Controls */}
+                    {paginationOn && pageAndLimit && totalRecords !== undefined && (
+                        <div className="flex items-center gap-1 sm:gap-2">
+                            <div className="mr-2 font-['Figtree',sans-serif] text-sm font-semibold text-[#595959] sm:mr-10 sm:text-base md:text-[1.25rem]">
+                                {pageAndLimit.page * pageAndLimit.limit + 1} {' – '}
+                                {Math.min((pageAndLimit.page + 1) * pageAndLimit.limit, totalRecords)} {' of '}
+                                {totalRecords}
+                            </div>
+                            <button
+                                onClick={() => updatePageLimit(0, pageAndLimit.limit)}
+                                disabled={pageAndLimit.page === 0}
+                                className="text-[#595959] transition-colors hover:text-(--bbp-red) disabled:opacity-30"
+                            >
+                                <ChevronFirst size={20} className="sm:h-6 sm:w-6" />
+                            </button>
+
+                            <button
+                                onClick={() => updatePageLimit(pageAndLimit.page - 1, pageAndLimit.limit)}
+                                disabled={pageAndLimit.page === 0}
+                                className="text-[#595959] transition-colors hover:text-(--bbp-red) disabled:opacity-30"
+                            >
+                                <ChevronLeft size={20} className="sm:h-6 sm:w-6" />
+                            </button>
+
+                            <button
+                                onClick={() => updatePageLimit(pageAndLimit.page + 1, pageAndLimit.limit)}
+                                disabled={(pageAndLimit.page + 1) * pageAndLimit.limit >= totalRecords}
+                                className="text-[#595959] transition-colors hover:text-(--bbp-red) disabled:opacity-30"
+                            >
+                                <ChevronRight size={20} className="sm:h-6 sm:w-6" />
+                            </button>
+
+                            <button
+                                onClick={() =>
+                                    updatePageLimit(
+                                        Math.ceil(totalRecords / pageAndLimit.limit) - 1,
+                                        pageAndLimit.limit
+                                    )
+                                }
+                                disabled={(pageAndLimit.page + 1) * pageAndLimit.limit >= totalRecords}
+                                className="text-[#595959] transition-colors hover:text-(--bbp-red) disabled:opacity-30"
+                            >
+                                <ChevronLast size={20} className="sm:h-6 sm:w-6" />
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
-          </div>
-        )}
-
-        {/* Table */}
-        <div className="bg-white px-4">
-          <table className="w-full border-collapse">
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="border-b-[0.5px] border-[#d9d9d9]">
-                  {allowRowSelect && (
-                    <th className="w-[43px]">{/* Checkbox removed from header */}</th>
-                  )}
-                  {headerGroup.headers.map((header) => {
-                    const isSortable = header.column.columnDef.enableSorting;
-                    return (
-                      <th
-                        key={header.id}
-                        onClick={isSortable ? header.column.getToggleSortingHandler() : undefined}
-                        className={`px-1.5 py-3 text-left sm:px-2.5 sm:py-4.5 ${isSortable ? 'cursor-pointer select-none' : ''}`}
-                      >
-                        <span className="flex items-center gap-1 font-['Figtree',sans-serif] text-[0.75rem] leading-[1.2] font-semibold text-[#42000e] uppercase sm:text-[0.875rem]">
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          {isSortable && <ArrowUpDown className="h-3 w-3 sm:h-4 sm:w-4" />}
-                        </span>
-                      </th>
-                    );
-                  })}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={columns.length + (allowRowSelect ? 1 : 0)}
-                    className="pt-4 text-center font-['DM_Sans',sans-serif] text-sm text-[#595959] sm:text-[1rem]"
-                  >
-                    No data available.
-                  </td>
-                </tr>
-              ) : (
-                table.getRowModel().rows.map((row, index) => {
-                  const isSelected = row.getIsSelected();
-                  return (
-                    <tr
-                      className={`border-b-[0.3px] border-[#d9d9d9] ${
-                        isSelected ? 'bg-slate-100' : index % 2 === 0 ? 'bg-[#fcfcfc]' : 'bg-white'
-                      }`}
-                      key={row.id}
-                    >
-                      {allowRowSelect && (
-                        <td className="px-1.5 py-3 sm:px-2.5 sm:py-4.5">
-                          <input
-                            type="checkbox"
-                            checked={row.getIsSelected()}
-                            onChange={row.getToggleSelectedHandler()}
-                            className="h-4 w-4 cursor-pointer rounded accent-(--bbp-red)"
-                          />
-                        </td>
-                      )}
-                      {row.getVisibleCells().map((cell) => (
-                        <td
-                          className="px-1.5 py-3 font-['DM_Sans',sans-serif] text-xs font-normal text-black sm:px-2.5 sm:py-4.5 sm:text-sm md:text-[1rem]"
-                          key={cell.id}
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
         </div>
-
-        {/* Pagination */}
-        <div
-          className={`flex flex-col gap-3 sm:flex-row sm:gap-0 ${showPageSizeDropdown ? 'sm:justify-between' : 'sm:justify-end'} mt-4 items-center`}
-        >
-          {/* Page Size Dropdown */}
-          {showPageSizeDropdown && (
-            <div className="flex items-center gap-2">
-              <label
-                htmlFor="pageSizeSelect"
-                className="font-['DM_Sans',sans-serif] text-xs font-normal text-[#595959] sm:text-[0.875rem]"
-              >
-                Items per page
-              </label>
-              <select
-                id="pageSizeSelect"
-                value={pageAndLimit?.limit ?? 10}
-                onChange={(e) => onPageLimitChange?.({ page: 0, limit: Number(e.target.value) })}
-                className="rounded border border-[#d9d9d9] px-2 py-1 font-['DM_Sans',sans-serif] text-xs focus:ring-2 focus:ring-(--bbp-red) focus:outline-none sm:text-[0.875rem]"
-              >
-                {[10, 20, 30, 50].map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Pagination Controls */}
-          {paginationOn && pageAndLimit && totalRecords !== undefined && (
-            <div className="flex items-center gap-1 sm:gap-2">
-              <div className="mr-2 font-['Figtree',sans-serif] text-sm font-semibold text-[#595959] sm:mr-10 sm:text-base md:text-[1.25rem]">
-                {pageAndLimit.page * pageAndLimit.limit + 1} {' – '}
-                {Math.min((pageAndLimit.page + 1) * pageAndLimit.limit, totalRecords)} {' of '}
-                {totalRecords}
-              </div>
-              <button
-                onClick={() => updatePageLimit(0, pageAndLimit.limit)}
-                disabled={pageAndLimit.page === 0}
-                className="text-[#595959] transition-colors hover:text-(--bbp-red) disabled:opacity-30"
-              >
-                <ChevronFirst size={20} className="sm:h-6 sm:w-6" />
-              </button>
-
-              <button
-                onClick={() => updatePageLimit(pageAndLimit.page - 1, pageAndLimit.limit)}
-                disabled={pageAndLimit.page === 0}
-                className="text-[#595959] transition-colors hover:text-(--bbp-red) disabled:opacity-30"
-              >
-                <ChevronLeft size={20} className="sm:h-6 sm:w-6" />
-              </button>
-
-              <button
-                onClick={() => updatePageLimit(pageAndLimit.page + 1, pageAndLimit.limit)}
-                disabled={(pageAndLimit.page + 1) * pageAndLimit.limit >= totalRecords}
-                className="text-[#595959] transition-colors hover:text-(--bbp-red) disabled:opacity-30"
-              >
-                <ChevronRight size={20} className="sm:h-6 sm:w-6" />
-              </button>
-
-              <button
-                onClick={() =>
-                  updatePageLimit(
-                    Math.ceil(totalRecords / pageAndLimit.limit) - 1,
-                    pageAndLimit.limit
-                  )
-                }
-                disabled={(pageAndLimit.page + 1) * pageAndLimit.limit >= totalRecords}
-                className="text-[#595959] transition-colors hover:text-(--bbp-red) disabled:opacity-30"
-              >
-                <ChevronLast size={20} className="sm:h-6 sm:w-6" />
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default ReactTable;
