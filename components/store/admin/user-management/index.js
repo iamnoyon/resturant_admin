@@ -11,7 +11,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         }),
         getUserList: builder.query({
             query: (params) => ({
-                url: '/user-list',
+                url: '/user/list',
                 method: 'GET',
                 params
             })
