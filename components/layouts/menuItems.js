@@ -33,7 +33,7 @@ export const menuItems = [
         activePath: ["/user-management/users/"],
       },
       {
-        name: "Role",
+        name: "Role & Permissions",
         path: "/user-management/roles",
         icon: UserPlus,
       },

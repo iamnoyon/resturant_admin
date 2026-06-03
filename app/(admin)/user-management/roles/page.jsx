@@ -1,8 +1,9 @@
+import RoleManagementPage from '@/components/modules/User-management/Role/RoleManagementPage'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>role</div>
+    <RoleManagementPage />
   )
 }
 

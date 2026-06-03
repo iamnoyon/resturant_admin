@@ -2,14 +2,13 @@
 'use client';
 
 import CardLayout from '@/components/common/CardLayout';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Plus, List, Edit, Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Plus, List } from 'lucide-react';
 import useBreadcrumb from '@/components/hooks/useBreadcurmb';
 import { breadcrumbList } from '@/components/layouts/breadcrumbList';
 import { useLazyGetUserListQuery } from '@/components/store/admin/user-management';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
-import Link from 'next/link';
 import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';
 import ThreeDotMenu from '@/components/common/ThreeDotMenu';
 
@@ -161,8 +160,8 @@ const UserList = () => {
                         columns={columns}
                         dataSource={userData?.users || []}
                         totalRecords={userData?.pagination?.total || 0}
-                        showPageSizeDropdown={true}
-                        paginationOn={true}
+                        showPageSizeDropdown={userData?.pagination?.total > pageAndLimit.limit ? true : false}
+                        paginationOn={userData?.pagination?.total > 0 ? true : false}
                         pageAndLimit={pageAndLimit}
                         searchQuery={searchQuery}
                         onSearchChange={setSearchQuery}
