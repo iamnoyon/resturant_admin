@@ -6,11 +6,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { Plus, List } from 'lucide-react';
 import useBreadcrumb from '@/components/hooks/useBreadcurmb';
 import { breadcrumbList } from '@/components/layouts/breadcrumbList';
-import { useLazyGetUserListQuery } from '@/components/store/admin/user-management';
+import { useLazyGetUserListQuery, useUpdateUserStatusMutation } from '@/components/store/admin/user-management';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';
 import ThreeDotMenu from '@/components/common/ThreeDotMenu';
+import useToaster from '@/components/hooks/useToaster';
 
 const columnHelper = createColumnHelper();
 
@@ -19,21 +20,27 @@ const UserList = () => {
     useBreadcrumb(breadcrumbList?.userList);
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
+    const {successToaster} = useToaster()
 
-    // Action handlers
-    const handleApprove = (id) =>{
-        console.log('Approve user with ID:', id);
-
-    }
-    const handleSuspend = (id) =>{
-        console.log('Suspend user with ID:', id);
-    }
-    const handleInvitation = (id) =>{
-        console.log('Send invitation to user with ID:', id);
-    }
 
     // API
-    const [triggerList, { data: userData, isLoading, isFetching }] = useLazyGetUserListQuery();
+    const [triggerList, { data: userData, isLoading }] = useLazyGetUserListQuery();
+    const [Update] = useUpdateUserStatusMutation();
+
+    // Action handlers
+    const handleStatusUpdate = (id, status) =>{
+        Update({id, status})
+        .unwrap()
+        .then((res)=>{
+            if(res?.success == true, res?.status_code == 200){
+                successToaster(res?.message || 'User status updated successfully!')
+            }
+        })
+    }
+
+    const handleInvitation = (id) => {
+
+    }
 
     // Trigger API call
     useEffect(() => {
@@ -121,17 +128,17 @@ const UserList = () => {
                                 actions={[
                                     {
                                         label: 'Approve',
-                                        onClick: () => handleApprove(info?.row?.original?.id),
+                                        onClick: () => handleStatusUpdate(info?.row?.original?.id, 'approved'),
                                         isDisabled: isActive,
                                     },
                                     {
                                         label: 'Suspend',
-                                        onClick: () => handleSuspend(info?.row?.original?.id),
+                                        onClick: () => handleStatusUpdate(info?.row?.original?.id, 'suspended'),
                                         isDisabled: isPending,
                                     },
                                     {
                                         label: 'Invitation',
-                                        onClick: () => handleInvitation(info?.row?.original?.id),
+                                        onClick: () => handleInvitation(info?.row?.original?.id,),
                                         isDisabled: isActive || isPending,
                                     },
                                 ]}
@@ -153,7 +160,7 @@ const UserList = () => {
             buttonHref="/user-management/users/create"
         >
             {
-                (isLoading || isFetching) ? (
+                (isLoading) ? (
                     <TableSkeleton rowLength={10} columnLength={columns?.length || 5} />
                 ) : (
                     <ReactTable

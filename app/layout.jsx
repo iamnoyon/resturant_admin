@@ -15,7 +15,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={manrope.variable}>
+    <html lang="en" className={manrope.variable} data-scroll-behavior="smooth">
       <body className={manrope.className}>
         <ReduxProvider>{children}</ReduxProvider>
         <ToastContainer

@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 
-export function middleware(request) {
+export function proxy(request) {
   const accessToken = request.cookies.get("accessToken");
-  const refreshToken = request.cookies.get("refreshToken");
 
-  const isAuthenticated = accessToken || refreshToken;
+  const isAuthenticated = accessToken;
 
   const isProtectedRoute =
     request.nextUrl.pathname.startsWith("/");

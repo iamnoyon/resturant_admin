@@ -1,84 +1,134 @@
-"use client"
-import CardLayout from '@/components/common/CardLayout'
-import { useGetPermissionListQuery } from '@/components/store/admin/role-management';
-import Formwrapper from '@/Forms/Formwrapper';
-import React from 'react'
-import { useForm } from 'react-hook-form';
+"use client";
+
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { AiOutlineUnlock } from "react-icons/ai";
 
+import CardLayout from "@/components/common/CardLayout";
+import Formwrapper from "@/Forms/Formwrapper";
+import {
+    useGetPermissionListQuery,
+    useGetUserDropdownWithPermissionsQuery,
+} from "@/components/store/admin/role-management";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { roleSchema } from "./schema";
+import FormSelect from "@/Forms/FormSelect";
+import FormCheckboxGroup from "@/Forms/FormCheckboxGroup";
+
 const RoleManagementPage = () => {
-    const { data: permissionList } = useGetPermissionListQuery()
+    const { data: permissionList } = useGetPermissionListQuery();
+    const { data: userDropdown } = useGetUserDropdownWithPermissionsQuery();
+
     const methods = useForm({
+        resolver: zodResolver(roleSchema),
         defaultValues: {
-            userId: '',
-            assignRole: '',
-            permissions: []
+            userId: "",
+            assignRole: "",
+            permissions: [],
+        },
+    });
+
+    const selectedUserId = methods.watch("userId");
+
+    useEffect(() => {
+        if (!selectedUserId || !userDropdown?.data) {
+            methods.setValue("assignRole", "");
+            methods.setValue("permissions", []);
+            return;
         }
-    })
+
+        const selectedUser = userDropdown.data.find(
+            (user) => String(user.id) === String(selectedUserId)
+        );
+
+        if (!selectedUser) return;
+
+        methods.setValue("assignRole", selectedUser.role || "");
+
+        methods.setValue(
+            "permissions",
+            selectedUser.permissions || []
+        );
+
+        methods.setValue(
+            "assignRole",
+            selectedUser?.role || ''
+        )
+    }, [selectedUserId, userDropdown, methods]);
+
     const onSubmit = (data) => {
-        console.log(data);
-    }
+        console.log("Form Data:", data);
+
+    };
+
     return (
-        <div className=''>
+        <div>
             <CardLayout
                 title="Assign Roles & Permissions"
                 titleIcon={AiOutlineUnlock}
             >
-                <Formwrapper
-                    methods={methods}
-                    onSubmit={onSubmit}
-                >
-                    <div className='grid lg:grid-cols-2 gap-5'>
-                        <div>
-                            <label className='block mb-2 text-sm font-medium text-gray-900'>Select User</label>
-                            <select
-                                {...methods.register('userId')}
-                                className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
-                            >
-                                <option value="">Select a user</option>
-                                <option value="admin">Admin</option>
-                                <option value="editor">Editor</option>
-                                <option value="viewer">Viewer</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className='block mb-2 text-sm font-medium text-gray-900'>Select Role</label>
-                            <select
-                                {...methods.register('assignRole')}
-                                className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
-                            >
-                                <option value="">Select a role</option>
-                                <option value="admin">Admin</option>
-                                <option value="editor">Editor</option>
-                                <option value="viewer">Viewer</option>
-                            </select>
-                        </div>
-                        <div className='lg:col-span-2'>
-                            <label className='block mb-2 text-sm font-medium text-gray-900'>Assign Permissions</label>
-                            <div className='grid lg:grid-cols-4 md:grid-cols-2 gap-4 max-h-60 overflow-y-auto p-2 border border-gray-300 rounded-lg'>
-                                {permissionList?.data?.map((permission) => (
-                                    <div key={permission.value} className='flex items-center'>
-                                        <input
-                                            id={permission.value}
-                                            type="checkbox"
-                                            value={permission.value}
-                                            {...methods.register('permissions')}
-                                            className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500'
-                                        />
-                                        <label htmlFor={permission.value} className='ml-2 text-sm text-gray-900'>{permission.label}</label>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        <div className='flex items-center justify-center gap-10 mt-10 lg:col-span-2'>
-                            <button type='button' onClick={() => methods.reset()} className='w-40 hover:cursor-pointer hover:bg-[#0A4D99] rounded font-semibold py-2 border text-[#0A4D99] hover:text-white border-[#0A4D99]'>Cancel</button>
-                            <button type="submit" className='w-40 hover:cursor-pointer hover:bg-[#053872] rounded font-semibold py-2  bg-[#0A4D99]'>Save</button>
-                        </div>
+                <Formwrapper methods={methods} onSubmit={onSubmit}>
+                    <div className="grid lg:grid-cols-2 gap-5">
+                        <FormSelect
+                            name="userId"
+                            label="Select User"
+                            options={userDropdown?.data || []}
+                            labelKey="name"
+                            required
+                        />
+
+                        {/* Role */}
+                        <FormSelect
+                            name="assignRole"
+                            label="Select Role"
+                            required
+                            options={[
+                                { label: 'Admin', id: 'admin' },
+                                { label: 'Manager', id: 'manager' },
+                                { label: 'Employee', id: 'employee' },
+                                {label: 'Owner', id: 'owner'}
+                            ]}
+                        />
+                    </div>
+
+                    <div className="mt-10">
+                        {/* Permissions */}
+                        <FormCheckboxGroup
+                            name="permissions"
+                            label="Select Permissions"
+                            labelKey="label"
+                            valueKey="value"
+                            required
+                            options={permissionList?.data}
+                            columns={{
+                                sm: 1,
+                                md: 2,
+                                lg: 4,
+                            }}
+                        />
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex items-center justify-center gap-10 mt-10 lg:col-span-2">
+                        <button
+                            type="button"
+                            onClick={() => methods.reset()}
+                            className="w-40 rounded font-semibold py-2 border text-[#0A4D99] border-[#0A4D99]"
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            className="w-40 rounded font-semibold py-2 bg-[#0A4D99] text-white"
+                        >
+                            Save
+                        </button>
                     </div>
                 </Formwrapper>
             </CardLayout>
         </div>
-    )
-}
+    );
+};
 
-export default RoleManagementPage
+export default RoleManagementPage;
