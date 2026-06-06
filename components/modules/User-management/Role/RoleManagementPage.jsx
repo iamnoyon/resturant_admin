@@ -9,15 +9,19 @@ import Formwrapper from "@/Forms/Formwrapper";
 import {
     useGetPermissionListQuery,
     useGetUserDropdownWithPermissionsQuery,
+    useUpdateUserRoleAndPermissionsMutation,
 } from "@/components/store/admin/role-management";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { roleSchema } from "./schema";
 import FormSelect from "@/Forms/FormSelect";
 import FormCheckboxGroup from "@/Forms/FormCheckboxGroup";
+import useToaster from "@/components/hooks/useToaster";
 
 const RoleManagementPage = () => {
+    const { successToaster } = useToaster();
     const { data: permissionList } = useGetPermissionListQuery();
     const { data: userDropdown } = useGetUserDropdownWithPermissionsQuery();
+    const [update] = useUpdateUserRoleAndPermissionsMutation()
 
     const methods = useForm({
         resolver: zodResolver(roleSchema),
@@ -57,7 +61,20 @@ const RoleManagementPage = () => {
     }, [selectedUserId, userDropdown, methods]);
 
     const onSubmit = (data) => {
-        console.log("Form Data:", data);
+        const payload = {
+            userId: data?.userId,
+            role: data?.assignRole,
+            permissions: data?.permissions
+        }
+
+        update(payload)
+        .unwrap()
+        .then((res)=>{
+            if(res?.success || res?.status_code == 200){
+                successToaster(res?.message || 'Role & Permissios are updated.')
+                methods.reset({});
+            }
+        })
 
     };
 
@@ -113,14 +130,14 @@ const RoleManagementPage = () => {
                         <button
                             type="button"
                             onClick={() => methods.reset()}
-                            className="w-40 rounded font-semibold py-2 border text-[#0A4D99] border-[#0A4D99]"
+                            className="w-40 rounded font-semibold py-2 hover:cursor-pointer hover:bg-[#0A4D99] hover:text-white border text-[#0A4D99] border-[#0A4D99]"
                         >
                             Cancel
                         </button>
 
                         <button
                             type="submit"
-                            className="w-40 rounded font-semibold py-2 bg-[#0A4D99] text-white"
+                            className="w-40 rounded font-semibold py-2 bg-[#0A4D99] text-white hover:cursor-pointer"
                         >
                             Save
                         </button>

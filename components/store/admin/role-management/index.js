@@ -14,6 +14,13 @@ export const userApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    updateUserRoleAndPermissions: builder.mutation({
+      query: (data)=>({
+        url: '/user/update-permissions',
+        method: 'PUT',
+        body: data
+      })
+    })
   }),
   overrideExisting: true,
 });
@@ -21,4 +28,5 @@ export const userApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetPermissionListQuery,
   useGetUserDropdownWithPermissionsQuery,
+  useUpdateUserRoleAndPermissionsMutation
 } = userApiSlice;
