@@ -10,6 +10,9 @@ import {
   List,
   Plus,
 } from "lucide-react";
+import { FaChrome } from "react-icons/fa";
+import { AiFillProduct } from "react-icons/ai";
+import { MdFormatListBulletedAdd } from "react-icons/md";
 
 export const menuItems = [
   {
@@ -29,13 +32,13 @@ export const menuItems = [
       {
         name: "Users",
         path: "/user-management/users",
-        icon: List,
+        icon: UserPlus,
         activePath: ["/user-management/users/"],
       },
       {
         name: "Role & Permissions",
         path: "/user-management/roles",
-        icon: UserPlus,
+        icon: FaChrome,
       },
     ],
   },
@@ -48,24 +51,20 @@ export const menuItems = [
   },
 
   {
-    name: "Products",
-    icon: Package,
-    path: "/admin/products",
-    activePath: [
-      "/admin/products",
-      "/admin/products/create",
-      "/admin/products/edit",
-    ],
+    name: "Product Management",
+    icon: AiFillProduct,
+    path: "#",
+    activePath: ["/product-management/"],
 
     children: [
       {
-        name: "All Products",
-        path: "/admin/products",
-        icon: List,
+        name: "Products",
+        path: "/product-management/products",
+        icon: MdFormatListBulletedAdd,
       },
       {
-        name: "Add Product",
-        path: "/admin/products/create",
+        name: "Stocks",
+        path: "/product-management/stocks",
         icon: Plus,
       },
     ],

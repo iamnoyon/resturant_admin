@@ -16,7 +16,7 @@ import useToaster from '@/components/hooks/useToaster';
 const columnHelper = createColumnHelper();
 
 
-const UserList = () => {
+const ProductList = () => {
     useBreadcrumb(breadcrumbList?.userList);
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
@@ -147,11 +147,11 @@ const UserList = () => {
 
     return (
         <CardLayout
-            title="User List"
+            title="Product List"
             titleIcon={List}
-            buttonText="Add User"
+            buttonText="Add Product"
             buttonIcon={Plus}
-            buttonHref="/user-management/users/create"
+            buttonHref="/product-management/products/create"
         >
             {
                 (isLoading) ? (
@@ -176,4 +176,4 @@ const UserList = () => {
     );
 };
 
-export default UserList;
+export default ProductList;

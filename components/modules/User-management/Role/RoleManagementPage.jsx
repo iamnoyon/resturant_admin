@@ -68,83 +68,81 @@ const RoleManagementPage = () => {
         }
 
         update(payload)
-        .unwrap()
-        .then((res)=>{
-            if(res?.success || res?.status_code == 200){
-                successToaster(res?.message || 'Role & Permissios are updated.')
-                methods.reset({});
-            }
-        })
+            .unwrap()
+            .then((res) => {
+                if (res?.success || res?.status_code == 200) {
+                    successToaster(res?.message || 'Role & Permissios are updated.')
+                    methods.reset({});
+                }
+            })
 
     };
 
     return (
-        <div>
-            <CardLayout
-                title="Assign Roles & Permissions"
-                titleIcon={AiOutlineUnlock}
-            >
-                <Formwrapper methods={methods} onSubmit={onSubmit}>
-                    <div className="grid lg:grid-cols-2 gap-5">
-                        <FormSelect
-                            name="userId"
-                            label="Select User"
-                            options={userDropdown?.data || []}
-                            labelKey="name"
-                            required
-                        />
+        <CardLayout
+            title="Assign Roles & Permissions"
+            titleIcon={AiOutlineUnlock}
+        >
+            <Formwrapper methods={methods} onSubmit={onSubmit}>
+                <div className="grid lg:grid-cols-2 gap-5">
+                    <FormSelect
+                        name="userId"
+                        label="Select User"
+                        options={userDropdown?.data || []}
+                        labelKey="name"
+                        required
+                    />
 
-                        {/* Role */}
-                        <FormSelect
-                            name="assignRole"
-                            label="Select Role"
-                            required
-                            options={[
-                                { label: 'Admin', id: 'admin' },
-                                { label: 'Manager', id: 'manager' },
-                                { label: 'Employee', id: 'employee' },
-                                {label: 'Owner', id: 'owner'}
-                            ]}
-                        />
-                    </div>
+                    {/* Role */}
+                    <FormSelect
+                        name="assignRole"
+                        label="Select Role"
+                        required
+                        options={[
+                            { label: 'Admin', id: 'admin' },
+                            { label: 'Manager', id: 'manager' },
+                            { label: 'Employee', id: 'employee' },
+                            { label: 'Owner', id: 'owner' }
+                        ]}
+                    />
+                </div>
 
-                    <div className="mt-10">
-                        {/* Permissions */}
-                        <FormCheckboxGroup
-                            name="permissions"
-                            label="Select Permissions"
-                            labelKey="label"
-                            valueKey="value"
-                            required
-                            options={permissionList?.data}
-                            columns={{
-                                sm: 1,
-                                md: 2,
-                                lg: 4,
-                            }}
-                        />
-                    </div>
+                <div className="mt-10">
+                    {/* Permissions */}
+                    <FormCheckboxGroup
+                        name="permissions"
+                        label="Select Permissions"
+                        labelKey="label"
+                        valueKey="value"
+                        required
+                        options={permissionList?.data}
+                        columns={{
+                            sm: 4,
+                            md: 4,
+                            lg: 4,
+                        }}
+                    />
+                </div>
 
-                    {/* Buttons */}
-                    <div className="flex items-center justify-center gap-10 mt-10 lg:col-span-2">
-                        <button
-                            type="button"
-                            onClick={() => methods.reset()}
-                            className="w-40 rounded font-semibold py-2 hover:cursor-pointer hover:bg-[#0A4D99] hover:text-white border text-[#0A4D99] border-[#0A4D99]"
-                        >
-                            Cancel
-                        </button>
+                {/* Buttons */}
+                <div className="flex items-center justify-center gap-10 mt-20 lg:col-span-2">
+                    <button
+                        type="button"
+                        onClick={() => methods.reset()}
+                        className="w-40 rounded font-semibold py-2 hover:cursor-pointer hover:bg-[#0A4D99] hover:text-white border text-[#0A4D99] border-[#0A4D99]"
+                    >
+                        Cancel
+                    </button>
 
-                        <button
-                            type="submit"
-                            className="w-40 rounded font-semibold py-2 bg-[#0A4D99] text-white hover:cursor-pointer"
-                        >
-                            Save
-                        </button>
-                    </div>
-                </Formwrapper>
-            </CardLayout>
-        </div>
+                    <button
+                        type="submit"
+                        className="w-40 rounded font-semibold py-2 bg-[#0A4D99] text-white hover:cursor-pointer"
+                    >
+                        Save
+                    </button>
+                </div>
+            </Formwrapper>
+        </CardLayout>
     );
 };
 
