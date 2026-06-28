@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setBreadcrumb } from "@/components/store/common/breadcurmb";
+import { setBreadcrumb } from "@/store/common/breadcurmb";
 
 const useBreadcrumb = (items) => {
   const dispatch = useDispatch();

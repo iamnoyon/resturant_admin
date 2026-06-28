@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Plus, List } from 'lucide-react';
 import useBreadcrumb from '@/components/hooks/useBreadcurmb';
 import { breadcrumbList } from '@/components/layouts/breadcrumbList';
-import { useLazyGetUserListQuery, useUpdateUserStatusMutation } from '@/components/store/admin/user-management';
+import { useLazyGetUserListQuery, useUpdateUserStatusMutation } from '@/store/admin/user-management';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';

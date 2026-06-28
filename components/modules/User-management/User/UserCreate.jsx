@@ -10,7 +10,7 @@ import { userSchema } from './schema';
 import Formwrapper from '@/Forms/Formwrapper';
 import FormInput from '@/Forms/FormInput';
 import { useForm } from 'react-hook-form';
-import { useCreateUserMutation } from '@/components/store/admin/user-management';
+import { useCreateUserMutation } from '@/store/admin/user-management';
 import { useRouter } from 'next/navigation';
 import useToaster from '@/components/hooks/useToaster';
 

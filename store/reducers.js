@@ -7,5 +7,4 @@ export const rootReducer = combineReducers({
     [apiSlice.reducerPath]: apiSlice.reducer,
     user: UserReducer,
     breadcurmb: BreadcurmbReducer
-
 })

@@ -10,7 +10,7 @@ import {
     useGetPermissionListQuery,
     useGetUserDropdownWithPermissionsQuery,
     useUpdateUserRoleAndPermissionsMutation,
-} from "@/components/store/admin/role-management";
+} from "@/store/admin/role-management";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { roleSchema } from "./schema";
 import FormSelect from "@/Forms/FormSelect";

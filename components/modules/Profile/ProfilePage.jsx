@@ -1,7 +1,7 @@
 "use client";
 
 import useToaster from "@/components/hooks/useToaster";
-import { useChangePasswordMutation, useUpdateProfileMutation, useUploadProfilePhotoMutation } from "@/components/store/auth";
+import { useChangePasswordMutation, useUpdateProfileMutation, useUploadProfilePhotoMutation } from "@/store/auth";
 import {
     User,
     Mail,

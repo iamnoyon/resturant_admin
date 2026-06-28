@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { useLoginMutation } from "@/components/store/public/index";
+import { useLoginMutation } from "@/store/public/index";
 import { useRouter } from 'next/navigation';
 import useToaster from '@/components/hooks/useToaster';
 

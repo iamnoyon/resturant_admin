@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useLoginMutation } from "@/components/store/public/index";
+import { useLoginMutation } from "@/store/public/index";
 import { useRouter } from "next/navigation";
 import useToaster from "@/components/hooks/useToaster";
 

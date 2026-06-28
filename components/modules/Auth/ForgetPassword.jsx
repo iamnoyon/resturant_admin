@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { HiOutlineMail } from "react-icons/hi";
 import { IoCheckmarkCircle } from "react-icons/io5";
 import NextLink from "next/link"
-import { useForgotPasswordMutation } from "@/components/store/auth";
+import { useForgotPasswordMutation } from "@/store/auth";
 import useToaster from "@/components/hooks/useToaster";
 import { useRouter } from "next/navigation";
 
