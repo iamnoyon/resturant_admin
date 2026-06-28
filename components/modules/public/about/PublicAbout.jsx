@@ -28,9 +28,9 @@ export default function PublicAboutPage() {
 
       {/* Stats */}
       <section className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 ">
           {stats.map((stat) => (
-            <div key={stat.label} className="text-center p-6 bg-gray-50 rounded-xl">
+            <div key={stat.label} className="text-center p-6 bg-gray-50 rounded-xl shadow-md hover:-translate-y-1 transition-all duration-200 cursor-default">
               <p className="text-3xl font-bold text-[#042A55]">{stat.value}</p>
               <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
             </div>
@@ -95,9 +95,9 @@ export default function PublicAboutPage() {
             ].map((value) => (
               <div
                 key={value.title}
-                className="bg-white p-6 rounded-xl border border-gray-200"
+                className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-md hover:-translate-y-1 transition-all duration-200 cursor-default group"
               >
-                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4 group-hover:scale-125 transition-transform duration-200">
                   <value.icon size={24} className="text-[#042A55]" />
                 </div>
                 <h3 className="font-bold text-gray-900 mb-2">{value.title}</h3>
