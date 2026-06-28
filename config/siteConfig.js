@@ -1,3 +1,3 @@
 export const siteConfig = {
-    baseUrl: "http://localhost:8001/api/"
+    baseUrl: "http://localhost:5000/api"
 }

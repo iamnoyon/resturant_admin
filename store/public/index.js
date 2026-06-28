@@ -4,14 +4,14 @@ const publicApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder)=>({
         login: builder.mutation({
             query: (data)=>({
-                url: '/login',
+                url: '/auth/login',
                 method: 'POST',
                 body: data
             })
         }),
         profile: builder.query({
             query: ()=>({
-                url: '/me',
+                url: '/auth/profile',
                 method: 'GET'
             })
         }),

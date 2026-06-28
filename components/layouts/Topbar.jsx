@@ -5,9 +5,9 @@ import { Bell, LogOut, User } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { useLogoutMutation } from "../store/public";
 import NextLink from "next/link"
 import Breadcurmb from "../common/Breadcurmb";
+import { useLogoutMutation } from "@/store/public";
 
 export default function Topbar() {
     const state = useSelector(state => state?.user)

@@ -1,10 +1,10 @@
 "use client";
 
+import { useProfileQuery } from "@/store/public";
+import { setUser } from "@/store/user";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useProfileQuery } from "../store/public";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../store/user";
 
 export default function AuthProvider({ children }) {
   const dispatch = useDispatch();
