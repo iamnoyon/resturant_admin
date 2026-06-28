@@ -62,7 +62,7 @@ export default function PublicHeader() {
               EcommerceStore
             </h1> */}
             <Image
-            src='/asdf.png'
+            src='/as.png'
             alt="logo"
             width={100}
             height={80}
@@ -95,7 +95,7 @@ export default function PublicHeader() {
                 className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#042A55] focus:border-transparent text-sm"
               />
               <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#042A55]">
-                <Search size={18} />
+                <Search className="hover:cursor-pointer" size={18} />
               </button>
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function PublicHeader() {
             </button>
             <button
               onClick={() => setWishlistOpen(true)}
-              className="flex flex-col items-center gap-0.5 p-2 hover:text-[#042A55] rounded-lg relative hidden sm:flex"
+              className="flex flex-col hover:cursor-pointer items-center gap-0.5 p-2 hover:text-[#042A55] rounded-lg relative hidden sm:flex"
             >
               <Heart size={20} className="fill-red-500 text-red-500" />
               <span className="text-[10px]">Wishlist</span>
@@ -121,14 +121,14 @@ export default function PublicHeader() {
             </button>
             <Link
               href="/account"
-              className="flex flex-col items-center gap-0.5 p-2 hover:text-[#042A55] rounded-lg hidden sm:flex"
+              className="flex hover:cursor-pointer flex-col items-center gap-0.5 p-2 hover:text-[#042A55] rounded-lg hidden sm:flex"
             >
               <User size={20} />
               <span className="text-[10px]">Account</span>
             </Link>
             <Link
               href="/cart"
-              className="flex flex-col items-center gap-0.5 p-2 hover:text-[#042A55] rounded-lg relative"
+              className="flex flex-col hover:cursor-pointer items-center gap-0.5 p-2 hover:text-[#042A55] rounded-lg relative"
             >
               <ShoppingBag size={20} />
               <span className="text-[10px]">Cart</span>

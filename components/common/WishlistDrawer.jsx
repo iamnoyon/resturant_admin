@@ -29,7 +29,7 @@ export default function WishlistDrawer({ isOpen, onClose }) {
           </div>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-gray-100 hover:cursor-pointer rounded-lg transition-colors"
           >
             <X size={20} />
           </button>
