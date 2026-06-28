@@ -129,13 +129,6 @@ export default function PublicHeader() {
                 2
               </span>
             </Link>
-            <Link
-              href="/corporate"
-              className="flex flex-col items-center gap-0.5 p-2 hover:text-[#042A55] rounded-lg hidden sm:flex"
-            >
-              <Briefcase size={20} />
-              <span className="text-[10px]">Corporate</span>
-            </Link>
           </div>
         </div>
 

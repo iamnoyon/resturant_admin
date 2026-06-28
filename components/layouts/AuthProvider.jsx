@@ -11,6 +11,7 @@ export default function AuthProvider({ children }) {
   const router = useRouter();
   // getting user
   const user = useSelector((state) => state.user);
+  console.log(user);
 
   const {
     data: profileData,
@@ -20,8 +21,11 @@ export default function AuthProvider({ children }) {
 
   // ✅ Sync API user → Redux store
   useEffect(() => {
-    if (profileData?.user) {
-      dispatch(setUser(profileData.user));
+    if (profileData?.data) {
+      dispatch(setUser(profileData.data));
+      if(profileData?.data?.role !== 'admin'){
+        router.replace('/account')
+      }
     }
   }, [profileData]);
 
