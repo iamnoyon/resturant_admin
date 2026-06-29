@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { FiCircle } from "react-icons/fi";
 
 const COL_MAP = {
   1: "grid-cols-1",
@@ -66,8 +65,6 @@ const FormRadioGroup = ({
 
   // disable
   disabled = false,
-
-  ...props
 }) => {
   const {
     control,

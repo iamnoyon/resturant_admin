@@ -12,6 +12,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';
 import ThreeDotMenu from '@/components/common/ThreeDotMenu';
 import useToaster from '@/components/hooks/useToaster';
+import { useGetCategoryListQuery } from '@/store/admin/category';
 
 const columnHelper = createColumnHelper();
 
@@ -24,7 +25,7 @@ const ProductCategoryList = () => {
 
 
     // API
-    const [triggerList, { data: userData, isLoading }] = useLazyGetUserListQuery();
+    const {data: categoryData, isLoading} = useGetCategoryListQuery()
     const [Update] = useUpdateUserStatusMutation();
 
     // Action handlers
@@ -38,13 +39,6 @@ const ProductCategoryList = () => {
         })
     }
 
-    // Trigger API call
-    useEffect(() => {
-        triggerList({
-            page: pageAndLimit.page,
-            limit: pageAndLimit.limit,
-        });
-    }, [pageAndLimit]);
 
     // Columns definition
     const columns = useMemo(
@@ -69,9 +63,9 @@ const ProductCategoryList = () => {
                     ),
                     enableSorting: true,
                 }),
-                columnHelper.accessor('email', {
-                    id: 'email',
-                    header: () => 'Email',
+                columnHelper.accessor('slug', {
+                    id: 'slug',
+                    header: () => 'Slug',
                     cell: (info) => (
                         <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
                             {info.getValue()}
@@ -79,32 +73,18 @@ const ProductCategoryList = () => {
                     ),
                     enableSorting: true,
                 }),
-                columnHelper.accessor('role', {
-                    id: 'role',
-                    header: () => 'Role',
-                    cell: (info) => {
-                        const role = info.getValue();
-                        return (
-                            <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937] capitalize">
-                                {role ? role : '-'}
-                            </span>
-                        );
-                    },
-                    enableSorting: true,
-                }),
-                columnHelper.accessor('status', {
-                    id: 'status',
+                columnHelper.accessor('isActive', {
+                    id: 'isActive',
                     header: () => 'Status',
                     cell: (info) => {
                         const status = info.getValue();
                         let bgColor = 'bg-gray-500';
-                        if (status === 'approved') bgColor = 'bg-[#16A34A]';
-                        if (status === 'pending') bgColor = 'bg-[#F59E0B]';
-                        if (status === 'suspended') bgColor = 'bg-[#EF4444]';
+                        if (status === true) bgColor = 'bg-[#16A34A]';
+                        if (status === false) bgColor = 'bg-[#EF4444]';
 
                         return (
                             <span className={`inline-block rounded-full px-3 py-1 text-[0.875rem] font-medium text-white ${bgColor}`}>
-                                {status ? status.charAt(0).toUpperCase() + status.slice(1) : '-'}
+                                {status ? 'Active' : 'Inactive'}
                             </span>
                         );
                     },
@@ -159,11 +139,11 @@ const ProductCategoryList = () => {
                 ) : (
                     <ReactTable
                         columns={columns}
-                        dataSource={userData?.users || []}
-                        totalRecords={userData?.pagination?.total || 0}
-                        showPageSizeDropdown={userData?.pagination?.total > pageAndLimit.limit ? true : false}
-                        paginationOn={userData?.pagination?.total > 0 ? true : false}
-                        pageAndLimit={pageAndLimit}
+                        dataSource={categoryData?.data || []}
+                        // totalRecords={userData?.pagination?.total || 0}
+                        // showPageSizeDropdown={userData?.pagination?.total > pageAndLimit.limit ? true : false}
+                        // paginationOn={userData?.pagination?.total > 0 ? true : false}
+                        // pageAndLimit={pageAndLimit}
                         searchQuery={searchQuery}
                         onSearchChange={setSearchQuery}
                         onPageLimitChange={({ page, limit }) => {

@@ -13,11 +13,14 @@ import FormFileUpload from '@/Forms/FormFileUpload';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import useToaster from '@/components/hooks/useToaster';
+import { useCreateCategoryMutation } from '@/store/admin/category';
 
 const CreateProductCategory = () => {
     const router = useRouter()
-    const { errorToaster, successToaster } = useToaster();
+    const { successToaster } = useToaster();
     useBreadcrumb(breadcrumbList?.productCreate);
+
+    const [CreateCategory] = useCreateCategoryMutation()
 
     const methods = useForm({
         defaultValues: {
@@ -30,8 +33,22 @@ const CreateProductCategory = () => {
     });
 
     const onSubmit = (data) => {
-        console.log(data);
-        successToaster("Category created successfully!");
+        const payload = {
+            name: data?.name,
+            slug: data?.slug,
+            description: data?.description,
+            image: data?.image?.url,
+            isActive: data?.isActive == '1' ? true : false
+        };
+
+        CreateCategory(payload)
+        .unwrap()
+        .then((res)=>{
+            if(res?.success){
+                successToaster("Category created successfully!");
+                router.push('/product-management/categories')
+            }
+        })
         // TODO: Replace with actual API mutation
         // router.push("/product-management/categories");
     }

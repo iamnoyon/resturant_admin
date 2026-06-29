@@ -54,9 +54,9 @@ export default function CMSContent() {
             <Formwrapper methods={methods} onSubmit={onSubmit}>
                 {fields.length === 0 && (
                     <div className="text-center py-16 border-2 border-dashed border-gray-300 rounded-lg">
-                        <Image size={56} className="mx-auto text-gray-400 mb-3" />
+                        <Image size={56} className="mx-auto text-gray-400 mb-3" aria-hidden="true" />
                         <p className="text-gray-500 text-lg font-medium mb-1">No slides added yet</p>
-                        <p className="text-gray-400 text-sm mb-6">Click "Add Slide" to start building your slider</p>
+                        <p className="text-gray-400 text-sm mb-6">Click &quot;Add Slide&quot; to start building your slider</p>
                         <button
                             type="button"
                             onClick={addSlide}
