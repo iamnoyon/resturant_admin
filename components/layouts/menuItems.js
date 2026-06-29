@@ -82,4 +82,10 @@ export const menuItems = [
     path: "/admin/settings",
     activePath: ["/admin/settings"],
   },
+  {
+    name: "CMS",
+    icon: Settings,
+    path: "/content-management",
+    activePath: ["/content-management/"]
+  }
 ];

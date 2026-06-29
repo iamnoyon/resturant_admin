@@ -21,5 +21,9 @@ export const breadcrumbList = {
   productCreate: [
     {label: "Product Management", href: "#"},
     {label: "Add", href: "#"},
+  ],
+  cmsSlider: [
+    {label: "Content Management", href: "#"},
+    {label: "Home Page Slider", href: "/content-management"},
   ]
 };
