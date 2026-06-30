@@ -6,12 +6,12 @@ import { Tags } from "lucide-react";
 import Formwrapper from '@/Forms/Formwrapper';
 import FormInput from '@/Forms/FormInput';
 import FormRadioGroup from '@/Forms/FormRadioGroup';
-import FormTextEditor from '@/Forms/FormTextEditor';
 import FormFileUpload from '@/Forms/FormFileUpload';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import useToaster from '@/components/hooks/useToaster';
 import { useCreateCategoryMutation } from '@/store/admin/category';
+import FormTextarea from '@/Forms/FormTextarea';
 
 const CreateProductCategory = () => {
     const router = useRouter()
@@ -90,9 +90,9 @@ const CreateProductCategory = () => {
                     />
                 </div>
                 <div className='mt-5'>
-                    <FormTextEditor
-                        name="description"
-                        label="Description"
+                    <FormTextarea
+                    name="description"
+                    label="Description"
                     />
                 </div>
                 <div className='flex items-center justify-center gap-10 mt-20'>
