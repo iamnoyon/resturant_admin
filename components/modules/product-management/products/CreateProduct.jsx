@@ -1,7 +1,5 @@
 "use client"
 import CardLayout from '@/components/common/CardLayout'
-import useBreadcrumb from '@/components/hooks/useBreadcurmb';
-import { breadcrumbList } from '@/components/layouts/breadcrumbList';
 import FormFileUpload from '@/Forms/FormFileUpload';
 import FormInput from '@/Forms/FormInput';
 import FormSelect from '@/Forms/FormSelect';
@@ -14,7 +12,6 @@ import { MdFormatListBulletedAdd } from "react-icons/md";
 
 const CreateProduct = () => {
     const router = useRouter();
-    useBreadcrumb(breadcrumbList?.productCreate);
 
     const methods = useForm({
         defaultValues: {

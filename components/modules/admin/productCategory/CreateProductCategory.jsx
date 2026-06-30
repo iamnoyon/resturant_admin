@@ -3,8 +3,6 @@
 import CardLayout from '@/components/common/CardLayout'
 import React from 'react'
 import { Tags } from "lucide-react";
-import { breadcrumbList } from '@/components/layouts/breadcrumbList';
-import useBreadcrumb from '@/components/hooks/useBreadcurmb';
 import Formwrapper from '@/Forms/Formwrapper';
 import FormInput from '@/Forms/FormInput';
 import FormRadioGroup from '@/Forms/FormRadioGroup';
@@ -18,7 +16,6 @@ import { useCreateCategoryMutation } from '@/store/admin/category';
 const CreateProductCategory = () => {
     const router = useRouter()
     const { successToaster } = useToaster();
-    useBreadcrumb(breadcrumbList?.productCreate);
 
     const [CreateCategory] = useCreateCategoryMutation()
 

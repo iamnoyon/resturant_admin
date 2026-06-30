@@ -6,13 +6,10 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import NextLink from "next/link"
-import Breadcurmb from "../common/Breadcurmb";
 import { useLogoutMutation } from "@/store/auth";
 
 export default function Topbar() {
     const state = useSelector(state => state?.user)
-    const breadcurmb = useSelector(state => state?.breadcurmb);
-    console.log(breadcurmb);
     const [open, setOpen] = useState(false);
     console.log(state?.profile_photo);
 
@@ -55,13 +52,7 @@ export default function Topbar() {
     }, []);
 
     return (
-        <header className="flex h-16 items-center justify-between border-b bg-white px-6 shadow-sm">
-            {/* Left */}
-            <div>
-                <Breadcurmb items={breadcurmb?.items} />
-            </div>
-
-            {/* Right */}
+        <header className="flex h-16 items-center justify-end border-b bg-white px-6 shadow-sm">
             <div className="flex items-center gap-4">
                 {/* Notification */}
                 <button className="relative rounded-full p-2 transition hover:bg-gray-100">

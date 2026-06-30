@@ -4,8 +4,6 @@
 import CardLayout from '@/components/common/CardLayout';
 import { useEffect, useMemo, useState } from 'react';
 import { Plus, List } from 'lucide-react';
-import useBreadcrumb from '@/components/hooks/useBreadcurmb';
-import { breadcrumbList } from '@/components/layouts/breadcrumbList';
 import { useLazyGetUserListQuery, useUpdateUserStatusMutation } from '@/store/admin/user-management';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -17,7 +15,6 @@ const columnHelper = createColumnHelper();
 
 
 const ProductList = () => {
-    useBreadcrumb(breadcrumbList?.productList);
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
     const {successToaster} = useToaster()

@@ -3,8 +3,6 @@
 import CardLayout from '@/components/common/CardLayout'
 import React from 'react'
 import { User } from "lucide-react";
-import { breadcrumbList } from '@/components/layouts/breadcrumbList';
-import useBreadcrumb from '@/components/hooks/useBreadcurmb';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { userSchema } from './schema';
 import Formwrapper from '@/Forms/Formwrapper';
@@ -17,7 +15,6 @@ import useToaster from '@/components/hooks/useToaster';
 const UserCreate = () => {
     const router = useRouter()
     const { errorToaster, successToaster } = useToaster();
-    useBreadcrumb(breadcrumbList?.userCreate);
     //api
     const [Create] = useCreateUserMutation()
 

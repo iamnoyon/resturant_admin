@@ -6,8 +6,6 @@ import Formwrapper from '@/Forms/Formwrapper';
 import FormInput from '@/Forms/FormInput';
 import FormFileUpload from '@/Forms/FormFileUpload';
 import { Image, Plus, Trash2 } from 'lucide-react';
-import useBreadcrumb from '@/components/hooks/useBreadcurmb';
-import { breadcrumbList } from '@/components/layouts/breadcrumbList';
 import useToaster from '@/components/hooks/useToaster';
 import { useRouter } from 'next/navigation';
 
@@ -23,7 +21,6 @@ const defaultSlide = {
 };
 
 export default function CMSContent() {
-    useBreadcrumb(breadcrumbList?.cmsSlider);
     const { successToaster } = useToaster();
     const router = useRouter();
 

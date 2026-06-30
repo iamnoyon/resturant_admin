@@ -16,12 +16,9 @@ import { roleSchema } from "./schema";
 import FormSelect from "@/Forms/FormSelect";
 import FormCheckboxGroup from "@/Forms/FormCheckboxGroup";
 import useToaster from "@/components/hooks/useToaster";
-import useBreadcrumb from "@/components/hooks/useBreadcurmb";
-import { breadcrumbList } from "@/components/layouts/breadcrumbList";
 
 const RoleManagementPage = () => {
     const { successToaster } = useToaster();
-    useBreadcrumb(breadcrumbList?.roleAndPermissions);
     const { data: permissionList } = useGetPermissionListQuery();
     const { data: userDropdown } = useGetUserDropdownWithPermissionsQuery();
     const [update] = useUpdateUserRoleAndPermissionsMutation()
