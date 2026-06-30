@@ -24,7 +24,7 @@ export default function CardLayout({
             <div className="flex items-center justify-between bg-[#043570] px-4 py-3 border-b rounded-t-lg">
                 {/* Left: Title */}
                 <div className="flex items-center gap-2">
-                    {titleIcon && <TitleIcon size={22} />}
+                    {titleIcon && <TitleIcon className='text-white' size={22} />}
                     <div className="text-lg xl:text-xl text-white">
                         {title}
                     </div>

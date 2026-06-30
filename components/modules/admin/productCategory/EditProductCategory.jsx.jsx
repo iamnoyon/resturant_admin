@@ -1,25 +1,28 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import CardLayout from '@/components/common/CardLayout'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Tags } from "lucide-react";
 import Formwrapper from '@/Forms/Formwrapper';
 import FormInput from '@/Forms/FormInput';
 import FormRadioGroup from '@/Forms/FormRadioGroup';
 import FormFileUpload from '@/Forms/FormFileUpload';
 import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import useToaster from '@/components/hooks/useToaster';
-import { useCreateCategoryMutation } from '@/store/admin/category';
+import { useGetCategoryByIdQuery, useUpdateCategoryByIDMutation } from '@/store/admin/category';
 import FormTextarea from '@/Forms/FormTextarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { categorySchema } from './schema';
 
-const CreateProductCategory = () => {
+const EditProductCategory = () => {
     const router = useRouter()
+    const id = useParams()?.id
     const { successToaster, errorToaster } = useToaster();
 
-    const [CreateCategory] = useCreateCategoryMutation()
+    const [UpdateCategory] = useUpdateCategoryByIDMutation()
+    const { data: categoryDetails } = useGetCategoryByIdQuery({ id }, { skip: !id })
 
     const methods = useForm({
         resolver: zodResolver(categorySchema),
@@ -28,9 +31,21 @@ const CreateProductCategory = () => {
             slug: '',
             description: '',
             image: '',
-            isActive: true,
+            isActive: null,
         }
     });
+
+    useEffect(() => {
+        if (categoryDetails?.success) {
+            methods.reset({
+                name: categoryDetails?.data?.name,
+                slug: categoryDetails?.data?.slug,
+                description: categoryDetails?.data?.description,
+                image: categoryDetails?.data?.image,
+                isActive: categoryDetails?.data?.isActive
+            })
+        }
+    }, [categoryDetails])
 
     const onSubmit = (data) => {
         const payload = {
@@ -41,24 +56,24 @@ const CreateProductCategory = () => {
             isActive: data?.isActive
         };
 
-        CreateCategory(payload)
-        .unwrap()
-        .then((res)=>{
-            if(res?.success){
-                successToaster(res?.data?.message || "Category created successfully!");
-                router.push('/product-management/categories')
-            }
-        })
-        .catch((err)=>{
-            errorToaster(err?.data?.message)
-        })
+        UpdateCategory({id: id, data: payload})
+            .unwrap()
+            .then((res) => {
+                if (res?.success) {
+                    successToaster("Category Updated successfully!");
+                    router.push('/product-management/categories')
+                }
+            })
+            .catch((err) => {
+                errorToaster(err?.data?.message)
+            })
         // TODO: Replace with actual API mutation
         // router.push("/product-management/categories");
     }
 
     return (
         <CardLayout
-            title="Add Category"
+            title="Edit Category"
             titleIcon={Tags}
         >
             <Formwrapper
@@ -97,8 +112,8 @@ const CreateProductCategory = () => {
                 </div>
                 <div className='mt-5'>
                     <FormTextarea
-                    name="description"
-                    label="Description"
+                        name="description"
+                        label="Description"
                     />
                 </div>
                 <div className='flex items-center justify-center gap-10 mt-20'>
@@ -110,4 +125,4 @@ const CreateProductCategory = () => {
     )
 }
 
-export default CreateProductCategory
+export default EditProductCategory

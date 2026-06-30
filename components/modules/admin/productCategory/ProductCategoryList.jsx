@@ -2,15 +2,15 @@
 'use client';
 
 import CardLayout from '@/components/common/CardLayout';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Plus, List } from 'lucide-react';
-import { useLazyGetUserListQuery, useUpdateUserStatusMutation } from '@/store/admin/user-management';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';
 import ThreeDotMenu from '@/components/common/ThreeDotMenu';
 import useToaster from '@/components/hooks/useToaster';
-import { useGetCategoryListQuery } from '@/store/admin/category';
+import { useGetCategoryListQuery, useUpdateCategoryByIDMutation } from '@/store/admin/category';
+import { useRouter } from 'next/navigation';
 
 const columnHelper = createColumnHelper();
 
@@ -18,21 +18,32 @@ const columnHelper = createColumnHelper();
 const ProductCategoryList = () => {
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
-    const {successToaster} = useToaster()
+    const {successToaster, errorToaster} = useToaster()
+    const router = useRouter()
 
 
     // API
     const {data: categoryData, isLoading} = useGetCategoryListQuery()
-    const [Update] = useUpdateUserStatusMutation();
+    const [UpdateCategory] = useUpdateCategoryByIDMutation();
 
     // Action handlers
-    const handleStatusUpdate = (id, status) =>{
-        Update({id, status})
+    const handleStatusUpdate = (category, status) =>{
+        const payload = {
+            name: category?.name,
+            slug: category?.slug,
+            image: category?.image,
+            description: category?.description,
+            isActive: status
+        }
+        UpdateCategory({id:category?.id, data: payload})
         .unwrap()
         .then((res)=>{
-            if(res?.success == true, res?.status_code == 200){
+            if(res?.success){
                 successToaster(res?.message || 'User status updated successfully!')
             }
+        })
+        .catch((err)=>{
+            errorToaster(err?.data?.message)
         })
     }
 
@@ -91,26 +102,25 @@ const ProductCategoryList = () => {
                     id: 'actions',
                     header: () => 'Actions',
                     cell: (info) => {
-                        const user = info.row.original;
+                        const category = info.row.original;
 
                         return (
                             <ThreeDotMenu
-                                object={user}
+                                object={category}
                                 actions={[
                                     {
-                                        label: 'Approve',
-                                        onClick: () => handleStatusUpdate(info?.row?.original?.id, 'approved'),
-                                        isDisabled: user?.status === "approved" || user?.status === "suspended",
+                                        label: 'Edit',
+                                        onClick: () => router.push(`/product-management/categories/edit/${category?.id}`),
                                     },
                                     {
-                                        label: 'Suspend',
-                                        onClick: () => handleStatusUpdate(info?.row?.original?.id, 'suspended'),
-                                        isDisabled: user?.status === "pending" || user?.status === "suspended",
+                                        label: 'Active',
+                                        onClick: () => handleStatusUpdate(category, true),
+                                        isDisabled: category?.isActive === true
                                     },
                                     {
-                                        label: 'Invitation',
-                                        onClick: () => handleStatusUpdate(info?.row?.original?.id, "invitation"),
-                                        isDisabled: user?.status === "approved" || user?.status === "pending",
+                                        label: 'Inactive',
+                                        onClick: () => handleStatusUpdate(category, false),
+                                        isDisabled: category?.isActive === false
                                     },
                                 ]}
                                 isDisabled={false}

@@ -8,20 +8,43 @@ export const categorySlice = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ['Categories']
+      invalidatesTags: ["Categories"],
     }),
     getCategoryList: builder.query({
       query: () => ({
         url: "/categories",
         method: "GET",
       }),
-      providesTags: ['Categories']
+      providesTags: ["Categories"],
+    }),
+    getCategoryById: builder.query({
+      query: ({ id }) => ({
+        url: `/categories/${id}`,
+        method: "GET",
+      }),
+    }),
+    updateCategoryByID: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/categories/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Categories"],
+    }),
+    getCategoryDropdown: builder.query({
+      query: () => ({
+        url: `/categories/dropdown`,
+        method: "GET",
+      }),
     }),
   }),
   overrideExisting: true,
 });
 
 export const {
-    useCreateCategoryMutation,
-    useGetCategoryListQuery
+  useCreateCategoryMutation,
+  useGetCategoryListQuery,
+  useGetCategoryByIdQuery,
+  useUpdateCategoryByIDMutation,
+  useGetCategoryDropdownQuery
 } = categorySlice;
