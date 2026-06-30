@@ -1,4 +1,6 @@
 "use client"
+
+import React from 'react'
 import CardLayout from '@/components/common/CardLayout'
 import FormFileUpload from '@/Forms/FormFileUpload';
 import FormInput from '@/Forms/FormInput';
@@ -6,16 +8,23 @@ import FormRadioGroup from '@/Forms/FormRadioGroup';
 import FormSelect from '@/Forms/FormSelect';
 import FormTextarea from '@/Forms/FormTextarea';
 import FormTextEditor from '@/Forms/FormTextEditor';
+import FormFieldArray from '@/Forms/FormFieldArray';
 import Formwrapper from '@/Forms/Formwrapper';
 import { useRouter } from 'next/navigation';
-import React from 'react'
 import { useForm } from 'react-hook-form';
 import { MdFormatListBulletedAdd } from "react-icons/md";
+import { useGetCategoryDropdownQuery } from '@/store/admin/category';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { productSchema } from './schema';
+import { useCreateProductMutation } from '@/store/admin/products';
 
 const CreateProduct = () => {
     const router = useRouter();
+    const { data: categories } = useGetCategoryDropdownQuery()
+    const [CreateProduct, { isLoading }] = useCreateProductMutation()
 
     const methods = useForm({
+        resolver: zodResolver(productSchema),
         defaultValues: {
             name: '',
             slug: '',
@@ -34,7 +43,14 @@ const CreateProduct = () => {
     });
 
     const handleOnSubmit = (data) => {
-        console.log(data);
+        const imagesUrl = data.images.map(img => img?.url)
+        CreateProduct({...data, images: imagesUrl})
+            .unwrap()
+            .then((res) => {
+                if (res?.success) {
+                    router.push('/product-management/products')
+                }
+            })
     }
 
     return (
@@ -77,9 +93,8 @@ const CreateProduct = () => {
                     <FormSelect
                         name='categoryId'
                         label="Category name"
-                        options={[
-                            { label: 'one', id: 1 }
-                        ]}
+                        options={categories?.data || []}
+                        labelKey="name"
                         required
                     />
                     <FormInput
@@ -88,32 +103,39 @@ const CreateProduct = () => {
                         required
                     />
                     <FormRadioGroup
-                    name='isFeatured'
-                    label='Is Feature?'
-                    options={[
-                        {label: 'Yes', id: true},
-                        {label: 'No', id: false}
-                    ]}
-                    required
+                        name='isFeatured'
+                        label='Is Feature?'
+                        options={[
+                            { label: 'Yes', id: true },
+                            { label: 'No', id: false }
+                        ]}
+                        required
                     />
                     <FormRadioGroup
-                    name='isActive'
-                    label='Status'
-                    options={[
-                        {label: 'Active', id: true},
-                        {label: 'Inactive', id: false}
-                    ]}
-                    required
+                        name='isActive'
+                        label='Status'
+                        options={[
+                            { label: 'Active', id: true },
+                            { label: 'Inactive', id: false }
+                        ]}
+                        required
                     />
+                    <div>
+                        <FormInput
+                            name='sku'
+                            label='SKU'
+                        />
+                        <FormFieldArray
+                            name="features"
+                            label="Features"
+                            placeholder="Enter a feature"
+                            addButtonText="+ Add Feature"
+                        />
+                    </div>
                     <FormTextarea
-                    name='shortnote'
-                    label='Short Note'
-                    required
-                    />
-                    <FormInput
-                    name='sku'
-                    label='SKU'
-                    
+                        name='shortnote'
+                        label='Short Note'
+                        required
                     />
                 </div>
                 <FormTextEditor
@@ -130,7 +152,7 @@ const CreateProduct = () => {
                 />
                 <div className='flex items-center justify-center gap-10 mt-10'>
                     <button type='button' onClick={() => router.push("/product-management/products")} className='w-40 hover:cursor-pointer hover:bg-[#0A4D99] rounded font-semibold py-2 border text-[#0A4D99] hover:text-white border-[#0A4D99]'>Cancel</button>
-                    <button type="submit" className='w-40 hover:cursor-pointer hover:bg-[#053872] rounded font-semibold py-2  bg-[#0A4D99]'>Save</button>
+                    <button type="submit" className='w-40 hover:cursor-pointer hover:bg-[#053872] rounded font-semibold py-2 text-white  bg-[#0A4D99]'>Save</button>
                 </div>
             </Formwrapper>
         </CardLayout>
