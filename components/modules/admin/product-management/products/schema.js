@@ -6,7 +6,7 @@ export const productSchema = z.object({
   description: z.string().min(1, 'Description is required'),
   price: z.string().min(1, 'Price is required'),
   discountPrice: z.string().optional(),
-  stock: z.string().min(1, 'Stock is required'),
+  stock: z.coerce.number().min(1, 'Stock is required'),
   sku: z.string().min(1, 'SKU is required'),
   shortnote: z.string().optional(),
   features: z.array(z.string()).optional(),

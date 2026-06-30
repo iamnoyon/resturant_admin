@@ -1,4 +1,5 @@
 import { apiSlice } from "../../apiSlice";
+import { transformListResponse } from "@/utils/responseTransformer";
 
 export const productSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -8,14 +9,16 @@ export const productSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Categories"],
+      invalidatesTags: ["Products"],
     }),
-    getCategoryList: builder.query({
-      query: () => ({
-        url: "/categories",
+    getProductList: builder.query({
+      query: (params) => ({
+        url: "/products",
         method: "GET",
+        params,
       }),
-      providesTags: ["Categories"],
+      providesTags: ["Products"],
+      transformResponse: (response) => transformListResponse(response),
     }),
     getCategoryById: builder.query({
       query: ({ id }) => ({
@@ -43,5 +46,5 @@ export const productSlice = apiSlice.injectEndpoints({
 
 export const {
   useCreateProductMutation,
-
+  useLazyGetProductListQuery,
 } = productSlice;
