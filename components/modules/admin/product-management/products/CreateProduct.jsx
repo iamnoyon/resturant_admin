@@ -2,7 +2,9 @@
 import CardLayout from '@/components/common/CardLayout'
 import FormFileUpload from '@/Forms/FormFileUpload';
 import FormInput from '@/Forms/FormInput';
+import FormRadioGroup from '@/Forms/FormRadioGroup';
 import FormSelect from '@/Forms/FormSelect';
+import FormTextarea from '@/Forms/FormTextarea';
 import FormTextEditor from '@/Forms/FormTextEditor';
 import Formwrapper from '@/Forms/Formwrapper';
 import { useRouter } from 'next/navigation';
@@ -32,7 +34,7 @@ const CreateProduct = () => {
     });
 
     const handleOnSubmit = (data) => {
-
+        console.log(data);
     }
 
     return (
@@ -47,41 +49,80 @@ const CreateProduct = () => {
             >
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
                     <FormInput
-                        name="batch_code"
-                        label="Batch No."
+                        name="name"
+                        label="Product name"
                         placeholder='NPCAH563'
                         required
                     />
                     <FormInput
-                        name="product_title"
-                        label="Product Title"
+                        name="slug"
+                        label="Product slug"
                         placeholder='Ice-cream'
                         required
                     />
                 </div>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
                     <FormInput
-                        name="product_price"
-                        label="Product Price (TK)"
+                        name="price"
+                        label="Product price (TK)"
                         placeholder='500'
                         required
                     />
+                    <FormInput
+                        name="discountPrice"
+                        label="Discount price (TK)"
+                        placeholder='400'
+                        required
+                    />
                     <FormSelect
-                    name="product_category"
-                    label="Product Category"
+                        name='categoryId'
+                        label="Category name"
+                        options={[
+                            { label: 'one', id: 1 }
+                        ]}
+                        required
+                    />
+                    <FormInput
+                        name='stock'
+                        label='Stock'
+                        required
+                    />
+                    <FormRadioGroup
+                    name='isFeatured'
+                    label='Is Feature?'
                     options={[
-                        {label: 'A', id: 'a'}
+                        {label: 'Yes', id: true},
+                        {label: 'No', id: false}
                     ]}
                     required
                     />
+                    <FormRadioGroup
+                    name='isActive'
+                    label='Status'
+                    options={[
+                        {label: 'Active', id: true},
+                        {label: 'Inactive', id: false}
+                    ]}
+                    required
+                    />
+                    <FormTextarea
+                    name='shortnote'
+                    label='Short Note'
+                    required
+                    />
+                    <FormInput
+                    name='sku'
+                    label='SKU'
+                    
+                    />
                 </div>
                 <FormTextEditor
-                    name="product_desc"
+                    name="description"
                     label="Product Description"
                     required
                 />
                 <FormFileUpload
-                    name="product_images"
+                    name="images"
                     label="Product Images"
                     required
                     multiple
