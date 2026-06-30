@@ -1,6 +1,6 @@
 "use client";
 
-import { useProfileQuery } from "@/store/public";
+import { useProfileQuery } from "@/store/auth";
 import { setUser } from "@/store/user";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -24,7 +24,7 @@ export default function AuthProvider({ children }) {
     if (profileData?.data) {
       dispatch(setUser(profileData.data));
       if(profileData?.data?.role !== 'admin'){
-        router.replace('/account')
+        router.replace('/auth/login')
       }
     }
   }, [profileData]);
@@ -35,10 +35,10 @@ export default function AuthProvider({ children }) {
   // ✅ Redirect unauthenticated users
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace("/");
+      router.replace("/auth/login");
     }
     if(isError){
-      router.replace("/")
+      router.replace("/auth/login")
     }
   }, [isLoading, isAuthenticated, router, isError]);
 

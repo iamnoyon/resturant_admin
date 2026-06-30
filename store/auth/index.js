@@ -2,6 +2,25 @@ import { apiSlice } from "../apiSlice";
 
 export const authSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    login: builder.mutation({
+      query: (data) => ({
+        url: "/auth/login",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    profile: builder.query({
+      query: () => ({
+        url: "/auth/profile",
+        method: "GET",
+      }),
+    }),
+    logout: builder.mutation({
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
+      }),
+    }),
     changePassword: builder.mutation({
       query: (data) => ({
         url: "/change-password",
@@ -35,6 +54,9 @@ export const authSlice = apiSlice.injectEndpoints({
 });
 
 export const {
+  useLoginMutation,
+  useProfileQuery,
+  useLogoutMutation,
   useChangePasswordMutation,
   useUploadProfilePhotoMutation,
   useUpdateProfileMutation,

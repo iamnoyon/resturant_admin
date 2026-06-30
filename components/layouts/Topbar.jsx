@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import NextLink from "next/link"
 import Breadcurmb from "../common/Breadcurmb";
-import { useLogoutMutation } from "@/store/public";
+import { useLogoutMutation } from "@/store/auth";
 
 export default function Topbar() {
     const state = useSelector(state => state?.user)
