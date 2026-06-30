@@ -1,5 +1,5 @@
-import EditProductCategory from '@/components/modules/admin/productCategory/EditProductCategory.jsx'
 import React from 'react'
+import EditProductCategory from '@/components/modules/admin/product-management/productCategory/EditProductCategory.jsx'
 
 const page = () => {
   return (

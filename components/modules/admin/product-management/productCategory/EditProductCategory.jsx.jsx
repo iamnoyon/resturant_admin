@@ -48,6 +48,7 @@ const EditProductCategory = () => {
     }, [categoryDetails])
 
     const onSubmit = (data) => {
+        
         const payload = {
             name: data?.name,
             slug: data?.slug,
@@ -55,7 +56,7 @@ const EditProductCategory = () => {
             image: data?.image?.url,
             isActive: data?.isActive
         };
-
+console.log(payload);
         UpdateCategory({id: id, data: payload})
             .unwrap()
             .then((res) => {

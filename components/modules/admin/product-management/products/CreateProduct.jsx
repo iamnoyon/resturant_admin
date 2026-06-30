@@ -15,12 +15,19 @@ const CreateProduct = () => {
 
     const methods = useForm({
         defaultValues: {
-            batch_code: '',
-            product_category: '',
-            product_title: '',
-            product_desc: '',
-            product_images: '',
-            product_price: '',
+            name: '',
+            slug: '',
+            description: '',
+            price: '',
+            discountPrice: '',
+            stock: '',
+            sku: '',
+            shortnote: '',
+            features: [],
+            images: [],
+            isActive: true,
+            isFeatured: true,
+            categoryId: '',
         }
     });
 

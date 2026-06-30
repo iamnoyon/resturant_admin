@@ -1,5 +1,5 @@
-import CreateProduct from '@/components/modules/product-management/products/CreateProduct'
 import React from 'react'
+import CreateProduct from '@/components/modules/admin/product-management/products/CreateProduct'
 
 const page = () => {
   return (
