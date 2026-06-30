@@ -1,23 +1,23 @@
 import { NextResponse } from "next/server";
-import { decodeJwt } from "jose";
+
+const protectedRoutes = [
+  "/dashboard",
+  "/user-management",
+  "/product-management",
+  "/content-management",
+  "/profile",
+];
 
 export function proxy(request) {
   const accessToken = request.cookies.get("access_token")?.value;
   const path = request.nextUrl.pathname;
 
-  const isDashboardRoute = path.startsWith("/dashboard");
+  const isProtected = protectedRoutes.some((route) =>
+    path.startsWith(route)
+  );
 
-  if (!accessToken) {
-    if (isDashboardRoute) {
-      return NextResponse.redirect(new URL("/auth/login", request.url));
-    }
-    return NextResponse.next();
-  }
-
-  const payload = decodeJwt(accessToken);
-
-  if (isDashboardRoute && payload.role !== "admin") {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
+  if (!accessToken && isProtected) {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();
@@ -26,5 +26,9 @@ export function proxy(request) {
 export const config = {
   matcher: [
     "/dashboard/:path*",
+    "/user-management/:path*",
+    "/product-management/:path*",
+    "/content-management/:path*",
+    "/profile/:path*",
   ],
 };
