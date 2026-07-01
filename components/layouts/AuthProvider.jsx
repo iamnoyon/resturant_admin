@@ -11,7 +11,6 @@ export default function AuthProvider({ children }) {
   const router = useRouter();
   // getting user
   const user = useSelector((state) => state.user);
-  console.log(user);
 
   const {
     data: profileData,
