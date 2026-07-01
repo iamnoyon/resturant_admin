@@ -1,5 +1,5 @@
-import CreateProductCategory from '@/components/modules/admin/productCategory/CreateProductCategory'
 import React from 'react'
+import CreateProductCategory from '@/components/modules/admin/product-management/productCategory/CreateProductCategory'
 
 const page = () => {
   return (

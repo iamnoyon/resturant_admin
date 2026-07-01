@@ -93,7 +93,7 @@ const ThreeDotMenu = ({
       {isOpen && (
         <div
           ref={menuRef}
-          className={`absolute right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-[9999]
+          className={`absolute right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-md z-[9999]
             ${
               openAbove
                 ? "bottom-full mb-2"

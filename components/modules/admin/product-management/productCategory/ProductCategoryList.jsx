@@ -2,46 +2,51 @@
 'use client';
 
 import CardLayout from '@/components/common/CardLayout';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Plus, List } from 'lucide-react';
-import { useLazyGetUserListQuery, useUpdateUserStatusMutation } from '@/store/admin/user-management';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';
 import ThreeDotMenu from '@/components/common/ThreeDotMenu';
 import useToaster from '@/components/hooks/useToaster';
+import { useGetCategoryListQuery, useUpdateCategoryByIDMutation } from '@/store/admin/category';
+import { useRouter } from 'next/navigation';
 
 const columnHelper = createColumnHelper();
 
 
-const ProductList = () => {
+const ProductCategoryList = () => {
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
-    const {successToaster} = useToaster()
+    const {successToaster, errorToaster} = useToaster()
+    const router = useRouter()
 
 
     // API
-    const [triggerList, { data: userData, isLoading }] = useLazyGetUserListQuery();
-    const [Update] = useUpdateUserStatusMutation();
+    const {data: categoryData, isLoading} = useGetCategoryListQuery()
+    const [UpdateCategory] = useUpdateCategoryByIDMutation();
 
     // Action handlers
-    const handleStatusUpdate = (id, status) =>{
-        Update({id, status})
+    const handleStatusUpdate = (category, status) =>{
+        const payload = {
+            name: category?.name,
+            slug: category?.slug,
+            image: category?.image,
+            description: category?.description,
+            isActive: status
+        }
+        UpdateCategory({id:category?.id, data: payload})
         .unwrap()
         .then((res)=>{
-            if(res?.success == true, res?.status_code == 200){
+            if(res?.success){
                 successToaster(res?.message || 'User status updated successfully!')
             }
         })
+        .catch((err)=>{
+            errorToaster(err?.data?.message)
+        })
     }
 
-    // Trigger API call
-    useEffect(() => {
-        triggerList({
-            page: pageAndLimit.page,
-            limit: pageAndLimit.limit,
-        });
-    }, [pageAndLimit]);
 
     // Columns definition
     const columns = useMemo(
@@ -66,9 +71,9 @@ const ProductList = () => {
                     ),
                     enableSorting: true,
                 }),
-                columnHelper.accessor('email', {
-                    id: 'email',
-                    header: () => 'Email',
+                columnHelper.accessor('slug', {
+                    id: 'slug',
+                    header: () => 'Slug',
                     cell: (info) => (
                         <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
                             {info.getValue()}
@@ -76,32 +81,18 @@ const ProductList = () => {
                     ),
                     enableSorting: true,
                 }),
-                columnHelper.accessor('role', {
-                    id: 'role',
-                    header: () => 'Role',
-                    cell: (info) => {
-                        const role = info.getValue();
-                        return (
-                            <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937] capitalize">
-                                {role ? role : '-'}
-                            </span>
-                        );
-                    },
-                    enableSorting: true,
-                }),
-                columnHelper.accessor('status', {
-                    id: 'status',
+                columnHelper.accessor('isActive', {
+                    id: 'isActive',
                     header: () => 'Status',
                     cell: (info) => {
                         const status = info.getValue();
                         let bgColor = 'bg-gray-500';
-                        if (status === 'approved') bgColor = 'bg-[#16A34A]';
-                        if (status === 'pending') bgColor = 'bg-[#F59E0B]';
-                        if (status === 'suspended') bgColor = 'bg-[#EF4444]';
+                        if (status === true) bgColor = 'bg-[#16A34A]';
+                        if (status === false) bgColor = 'bg-[#EF4444]';
 
                         return (
                             <span className={`inline-block rounded-full px-3 py-1 text-[0.875rem] font-medium text-white ${bgColor}`}>
-                                {status ? status.charAt(0).toUpperCase() + status.slice(1) : '-'}
+                                {status ? 'Active' : 'Inactive'}
                             </span>
                         );
                     },
@@ -111,26 +102,25 @@ const ProductList = () => {
                     id: 'actions',
                     header: () => 'Actions',
                     cell: (info) => {
-                        const user = info.row.original;
+                        const category = info.row.original;
 
                         return (
                             <ThreeDotMenu
-                                object={user}
+                                object={category}
                                 actions={[
                                     {
-                                        label: 'Approve',
-                                        onClick: () => handleStatusUpdate(info?.row?.original?.id, 'approved'),
-                                        isDisabled: user?.status === "approved" || user?.status === "suspended",
+                                        label: 'Edit',
+                                        onClick: () => router.push(`/product-management/categories/edit/${category?.id}`),
                                     },
                                     {
-                                        label: 'Suspend',
-                                        onClick: () => handleStatusUpdate(info?.row?.original?.id, 'suspended'),
-                                        isDisabled: user?.status === "pending" || user?.status === "suspended",
+                                        label: 'Active',
+                                        onClick: () => handleStatusUpdate(category, true),
+                                        isDisabled: category?.isActive === true
                                     },
                                     {
-                                        label: 'Invitation',
-                                        onClick: () => handleStatusUpdate(info?.row?.original?.id, "invitation"),
-                                        isDisabled: user?.status === "approved" || user?.status === "pending",
+                                        label: 'Inactive',
+                                        onClick: () => handleStatusUpdate(category, false),
+                                        isDisabled: category?.isActive === false
                                     },
                                 ]}
                                 isDisabled={false}
@@ -144,11 +134,11 @@ const ProductList = () => {
 
     return (
         <CardLayout
-            title="Product List"
+            title="Category List"
             titleIcon={List}
-            buttonText="Add Product"
+            buttonText="Add Category"
             buttonIcon={Plus}
-            buttonHref="/product-management/products/create"
+            buttonHref="/product-management/categories/create"
         >
             {
                 (isLoading) ? (
@@ -156,11 +146,11 @@ const ProductList = () => {
                 ) : (
                     <ReactTable
                         columns={columns}
-                        dataSource={userData?.users || []}
-                        totalRecords={userData?.pagination?.total || 0}
-                        showPageSizeDropdown={userData?.pagination?.total > pageAndLimit.limit ? true : false}
-                        paginationOn={userData?.pagination?.total > 0 ? true : false}
-                        pageAndLimit={pageAndLimit}
+                        dataSource={categoryData?.data || []}
+                        // totalRecords={userData?.pagination?.total || 0}
+                        // showPageSizeDropdown={userData?.pagination?.total > pageAndLimit.limit ? true : false}
+                        // paginationOn={userData?.pagination?.total > 0 ? true : false}
+                        // pageAndLimit={pageAndLimit}
                         searchQuery={searchQuery}
                         onSearchChange={setSearchQuery}
                         onPageLimitChange={({ page, limit }) => {
@@ -173,4 +163,4 @@ const ProductList = () => {
     );
 };
 
-export default ProductList;
+export default ProductCategoryList;

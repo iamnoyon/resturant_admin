@@ -1,58 +1,80 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import CardLayout from '@/components/common/CardLayout'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Tags } from "lucide-react";
 import Formwrapper from '@/Forms/Formwrapper';
 import FormInput from '@/Forms/FormInput';
 import FormRadioGroup from '@/Forms/FormRadioGroup';
-import FormTextEditor from '@/Forms/FormTextEditor';
 import FormFileUpload from '@/Forms/FormFileUpload';
 import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import useToaster from '@/components/hooks/useToaster';
-import { useCreateCategoryMutation } from '@/store/admin/category';
+import { useGetCategoryByIdQuery, useUpdateCategoryByIDMutation } from '@/store/admin/category';
+import FormTextarea from '@/Forms/FormTextarea';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { categorySchema } from './schema';
 
-const CreateProductCategory = () => {
+const EditProductCategory = () => {
     const router = useRouter()
-    const { successToaster } = useToaster();
+    const id = useParams()?.id
+    const { successToaster, errorToaster } = useToaster();
 
-    const [CreateCategory] = useCreateCategoryMutation()
+    const [UpdateCategory] = useUpdateCategoryByIDMutation()
+    const { data: categoryDetails } = useGetCategoryByIdQuery({ id }, { skip: !id })
 
     const methods = useForm({
+        resolver: zodResolver(categorySchema),
         defaultValues: {
             name: '',
             slug: '',
             description: '',
-            image: null,
-            isActive: '1',
+            image: '',
+            isActive: null,
         }
     });
 
+    useEffect(() => {
+        if (categoryDetails?.success) {
+            methods.reset({
+                name: categoryDetails?.data?.name,
+                slug: categoryDetails?.data?.slug,
+                description: categoryDetails?.data?.description,
+                image: categoryDetails?.data?.image,
+                isActive: categoryDetails?.data?.isActive
+            })
+        }
+    }, [categoryDetails])
+
     const onSubmit = (data) => {
+        
         const payload = {
             name: data?.name,
             slug: data?.slug,
             description: data?.description,
             image: data?.image?.url,
-            isActive: data?.isActive == '1' ? true : false
+            isActive: data?.isActive
         };
-
-        CreateCategory(payload)
-        .unwrap()
-        .then((res)=>{
-            if(res?.success){
-                successToaster("Category created successfully!");
-                router.push('/product-management/categories')
-            }
-        })
+console.log(payload);
+        UpdateCategory({id: id, data: payload})
+            .unwrap()
+            .then((res) => {
+                if (res?.success) {
+                    successToaster("Category Updated successfully!");
+                    router.push('/product-management/categories')
+                }
+            })
+            .catch((err) => {
+                errorToaster(err?.data?.message)
+            })
         // TODO: Replace with actual API mutation
         // router.push("/product-management/categories");
     }
 
     return (
         <CardLayout
-            title="Add Category"
+            title="Edit Category"
             titleIcon={Tags}
         >
             <Formwrapper
@@ -84,13 +106,13 @@ const CreateProductCategory = () => {
                         required
                         columns={{ sm: 1, md: 2 }}
                         options={[
-                            { label: 'Active', id: '1' },
-                            { label: 'Inactive', id: '0' },
+                            { label: 'Active', id: true },
+                            { label: 'Inactive', id: false },
                         ]}
                     />
                 </div>
                 <div className='mt-5'>
-                    <FormTextEditor
+                    <FormTextarea
                         name="description"
                         label="Description"
                     />
@@ -104,4 +126,4 @@ const CreateProductCategory = () => {
     )
 }
 
-export default CreateProductCategory
+export default EditProductCategory
