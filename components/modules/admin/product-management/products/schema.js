@@ -14,6 +14,7 @@ export const productSchema = z.object({
     z.string(),
     z.object({}).passthrough(),
   ])).optional(),
+  tags: z.string().optional(),
   isActive: z.boolean(),
   isFeatured: z.boolean(),
   categoryId: z.string().min(1, 'Category is required'),

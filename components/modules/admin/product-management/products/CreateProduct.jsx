@@ -35,6 +35,7 @@ const CreateProduct = () => {
             sku: '',
             shortnote: '',
             features: [],
+            tags: '',
             images: [],
             isActive: true,
             isFeatured: true,
@@ -88,6 +89,19 @@ const CreateProduct = () => {
                         name="discountPrice"
                         label="Discount price (TK)"
                         placeholder='400'
+                        required
+                    />
+                    <FormSelect
+                        name='tags'
+                        label="Tag"
+                        options={[
+                            { label: 'New', id: 'New' },
+                            { label: 'Sale', id: 'Sale' },
+                            { label: 'Best Seller', id: 'Best Seller' },
+                            { label: 'Trending', id: 'Trending' },
+                            { label: 'Offer', id: 'Offer' },
+                        ]}
+                        placeholder="Select a tag"
                         required
                     />
                     <FormSelect
