@@ -97,7 +97,6 @@ const CreateProduct = () => {
                         options={[
                             { label: 'New', id: 'New' },
                             { label: 'Sale', id: 'Sale' },
-                            { label: 'Best Seller', id: 'Best Seller' },
                             { label: 'Trending', id: 'Trending' },
                             { label: 'Offer', id: 'Offer' },
                         ]}
