@@ -20,23 +20,23 @@ export const productSlice = apiSlice.injectEndpoints({
       providesTags: ["Products"],
       transformResponse: (response) => transformListResponse(response),
     }),
-    getCategoryById: builder.query({
+    getProductById: builder.query({
       query: ({ id }) => ({
-        url: `/categories/${id}`,
+        url: `/products/${id}`,
         method: "GET",
       }),
     }),
-    updateCategoryByID: builder.mutation({
+    updateProductByID: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/categories/${id}`,
+        url: `/products/${id}`,
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ["Categories"],
+      invalidatesTags: ["Products"],
     }),
-    getCategoryDropdown: builder.query({
+    getProductDropdown: builder.query({
       query: () => ({
-        url: `/categories/dropdown`,
+        url: `/products/dropdown`,
         method: "GET",
       }),
     }),
@@ -46,5 +46,7 @@ export const productSlice = apiSlice.injectEndpoints({
 
 export const {
   useCreateProductMutation,
+  useUpdateProductByIDMutation,
   useLazyGetProductListQuery,
+  useGetProductByIdQuery,
 } = productSlice;

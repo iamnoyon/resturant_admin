@@ -7,17 +7,22 @@ import { Plus, List, SquarePen } from 'lucide-react';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';
-import { useLazyGetProductListQuery } from '@/store/admin/products';
+import { useLazyGetProductListQuery, useUpdateProductByIDMutation } from '@/store/admin/products';
 import { useEffect } from 'react';
 import ThreeDotMenu from '@/components/common/ThreeDotMenu';
+import { useRouter } from 'next/navigation';
+import useToaster from '@/components/hooks/useToaster';
 
 const columnHelper = createColumnHelper();
 
 const ProductList = () => {
+    const router = useRouter();
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
+    const { successToaster, errorToaster } = useToaster();
 
-    const [triggerList, {data: productData, isLoading }] = useLazyGetProductListQuery();
+    const [triggerList, { data: productData, isLoading }] = useLazyGetProductListQuery();
+    const [updateProduct] = useUpdateProductByIDMutation();
 
     useEffect(() => {
         triggerList({
@@ -25,6 +30,35 @@ const ProductList = () => {
             limit: pageAndLimit.limit,
         });
     }, [pageAndLimit]);
+
+    const handleStatusUpdate = (product, status) => {
+        const payload = {
+            name: product?.name || '',
+            slug: product?.slug || '',
+            description: product?.description || '',
+            price: product?.price || '',
+            discountPrice: product?.discountPrice || '',
+            stock: product?.stock || '',
+            sku: product?.sku || '',
+            shortnote: product?.shortnote || '',
+            features: product?.features || [],
+            tags: product?.tags || '',
+            images: product?.images || [],
+            isActive: status,
+            isFeatured: product?.isFeatured ?? true,
+            categoryId: product?.categoryId || '',
+        }
+        updateProduct({ id: product?.id, data: payload })
+            .unwrap()
+            .then((res) => {
+                if (res?.success) {
+                    successToaster(res?.message || 'Product status updated successfully!')
+                }
+            })
+            .catch((err) => {
+                errorToaster(err?.data?.message)
+            })
+    }
 
     const columns = useMemo(
         () => [
@@ -91,35 +125,35 @@ const ProductList = () => {
                 enableSorting: true,
             }),
             columnHelper.display({
-                                id: 'actions',
-                                header: () => 'Actions',
-                                cell: (info) => {
-                                    const product = info.row.original;
-            
-                                    return (
-                                        <div className="flex items-center gap-1">
-                                            <SquarePen size={16} className="mr-2 cursor-pointer"
-                                                onClick={() => router.push(`/product-management/products/edit/${product?.id}`)} />
-                                            <ThreeDotMenu
-                                                object={product}
-                                                actions={[
-                                                    {
-                                                        label: 'Active',
-                                                        onClick: () => handleStatusUpdate(product, true),
-                                                        isDisabled: product?.isActive === true
-                                                    },
-                                                    {
-                                                        label: 'Inactive',
-                                                        onClick: () => handleStatusUpdate(product, false),
-                                                        isDisabled: product?.isActive === false
-                                                    },
-                                                ]}
-                                                isDisabled={false}
-                                            />
-                                        </div>
-                                    );
-                                },
-                            }),
+                id: 'actions',
+                header: () => 'Actions',
+                cell: (info) => {
+                    const product = info.row.original;
+
+                    return (
+                        <div className="flex items-center gap-1">
+                            <SquarePen size={16} className="mr-2 cursor-pointer"
+                                onClick={() => router.push(`/product-management/products/edit/${product?.id}`)} />
+                            <ThreeDotMenu
+                                object={product}
+                                actions={[
+                                    {
+                                        label: 'Active',
+                                        onClick: () => handleStatusUpdate(product, true),
+                                        isDisabled: product?.isActive === true
+                                    },
+                                    {
+                                        label: 'Inactive',
+                                        onClick: () => handleStatusUpdate(product, false),
+                                        isDisabled: product?.isActive === false
+                                    },
+                                ]}
+                                isDisabled={false}
+                            />
+                        </div>
+                    );
+                },
+            }),
         ],
         [pageAndLimit]
     );

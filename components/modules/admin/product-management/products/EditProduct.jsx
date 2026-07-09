@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import CardLayout from '@/components/common/CardLayout'
 import FormFileUpload from '@/Forms/FormFileUpload';
 import FormInput from '@/Forms/FormInput';
@@ -10,19 +10,23 @@ import FormTextarea from '@/Forms/FormTextarea';
 import FormTextEditor from '@/Forms/FormTextEditor';
 import FormFieldArray from '@/Forms/FormFieldArray';
 import Formwrapper from '@/Forms/Formwrapper';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { MdFormatListBulletedAdd } from "react-icons/md";
 import { useGetCategoryDropdownQuery } from '@/store/admin/category';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { productSchema } from './schema';
-import { useCreateProductMutation } from '@/store/admin/products';
+import { useGetProductByIdQuery, useUpdateProductByIDMutation } from '@/store/admin/products';
 import { Loader2 } from 'lucide-react';
+import useToaster from '@/components/hooks/useToaster';
 
-const CreateProduct = () => {
+const EditProduct = () => {
     const router = useRouter();
-    const { data: categories } = useGetCategoryDropdownQuery()
-    const [CreateProduct, { isLoading }] = useCreateProductMutation()
+    const id = useParams()?.id;
+    const { successToaster, errorToaster } = useToaster();
+    const { data: categories } = useGetCategoryDropdownQuery();
+    const { data: productDetails } = useGetProductByIdQuery({ id: id }, { skip: !id });
+    const [UpdateProduct, { isLoading }] = useUpdateProductByIDMutation();
 
     const methods = useForm({
         resolver: zodResolver(productSchema),
@@ -44,20 +48,46 @@ const CreateProduct = () => {
         }
     });
 
+    useEffect(() => {
+        if (productDetails?.success) {
+            const product = productDetails.data;
+            methods.reset({
+                name: product?.name || '',
+                slug: product?.slug || '',
+                description: product?.description || '',
+                price: product?.price || '',
+                discountPrice: product?.discountPrice || '',
+                stock: product?.stock || '',
+                sku: product?.sku || '',
+                shortnote: product?.shortnote || '',
+                features: product?.features || [],
+                tags: product?.tags || '',
+                images: product?.images?.map((url) => ({ url })) || [],
+                isActive: product?.isActive ?? true,
+                isFeatured: product?.isFeatured ?? true,
+                categoryId: product?.categoryId || '',
+            });
+        }
+    }, [productDetails]);
+
     const handleOnSubmit = (data) => {
-        const imagesUrl = data.images.map(img => img?.url)
-        CreateProduct({ ...data, images: imagesUrl })
+        const images = data.images.map(img => typeof img === 'string' ? img : img?.url);
+        UpdateProduct({ id, data: { ...data, images } })
             .unwrap()
             .then((res) => {
                 if (res?.success) {
-                    router.push('/product-management/products')
+                    successToaster("Product updated successfully!");
+                    router.push('/product-management/products');
                 }
             })
-    }
+            .catch((err) => {
+                errorToaster(err?.data?.message);
+            });
+    };
 
     return (
         <CardLayout
-            title="Add Product"
+            title="Edit Product"
             titleIcon={MdFormatListBulletedAdd}
         >
             <Formwrapper
@@ -162,17 +192,17 @@ const CreateProduct = () => {
                     label="Product Images"
                     required
                     multiple
-                // accept=''
                 />
                 <div className='flex items-center justify-center gap-10 mt-10'>
                     <button type='button' onClick={() => router.push("/product-management/products")} className='w-40 hover:cursor-pointer hover:bg-[#0A4D99] rounded font-semibold py-2 border text-[#0A4D99] hover:text-white border-[#0A4D99]'>Cancel</button>
                     <button type="submit" disabled={isLoading}
-                        className={` w-40 bg-[#042A55] hover:enabled:bg-[#063C76] hover:cursor-pointer text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 ${isLoading ? "cursor-not-allowed" : ""}`}          >
-                        {isLoading ? <><Loader2 size={18} className="animate-spin" /> Saving...</> : "Save"}</button>
+                        className={`w-40 bg-[#042A55] hover:enabled:bg-[#063C76] hover:cursor-pointer text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 ${isLoading ? "cursor-not-allowed" : ""}`}>
+                        {isLoading ? <><Loader2 size={18} className="animate-spin" /> Updating...</> : "Update"}
+                    </button>
                 </div>
             </Formwrapper>
         </CardLayout>
     )
 }
 
-export default CreateProduct
+export default EditProduct
