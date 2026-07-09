@@ -76,7 +76,7 @@ const ReactTable = ({
 
     return (
         <div className="mx-auto pb-3">
-            <div className="overflow-x-auto">
+            <div className="">
                 {/* Global Search */}
                 {defaultSearch && (
                     <div className="mb-4 flex justify-end">

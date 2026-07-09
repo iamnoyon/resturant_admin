@@ -3,12 +3,13 @@
 
 import CardLayout from '@/components/common/CardLayout';
 import { useMemo, useState } from 'react';
-import { Plus, List } from 'lucide-react';
+import { Plus, List, SquarePen } from 'lucide-react';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';
 import { useLazyGetProductListQuery } from '@/store/admin/products';
 import { useEffect } from 'react';
+import ThreeDotMenu from '@/components/common/ThreeDotMenu';
 
 const columnHelper = createColumnHelper();
 
@@ -16,8 +17,7 @@ const ProductList = () => {
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
 
-    const [triggerList, result] = useLazyGetProductListQuery();
-    const { data, isLoading } = result;
+    const [triggerList, {data: productData, isLoading }] = useLazyGetProductListQuery();
 
     useEffect(() => {
         triggerList({
@@ -90,6 +90,36 @@ const ProductList = () => {
                 },
                 enableSorting: true,
             }),
+            columnHelper.display({
+                                id: 'actions',
+                                header: () => 'Actions',
+                                cell: (info) => {
+                                    const product = info.row.original;
+            
+                                    return (
+                                        <div className="flex items-center gap-1">
+                                            <SquarePen size={16} className="mr-2 cursor-pointer"
+                                                onClick={() => router.push(`/product-management/products/edit/${product?.id}`)} />
+                                            <ThreeDotMenu
+                                                object={product}
+                                                actions={[
+                                                    {
+                                                        label: 'Active',
+                                                        onClick: () => handleStatusUpdate(product, true),
+                                                        isDisabled: product?.isActive === true
+                                                    },
+                                                    {
+                                                        label: 'Inactive',
+                                                        onClick: () => handleStatusUpdate(product, false),
+                                                        isDisabled: product?.isActive === false
+                                                    },
+                                                ]}
+                                                isDisabled={false}
+                                            />
+                                        </div>
+                                    );
+                                },
+                            }),
         ],
         [pageAndLimit]
     );
@@ -107,10 +137,10 @@ const ProductList = () => {
             ) : (
                 <ReactTable
                     columns={columns}
-                    dataSource={data?.dataSource || []}
-                    totalRecords={data?.totalRecords}
-                    paginationOn={data?.paginationOn}
-                    pageAndLimit={data?.pageAndLimit ?? pageAndLimit}
+                    dataSource={productData?.dataSource || []}
+                    totalRecords={productData?.totalRecords}
+                    paginationOn={productData?.paginationOn}
+                    pageAndLimit={productData?.pageAndLimit ?? pageAndLimit}
                     searchQuery={searchQuery}
                     onSearchChange={setSearchQuery}
                     onPageLimitChange={({ page, limit }) => {

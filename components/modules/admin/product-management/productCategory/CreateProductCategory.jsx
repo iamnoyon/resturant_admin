@@ -2,7 +2,7 @@
 
 import CardLayout from '@/components/common/CardLayout'
 import React from 'react'
-import { Tags } from "lucide-react";
+import { Loader2, Tags } from "lucide-react";
 import Formwrapper from '@/Forms/Formwrapper';
 import FormInput from '@/Forms/FormInput';
 import FormRadioGroup from '@/Forms/FormRadioGroup';
@@ -19,7 +19,7 @@ const CreateProductCategory = () => {
     const router = useRouter()
     const { successToaster, errorToaster } = useToaster();
 
-    const [CreateCategory] = useCreateCategoryMutation()
+    const [CreateCategory, { isLoading }] = useCreateCategoryMutation()
 
     const methods = useForm({
         resolver: zodResolver(categorySchema),
@@ -42,16 +42,16 @@ const CreateProductCategory = () => {
         };
 
         CreateCategory(payload)
-        .unwrap()
-        .then((res)=>{
-            if(res?.success){
-                successToaster(res?.data?.message || "Category created successfully!");
-                router.push('/product-management/categories')
-            }
-        })
-        .catch((err)=>{
-            errorToaster(err?.data?.message)
-        })
+            .unwrap()
+            .then((res) => {
+                if (res?.success) {
+                    successToaster(res?.data?.message || "Category created successfully!");
+                    router.push('/product-management/categories')
+                }
+            })
+            .catch((err) => {
+                errorToaster(err?.data?.message)
+            })
         // TODO: Replace with actual API mutation
         // router.push("/product-management/categories");
     }
@@ -97,13 +97,16 @@ const CreateProductCategory = () => {
                 </div>
                 <div className='mt-5'>
                     <FormTextarea
-                    name="description"
-                    label="Description"
+                        name="description"
+                        label="Description"
                     />
                 </div>
                 <div className='flex items-center justify-center gap-10 mt-20'>
                     <button type='button' onClick={() => router.push("/product-management/categories")} className='w-40 hover:cursor-pointer hover:bg-[#0A4D99] rounded font-semibold py-2 border text-[#0A4D99] hover:text-white border-[#0A4D99]'>Cancel</button>
-                    <button type="submit" className='w-40 hover:cursor-pointer text-white hover:bg-[#053872] rounded font-semibold py-2 bg-[#0A4D99]'>Save</button>
+                    <button type="submit" 
+                    disabled={isLoading}
+                    className={` w-40 bg-[#042A55] hover:enabled:bg-[#063C76] hover:cursor-pointer text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 ${isLoading ? "cursor-not-allowed" : ""}`}          >
+                        {isLoading ? <><Loader2 size={18} className="animate-spin" /> Saving...</> : "Save"}</button>
                 </div>
             </Formwrapper>
         </CardLayout>

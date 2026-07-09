@@ -3,7 +3,7 @@
 
 import CardLayout from '@/components/common/CardLayout'
 import React, { useEffect } from 'react'
-import { Tags } from "lucide-react";
+import { Loader2, Tags } from "lucide-react";
 import Formwrapper from '@/Forms/Formwrapper';
 import FormInput from '@/Forms/FormInput';
 import FormRadioGroup from '@/Forms/FormRadioGroup';
@@ -21,7 +21,7 @@ const EditProductCategory = () => {
     const id = useParams()?.id
     const { successToaster, errorToaster } = useToaster();
 
-    const [UpdateCategory] = useUpdateCategoryByIDMutation()
+    const [UpdateCategory, { isLoading }] = useUpdateCategoryByIDMutation()
     const { data: categoryDetails } = useGetCategoryByIdQuery({ id }, { skip: !id })
 
     const methods = useForm({
@@ -119,7 +119,9 @@ console.log(payload);
                 </div>
                 <div className='flex items-center justify-center gap-10 mt-20'>
                     <button type='button' onClick={() => router.push("/product-management/categories")} className='w-40 hover:cursor-pointer hover:bg-[#0A4D99] rounded font-semibold py-2 border text-[#0A4D99] hover:text-white border-[#0A4D99]'>Cancel</button>
-                    <button type="submit" className='w-40 hover:cursor-pointer text-white hover:bg-[#053872] rounded font-semibold py-2 bg-[#0A4D99]'>Save</button>
+                    <button type="submit"  disabled={isLoading}
+                    className={` w-40 bg-[#042A55] hover:enabled:bg-[#063C76] hover:cursor-pointer text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 ${isLoading ? "cursor-not-allowed" : ""}`}          >
+                        {isLoading ? <><Loader2 size={18} className="animate-spin" /> Updating...</> : "Update"}</button>
                 </div>
             </Formwrapper>
         </CardLayout>

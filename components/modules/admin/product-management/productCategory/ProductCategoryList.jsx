@@ -3,7 +3,7 @@
 
 import CardLayout from '@/components/common/CardLayout';
 import { useMemo, useState } from 'react';
-import { Plus, List } from 'lucide-react';
+import { Plus, List, Edit2, SquarePen } from 'lucide-react';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';
@@ -18,16 +18,16 @@ const columnHelper = createColumnHelper();
 const ProductCategoryList = () => {
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
-    const {successToaster, errorToaster} = useToaster()
+    const { successToaster, errorToaster } = useToaster()
     const router = useRouter()
 
 
     // API
-    const {data: categoryData, isLoading} = useGetCategoryListQuery()
+    const { data: categoryData, isLoading } = useGetCategoryListQuery()
     const [UpdateCategory] = useUpdateCategoryByIDMutation();
 
     // Action handlers
-    const handleStatusUpdate = (category, status) =>{
+    const handleStatusUpdate = (category, status) => {
         const payload = {
             name: category?.name,
             slug: category?.slug,
@@ -35,16 +35,16 @@ const ProductCategoryList = () => {
             description: category?.description,
             isActive: status
         }
-        UpdateCategory({id:category?.id, data: payload})
-        .unwrap()
-        .then((res)=>{
-            if(res?.success){
-                successToaster(res?.message || 'User status updated successfully!')
-            }
-        })
-        .catch((err)=>{
-            errorToaster(err?.data?.message)
-        })
+        UpdateCategory({ id: category?.id, data: payload })
+            .unwrap()
+            .then((res) => {
+                if (res?.success) {
+                    successToaster(res?.message || 'User status updated successfully!')
+                }
+            })
+            .catch((err) => {
+                errorToaster(err?.data?.message)
+            })
     }
 
 
@@ -105,26 +105,26 @@ const ProductCategoryList = () => {
                         const category = info.row.original;
 
                         return (
-                            <ThreeDotMenu
-                                object={category}
-                                actions={[
-                                    {
-                                        label: 'Edit',
-                                        onClick: () => router.push(`/product-management/categories/edit/${category?.id}`),
-                                    },
-                                    {
-                                        label: 'Active',
-                                        onClick: () => handleStatusUpdate(category, true),
-                                        isDisabled: category?.isActive === true
-                                    },
-                                    {
-                                        label: 'Inactive',
-                                        onClick: () => handleStatusUpdate(category, false),
-                                        isDisabled: category?.isActive === false
-                                    },
-                                ]}
-                                isDisabled={false}
-                            />
+                            <div className="flex items-center gap-1">
+                                <SquarePen size={16} className="mr-2 cursor-pointer"
+                                    onClick={() => router.push(`/product-management/categories/edit/${category?.id}`)} />
+                                <ThreeDotMenu
+                                    object={category}
+                                    actions={[
+                                        {
+                                            label: 'Active',
+                                            onClick: () => handleStatusUpdate(category, true),
+                                            isDisabled: category?.isActive === true
+                                        },
+                                        {
+                                            label: 'Inactive',
+                                            onClick: () => handleStatusUpdate(category, false),
+                                            isDisabled: category?.isActive === false
+                                        },
+                                    ]}
+                                    isDisabled={false}
+                                />
+                            </div>
                         );
                     },
                 }),
@@ -147,10 +147,7 @@ const ProductCategoryList = () => {
                     <ReactTable
                         columns={columns}
                         dataSource={categoryData?.data || []}
-                        // totalRecords={userData?.pagination?.total || 0}
-                        // showPageSizeDropdown={userData?.pagination?.total > pageAndLimit.limit ? true : false}
-                        // paginationOn={userData?.pagination?.total > 0 ? true : false}
-                        // pageAndLimit={pageAndLimit}
+                        showPageSizeDropdown={false}
                         searchQuery={searchQuery}
                         onSearchChange={setSearchQuery}
                         onPageLimitChange={({ page, limit }) => {
