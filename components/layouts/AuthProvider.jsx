@@ -22,9 +22,9 @@ export default function AuthProvider({ children }) {
   useEffect(() => {
     if (profileData?.data) {
       dispatch(setUser(profileData.data));
-      if(profileData?.data?.role !== 'admin'){
-        router.replace('/auth/login')
-      }
+      // if(profileData?.data?.role !== 'admin'){
+      //   router.replace('/auth/login')
+      // }
     }
   }, [profileData]);
 

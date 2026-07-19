@@ -61,19 +61,9 @@ const ProductCategoryList = () => {
                         </span>
                     ),
                 }),
-                columnHelper.accessor('name', {
-                    id: 'name',
-                    header: () => 'Name',
-                    cell: (info) => (
-                        <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
-                            {info.getValue()}
-                        </span>
-                    ),
-                    enableSorting: true,
-                }),
-                columnHelper.accessor('slug', {
-                    id: 'slug',
-                    header: () => 'Slug',
+                columnHelper.accessor('categoryName', {
+                    id: 'categoryName',
+                    header: () => 'Category Name',
                     cell: (info) => (
                         <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
                             {info.getValue()}
@@ -146,8 +136,11 @@ const ProductCategoryList = () => {
                 ) : (
                     <ReactTable
                         columns={columns}
-                        dataSource={categoryData?.data || []}
-                        showPageSizeDropdown={false}
+                        dataSource={categoryData?.dataSource || []}
+                        totalRecords={categoryData?.totalRecords}
+                        showPageSizeDropdown={categoryData?.totalRecords > pageAndLimit.limit}
+                        paginationOn={categoryData?.paginationOn}
+                        pageAndLimit={categoryData?.pageAndLimit ?? pageAndLimit}
                         searchQuery={searchQuery}
                         onSearchChange={setSearchQuery}
                         onPageLimitChange={({ page, limit }) => {

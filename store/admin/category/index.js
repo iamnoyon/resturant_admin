@@ -1,3 +1,4 @@
+import { transformListResponse } from "@/utils/responseTransformer";
 import { apiSlice } from "../../apiSlice";
 
 export const categorySlice = apiSlice.injectEndpoints({
@@ -15,6 +16,8 @@ export const categorySlice = apiSlice.injectEndpoints({
         url: "/categories",
         method: "GET",
       }),
+      transformResponse: (response) => transformListResponse(response),
+
       providesTags: ["Categories"],
     }),
     getCategoryById: builder.query({

@@ -17,7 +17,7 @@ const columnHelper = createColumnHelper();
 const UserList = () => {
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
-    const {successToaster} = useToaster()
+    const { successToaster } = useToaster()
 
 
     // API
@@ -25,14 +25,14 @@ const UserList = () => {
     const [Update] = useUpdateUserStatusMutation();
 
     // Action handlers
-    const handleStatusUpdate = (id, status) =>{
-        Update({id, status})
-        .unwrap()
-        .then((res)=>{
-            if(res?.success == true, res?.status_code == 200){
-                successToaster(res?.message || 'User status updated successfully!')
-            }
-        })
+    const handleStatusUpdate = (id, status) => {
+        Update({ id, status })
+            .unwrap()
+            .then((res) => {
+                if (res?.success == true, res?.status_code == 200) {
+                    successToaster(res?.message || 'User status updated successfully!')
+                }
+            })
     }
 
     // Trigger API call
@@ -156,11 +156,11 @@ const UserList = () => {
                 ) : (
                     <ReactTable
                         columns={columns}
-                        dataSource={userData?.users || []}
-                        totalRecords={userData?.pagination?.total || 0}
-                        showPageSizeDropdown={userData?.pagination?.total > pageAndLimit.limit ? true : false}
-                        paginationOn={userData?.pagination?.total > 0 ? true : false}
-                        pageAndLimit={pageAndLimit}
+                        dataSource={userData?.dataSource || []}
+                        totalRecords={userData?.totalRecords}
+                        showPageSizeDropdown={userData?.totalRecords > pageAndLimit.limit}
+                        paginationOn={userData?.paginationOn}
+                        pageAndLimit={userData?.pageAndLimit ?? pageAndLimit}
                         searchQuery={searchQuery}
                         onSearchChange={setSearchQuery}
                         onPageLimitChange={({ page, limit }) => {

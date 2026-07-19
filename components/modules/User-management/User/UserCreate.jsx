@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { useCreateUserMutation } from '@/store/admin/user-management';
 import { useRouter } from 'next/navigation';
 import useToaster from '@/components/hooks/useToaster';
+import FormSelect from '@/Forms/FormSelect';
 
 const UserCreate = () => {
     const router = useRouter()
@@ -23,6 +24,9 @@ const UserCreate = () => {
         defaultValues: {
             name: '',
             email: '',
+            phone: '',
+            password: '',
+            role: ''
         }
     });
 
@@ -63,10 +67,30 @@ const UserCreate = () => {
                         placeholder='example@gmail.com'
                         required
                     />
+                    <FormInput
+                        name="phone"
+                        label="Phone"
+                        placeholder='01889010237'
+                        required
+                    />
+                    <FormInput
+                        name="password"
+                        label="Password"
+                        placeholder='Admin123!'
+                        required
+                    />
+                    <FormSelect
+                        name='role'
+                        label='Role'
+                        options={[
+                            { label: 'Admin', id: 'admin' },
+                            { label: 'cashier', id: 'cashier' },
+                        ]}
+                    />
                 </div>
                 <div className='flex items-center justify-center gap-10 mt-20'>
                     <button type='button' onClick={() => router.push("/user-management/users")} className='w-40 hover:cursor-pointer hover:bg-[#0A4D99] rounded font-semibold py-2 border text-[#0A4D99] hover:text-white border-[#0A4D99]'>Cancel</button>
-                    <button type="submit" className='w-40 hover:cursor-pointer hover:bg-[#053872] rounded font-semibold py-2  bg-[#0A4D99]'>Save</button>
+                    <button type="submit" className='w-40 hover:cursor-pointer hover:bg-[#053872] rounded font-semibold py-2  bg-[#0A4D99] text-white'>Save</button>
                 </div>
             </Formwrapper>
         </CardLayout>

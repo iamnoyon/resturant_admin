@@ -24,24 +24,14 @@ const CreateProductCategory = () => {
     const methods = useForm({
         resolver: zodResolver(categorySchema),
         defaultValues: {
-            name: '',
-            slug: '',
-            description: '',
-            image: '',
-            isActive: true,
+            categoryName: '',
+            shortNote: '',
         }
     });
 
     const onSubmit = (data) => {
-        const payload = {
-            name: data?.name,
-            slug: data?.slug,
-            description: data?.description,
-            image: data?.image?.url,
-            isActive: data?.isActive
-        };
 
-        CreateCategory(payload)
+        CreateCategory(data)
             .unwrap()
             .then((res) => {
                 if (res?.success) {
@@ -65,40 +55,16 @@ const CreateProductCategory = () => {
                 methods={methods}
                 onSubmit={onSubmit}
             >
-                <div className='grid lg:grid-cols-2 gap-5'>
+                <div className='grid gap-3'>
                     <FormInput
-                        name="name"
-                        label="Name"
+                        name="categoryName"
+                        label="Category Name"
                         placeholder='Electronics'
                         required
                     />
-                    <FormInput
-                        name="slug"
-                        label="Slug"
-                        placeholder='electronics'
-                        required
-                    />
-                    <FormFileUpload
-                        name='image'
-                        label="Category Image"
-                        required
-                        accept="image/*"
-                    />
-                    <FormRadioGroup
-                        name="isActive"
-                        label="Status"
-                        required
-                        columns={{ sm: 1, md: 2 }}
-                        options={[
-                            { label: 'Active', id: true },
-                            { label: 'Inactive', id: false },
-                        ]}
-                    />
-                </div>
-                <div className='mt-5'>
                     <FormTextarea
-                        name="description"
-                        label="Description"
+                        name="Short Description"
+                        label="shortNote"
                     />
                 </div>
                 <div className='flex items-center justify-center gap-10 mt-20'>
