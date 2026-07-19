@@ -26,6 +26,7 @@ const CreateProductCategory = () => {
         defaultValues: {
             categoryName: '',
             shortNote: '',
+            isActive: true
         }
     });
 
@@ -63,16 +64,22 @@ const CreateProductCategory = () => {
                         required
                     />
                     <FormTextarea
-                        name="Short Description"
+                        name="Description"
                         label="shortNote"
                     />
                 </div>
-                <div className='flex items-center justify-center gap-10 mt-20'>
-                    <button type='button' onClick={() => router.push("/product-management/categories")} className='w-40 hover:cursor-pointer hover:bg-[#0A4D99] rounded font-semibold py-2 border text-[#0A4D99] hover:text-white border-[#0A4D99]'>Cancel</button>
-                    <button type="submit" 
-                    disabled={isLoading}
-                    className={` w-40 bg-[#042A55] hover:enabled:bg-[#063C76] hover:cursor-pointer text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 ${isLoading ? "cursor-not-allowed" : ""}`}          >
-                        {isLoading ? <><Loader2 size={18} className="animate-spin" /> Saving...</> : "Save"}</button>
+                <div className='flex items-center justify-center gap-10 mt-10'>
+                    <button
+                        type='button'
+                        onClick={() => router.push("/product-management/categories")}
+                        className='w-40 hover:cursor-pointer hover:bg-[#0A4D99] rounded font-semibold py-2 border text-[#0A4D99] hover:text-white border-[#0A4D99]'>
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        disabled={isLoading}
+                        className={` w-40 bg-[#042A55] hover:enabled:bg-[#063C76] hover:cursor-pointer text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 ${isLoading ? "cursor-not-allowed" : ""}`}>
+                        {isLoading ? <><Loader2 size={18} className="animate-spin" /> Saving...</> : "Save"}
+                    </button>
                 </div>
             </Formwrapper>
         </CardLayout>

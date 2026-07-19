@@ -27,10 +27,8 @@ const EditProductCategory = () => {
     const methods = useForm({
         resolver: zodResolver(categorySchema),
         defaultValues: {
-            name: '',
-            slug: '',
-            description: '',
-            image: '',
+            categoryName: '',
+            shortNote: '',
             isActive: null,
         }
     });
@@ -38,26 +36,15 @@ const EditProductCategory = () => {
     useEffect(() => {
         if (categoryDetails?.success) {
             methods.reset({
-                name: categoryDetails?.data?.name,
-                slug: categoryDetails?.data?.slug,
-                description: categoryDetails?.data?.description,
-                image: categoryDetails?.data?.image,
+                categoryName: categoryDetails?.data?.categoryName,
+                shortNote: categoryDetails?.data?.shortNote,
                 isActive: categoryDetails?.data?.isActive
             })
         }
     }, [categoryDetails])
 
     const onSubmit = (data) => {
-        
-        const payload = {
-            name: data?.name,
-            slug: data?.slug,
-            description: data?.description,
-            image: data?.image?.url,
-            isActive: data?.isActive
-        };
-console.log(payload);
-        UpdateCategory({id: id, data: payload})
+        UpdateCategory({ id: id, data: data })
             .unwrap()
             .then((res) => {
                 if (res?.success) {
@@ -83,22 +70,10 @@ console.log(payload);
             >
                 <div className='grid lg:grid-cols-2 gap-5'>
                     <FormInput
-                        name="name"
-                        label="Name"
+                        name="categoryName"
+                        label="Category Name"
                         placeholder='Electronics'
                         required
-                    />
-                    <FormInput
-                        name="slug"
-                        label="Slug"
-                        placeholder='electronics'
-                        required
-                    />
-                    <FormFileUpload
-                        name='image'
-                        label="Category Image"
-                        required
-                        accept="image/*"
                     />
                     <FormRadioGroup
                         name="isActive"
@@ -113,14 +88,14 @@ console.log(payload);
                 </div>
                 <div className='mt-5'>
                     <FormTextarea
-                        name="description"
+                        name="shortNote"
                         label="Description"
                     />
                 </div>
                 <div className='flex items-center justify-center gap-10 mt-20'>
                     <button type='button' onClick={() => router.push("/product-management/categories")} className='w-40 hover:cursor-pointer hover:bg-[#0A4D99] rounded font-semibold py-2 border text-[#0A4D99] hover:text-white border-[#0A4D99]'>Cancel</button>
-                    <button type="submit"  disabled={isLoading}
-                    className={` w-40 bg-[#042A55] hover:enabled:bg-[#063C76] hover:cursor-pointer text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 ${isLoading ? "cursor-not-allowed" : ""}`}          >
+                    <button type="submit" disabled={isLoading}
+                        className={` w-40 bg-[#042A55] hover:enabled:bg-[#063C76] hover:cursor-pointer text-white font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 ${isLoading ? "cursor-not-allowed" : ""}`}          >
                         {isLoading ? <><Loader2 size={18} className="animate-spin" /> Updating...</> : "Update"}</button>
                 </div>
             </Formwrapper>

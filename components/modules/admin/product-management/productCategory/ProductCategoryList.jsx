@@ -37,10 +37,8 @@ const ProductCategoryList = () => {
     // Action handlers
     const handleStatusUpdate = (category, status) => {
         const payload = {
-            name: category?.name,
-            slug: category?.slug,
-            image: category?.image,
-            description: category?.description,
+            categoryName: category?.categoryName,
+            shortNote: category?.shortNote,
             isActive: status
         }
         UpdateCategory({ id: category?.id, data: payload })

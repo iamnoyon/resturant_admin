@@ -28,37 +28,36 @@ const ThreeDotMenu = ({
     }
   };
 
-  // Close menu when clicking outside
+  // Close menu when clicking outside or scrolling
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(e.target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(e.target)
-      ) {
-        setIsOpen(false);
-      }
-    };
+    const handleClose = () => setIsOpen(false);
 
     if (isOpen) {
-      document.addEventListener("click", handleClickOutside);
+      document.addEventListener("click", handleClose);
+      window.addEventListener("scroll", handleClose, true);
     }
 
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("click", handleClose);
+      window.removeEventListener("scroll", handleClose, true);
     };
   }, [isOpen]);
 
-  // Determine whether to open above or below
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
+
+  // Determine position for fixed dropdown
   useEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-
       const spaceBelow = window.innerHeight - rect.bottom;
       const estimatedMenuHeight = Math.max(actions.length * 40, 120);
+      const openUp = spaceBelow < estimatedMenuHeight;
 
-      setOpenAbove(spaceBelow < estimatedMenuHeight);
+      setMenuPos({
+        top: openUp ? rect.top - estimatedMenuHeight - 4 : rect.bottom + 4,
+        left: rect.right - 192,
+      });
+      setOpenAbove(openUp);
     }
   }, [isOpen, actions]);
 
@@ -93,12 +92,8 @@ const ThreeDotMenu = ({
       {isOpen && (
         <div
           ref={menuRef}
-          className={`absolute right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-md z-[9999]
-            ${
-              openAbove
-                ? "bottom-full mb-2"
-                : "top-full mt-2"
-            }`}
+          className="fixed w-48 bg-white border border-gray-200 rounded-lg shadow-md z-[9999]"
+          style={{ top: menuPos.top, left: menuPos.left }}
         >
           <div className="py-1">
             {actions.length > 0 ? (
