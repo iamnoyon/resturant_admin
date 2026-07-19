@@ -9,6 +9,8 @@ import {
   UserPlus,
   List,
   Plus,
+  Vault,
+  ChartBarStacked,
 } from "lucide-react";
 import { FaChrome } from "react-icons/fa";
 import { AiFillProduct } from "react-icons/ai";
@@ -61,26 +63,21 @@ export const menuItems = [
       {
         name: "Categories",
         path: "/product-management/categories",
-        icon: MdCategory,
+        icon: ChartBarStacked,
       },
       {
         name: "Products",
         path: "/product-management/products",
         icon: MdFormatListBulletedAdd,
       },
-      {
-        name: "Stocks",
-        path: "/product-management/stocks",
-        icon: Plus,
-      },
     ],
   },
 
   {
-    name: "Settings",
-    icon: Settings,
-    path: "/admin/settings",
-    activePath: ["/admin/settings"],
+    name: "Tables",
+    icon: Vault,
+    path: "/tables",
+    activePath: ["/tables"],
   },
   {
     name: "CMS",
