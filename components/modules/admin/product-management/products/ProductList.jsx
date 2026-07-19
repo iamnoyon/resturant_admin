@@ -9,13 +9,15 @@ import { createColumnHelper } from '@tanstack/react-table';
 import {
     useDeleteProductMutation,
     useLazyGetProductListQuery,
-    useUpdateProductByIDMutation
+    useUpdateProductByIDMutation,
+    useUpdateStockMutation
 } from '@/store/admin/products';
 import { useEffect } from 'react';
 import ThreeDotMenu from '@/components/common/ThreeDotMenu';
 import { useRouter } from 'next/navigation';
 import useToaster from '@/components/hooks/useToaster';
 import ConfirmationModal from '@/components/common/ConfirmationModal';
+import InputModal from '@/components/common/InputModal';
 
 const columnHelper = createColumnHelper();
 
@@ -25,11 +27,13 @@ const ProductList = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [itemId, setItemId] = useState(null)
+    const [isStockModalOpen, setIsStockModalOpen] = useState(false)
     const { successToaster, errorToaster } = useToaster();
 
     const [triggerList, { data: productList, isLoading }] = useLazyGetProductListQuery();
     const [updateProduct] = useUpdateProductByIDMutation();
     const [deleteProduct] = useDeleteProductMutation();
+    const [updateStock] = useUpdateStockMutation()
 
     useEffect(() => {
         triggerList({
@@ -68,6 +72,20 @@ const ProductList = () => {
                     successToaster(res?.message)
                     setIsModalOpen(false)
                 }
+            })
+    }
+
+    // stock update
+    const handleStockUpdate = (newStock) => {
+        updateStock({ id: itemId, data: { stock: Number(newStock) } })
+            .unwrap()
+            .then((res) => {
+                if (res?.success) {
+                    successToaster(res?.message || 'Stock updated successfully!')
+                }
+            })
+            .catch((err) => {
+                errorToaster(err?.data?.message)
             })
     }
 
@@ -121,11 +139,21 @@ const ProductList = () => {
             columnHelper.accessor('stock', {
                 id: 'stock',
                 header: () => 'Stock',
-                cell: (info) => (
-                    <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
-                        {info.getValue()}
-                    </span>
-                ),
+                cell: (info) => {
+                    const product = info.row.original;
+                    return (
+                        <button
+                            onClick={() => {
+                                setItemId(product?.id)
+                                setIsStockModalOpen(true);
+                            }}
+                            className="rounded bg-orange-500 px-3 py-1 font-['DM_Sans',sans-serif] text-xs font-medium text-white transition-colors hover:bg-orange-400 cursor-pointer flex justify-center items-center gap-2"
+                        >
+                            <span>{info.getValue()}</span>
+                            <span>Update Stock</span>
+                        </button>
+                    );
+                },
             }),
             columnHelper.accessor('isActive', {
                 id: 'isActive',
@@ -210,6 +238,16 @@ const ProductList = () => {
                 onClose={() => setIsModalOpen(false)}
                 firstButtonAction={handleDeleteItem}
                 firstButtonVariant='danger'
+            />
+            <InputModal
+                title='New quantity will be added.'
+                inputLabel='Stock Quantity'
+                inputType='number'
+                inputPlaceholder='Enter New quantity'
+                buttonText='Update'
+                isOpen={isStockModalOpen}
+                onClose={() => setIsStockModalOpen(false)}
+                onSubmit={handleStockUpdate}
             />
         </CardLayout>
     );
