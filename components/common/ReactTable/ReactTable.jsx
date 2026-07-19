@@ -153,7 +153,7 @@ const ReactTable = ({
                                             key={row.id}
                                         >
                                             {allowRowSelect && (
-                                                <td className="px-1.5 py-3 sm:px-2.5 sm:py-4.5">
+                                                <td className="px-1.5 py-2 sm:px-2.5 sm:py-3">
                                                     <input
                                                         type="checkbox"
                                                         checked={row.getIsSelected()}
@@ -164,7 +164,7 @@ const ReactTable = ({
                                             )}
                                             {row.getVisibleCells().map((cell) => (
                                                 <td
-                                                    className="px-1.5 py-3 font-['DM_Sans',sans-serif] text-xs font-normal text-black sm:px-2.5 sm:py-4.5 sm:text-sm md:text-[1rem]"
+                                                    className="px-1.5 py-2 font-['DM_Sans',sans-serif] text-xs font-normal text-black sm:px-2.5 sm:py-3 sm:text-sm md:text-[1rem]"
                                                     key={cell.id}
                                                 >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
