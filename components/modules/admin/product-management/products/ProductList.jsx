@@ -3,15 +3,19 @@
 
 import CardLayout from '@/components/common/CardLayout';
 import { useMemo, useState } from 'react';
-import { Plus, List, SquarePen } from 'lucide-react';
+import { Plus, List, SquarePen, Trash } from 'lucide-react';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
-import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';
-import { useLazyGetProductListQuery, useUpdateProductByIDMutation } from '@/store/admin/products';
+import {
+    useDeleteProductMutation,
+    useLazyGetProductListQuery,
+    useUpdateProductByIDMutation
+} from '@/store/admin/products';
 import { useEffect } from 'react';
 import ThreeDotMenu from '@/components/common/ThreeDotMenu';
 import { useRouter } from 'next/navigation';
 import useToaster from '@/components/hooks/useToaster';
+import ConfirmationModal from '@/components/common/ConfirmationModal';
 
 const columnHelper = createColumnHelper();
 
@@ -19,10 +23,13 @@ const ProductList = () => {
     const router = useRouter();
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [itemId, setItemId] = useState(null)
     const { successToaster, errorToaster } = useToaster();
 
-    const [triggerList, { data: productData, isLoading }] = useLazyGetProductListQuery();
+    const [triggerList, { data: productList, isLoading }] = useLazyGetProductListQuery();
     const [updateProduct] = useUpdateProductByIDMutation();
+    const [deleteProduct] = useDeleteProductMutation();
 
     useEffect(() => {
         triggerList({
@@ -33,20 +40,12 @@ const ProductList = () => {
 
     const handleStatusUpdate = (product, status) => {
         const payload = {
-            name: product?.name || '',
-            slug: product?.slug || '',
-            description: product?.description || '',
-            price: product?.price || '',
-            discountPrice: product?.discountPrice || '',
-            stock: product?.stock || '',
-            sku: product?.sku || '',
-            shortnote: product?.shortnote || '',
-            features: product?.features || [],
-            tags: product?.tags || '',
-            images: product?.images || [],
-            isActive: status,
-            isFeatured: product?.isFeatured ?? true,
-            categoryId: product?.categoryId || '',
+            productName: product?.productName,
+            categoryId: product?.categoryId,
+            description: product?.description,
+            costPrice: product?.costPrice,
+            soldPrice: product?.soldPrice,
+            isActive: status
         }
         updateProduct({ id: product?.id, data: payload })
             .unwrap()
@@ -57,6 +56,18 @@ const ProductList = () => {
             })
             .catch((err) => {
                 errorToaster(err?.data?.message)
+            })
+    }
+
+    // delete category
+    const handleDeleteItem = () => {
+        deleteProduct(itemId)
+            .unwrap()
+            .then((res) => {
+                if (res?.success) {
+                    successToaster(res?.message)
+                    setIsModalOpen(false)
+                }
             })
     }
 
@@ -71,35 +82,41 @@ const ProductList = () => {
                     </span>
                 ),
             }),
-            columnHelper.accessor('name', {
-                id: 'name',
-                header: () => 'Name',
+            columnHelper.accessor('productName', {
+                id: 'productName',
+                header: () => 'Product Name',
                 cell: (info) => (
                     <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
                         {info.getValue()}
                     </span>
                 ),
-                enableSorting: true,
             }),
-            columnHelper.accessor('slug', {
-                id: 'slug',
-                header: () => 'Slug',
+            columnHelper.accessor('categoryName', {
+                id: 'categoryName',
+                header: () => 'Category Name',
                 cell: (info) => (
                     <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
                         {info.getValue()}
                     </span>
                 ),
-                enableSorting: true,
             }),
-            columnHelper.accessor('price', {
-                id: 'price',
-                header: () => 'Price',
+            columnHelper.accessor('costPrice', {
+                id: 'costPrice',
+                header: () => 'Cost',
                 cell: (info) => (
                     <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
-                        ${info.getValue()}
+                        ৳{info.getValue()}
                     </span>
                 ),
-                enableSorting: true,
+            }),
+            columnHelper.accessor('soldPrice', {
+                id: 'soldPrice',
+                header: () => 'Sell',
+                cell: (info) => (
+                    <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
+                        ৳{info.getValue()}
+                    </span>
+                ),
             }),
             columnHelper.accessor('stock', {
                 id: 'stock',
@@ -109,7 +126,6 @@ const ProductList = () => {
                         {info.getValue()}
                     </span>
                 ),
-                enableSorting: true,
             }),
             columnHelper.accessor('isActive', {
                 id: 'isActive',
@@ -122,7 +138,6 @@ const ProductList = () => {
                         </span>
                     );
                 },
-                enableSorting: true,
             }),
             columnHelper.display({
                 id: 'actions',
@@ -150,6 +165,14 @@ const ProductList = () => {
                                 ]}
                                 isDisabled={false}
                             />
+                            <Trash
+                                size={16}
+                                className='hover:text-red-400 hover:cursor-pointer'
+                                onClick={() => {
+                                    setIsModalOpen(true)
+                                    setItemId(product?.id)
+                                }}
+                            />
                         </div>
                     );
                 },
@@ -166,22 +189,28 @@ const ProductList = () => {
             buttonIcon={Plus}
             buttonHref="/product-management/products/create"
         >
-            {isLoading ? (
-                <TableSkeleton rowLength={10} columnLength={columns?.length || 5} />
-            ) : (
-                <ReactTable
-                    columns={columns}
-                    dataSource={productData?.dataSource || []}
-                    totalRecords={productData?.totalRecords}
-                    paginationOn={productData?.paginationOn}
-                    pageAndLimit={productData?.pageAndLimit ?? pageAndLimit}
-                    searchQuery={searchQuery}
-                    onSearchChange={setSearchQuery}
-                    onPageLimitChange={({ page, limit }) => {
-                        setPageAndLimit({ page, limit });
-                    }}
-                />
-            )}
+            <ReactTable
+                columns={columns}
+                dataSource={productList?.dataSource || []}
+                isLoading={isLoading}
+                totalRecords={productList?.totalRecords}
+                showPageSizeDropdown={productList?.totalRecords > pageAndLimit.limit}
+                paginationOn={productList?.paginationOn}
+                pageAndLimit={pageAndLimit}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                onPageLimitChange={({ page, limit }) => {
+                    setPageAndLimit({ page, limit });
+                }}
+            />
+            <ConfirmationModal
+                title='Delete this record permanently?'
+                isOpen={isModalOpen}
+                firstButtonText='Delete'
+                onClose={() => setIsModalOpen(false)}
+                firstButtonAction={handleDeleteItem}
+                firstButtonVariant='danger'
+            />
         </CardLayout>
     );
 };

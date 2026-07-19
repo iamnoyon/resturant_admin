@@ -40,6 +40,13 @@ export const productSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    deleteProduct: builder.mutation({
+      query: (id) => ({
+        url: `/products/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Products"],
+    })
   }),
   overrideExisting: true,
 });
@@ -49,4 +56,5 @@ export const {
   useUpdateProductByIDMutation,
   useLazyGetProductListQuery,
   useGetProductByIdQuery,
+  useDeleteProductMutation
 } = productSlice;
