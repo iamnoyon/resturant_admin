@@ -1,14 +1,14 @@
 // components/layout/Topbar.jsx
 "use client";
 
-import { Bell, LogOut, User } from "lucide-react";
+import { Bell, LogOut, Menu, User } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import NextLink from "next/link"
 import { useLogoutMutation } from "@/store/auth";
 
-export default function Topbar() {
+export default function Topbar({ onMenuToggle }) {
     const state = useSelector(state => state?.user)
     const [open, setOpen] = useState(false);
     console.log(state?.profile_photo);
@@ -52,8 +52,16 @@ export default function Topbar() {
     }, []);
 
     return (
-        <header className="flex h-16 items-center justify-end border-b bg-white px-6 shadow-sm">
-            <div className="flex items-center gap-4">
+        <header className="flex h-16 items-center justify-between border-b bg-white px-6 shadow-sm">
+            {/* Hamburger menu for mobile */}
+            <button
+                onClick={onMenuToggle}
+                className="rounded-lg p-2 transition hover:bg-gray-100 lg:hidden"
+            >
+                <Menu size={22} className="text-gray-600" />
+            </button>
+
+            <div className="flex items-center gap-4 ml-auto">
                 {/* Notification */}
                 <button className="relative rounded-full p-2 transition hover:bg-gray-100">
                     <Bell size={20} className="text-gray-600" />

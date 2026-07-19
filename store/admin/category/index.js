@@ -12,9 +12,10 @@ export const categorySlice = apiSlice.injectEndpoints({
       invalidatesTags: ["Categories"],
     }),
     getCategoryList: builder.query({
-      query: () => ({
+      query: (params) => ({
         url: "/categories",
         method: "GET",
+        params,
       }),
       transformResponse: (response) => transformListResponse(response),
 
@@ -47,6 +48,7 @@ export const categorySlice = apiSlice.injectEndpoints({
 export const {
   useCreateCategoryMutation,
   useGetCategoryListQuery,
+  useLazyGetCategoryListQuery,
   useGetCategoryByIdQuery,
   useUpdateCategoryByIDMutation,
   useGetCategoryDropdownQuery

@@ -6,7 +6,7 @@ import { menuItems } from "./menuItems";
 import { PanelLeftClose, PanelLeftOpen, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
-export default function Sidebar() {
+export default function Sidebar({ onNavClick, hideToggle }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
@@ -18,9 +18,13 @@ export default function Sidebar() {
     setOpenMenu((prev) => (prev === menuName ? null : menuName));
   };
 
+  const handleNavClick = () => {
+    onNavClick?.();
+  };
+
   return (
     <aside
-      className={`flex flex-col border-r bg-[#02162e] transition-all duration-300 ${collapsed ? "w-20" : "w-65"
+      className={`flex h-full flex-col border-r bg-[#02162e] transition-all duration-300 ${collapsed ? "w-20" : "w-65"
         }`}
     >
       {/* Header */}
@@ -31,12 +35,14 @@ export default function Sidebar() {
         {!collapsed && (
           <span className="text-lg font-bold text-white">MyAdmin</span>
         )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="rounded-lg p-2 text-white transition hover:cursor-pointer hover:text-gray-300"
-        >
-          {collapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
-        </button>
+        {!hideToggle && (
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="rounded-lg p-2 text-white transition hover:cursor-pointer hover:text-gray-300"
+          >
+            {collapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
+          </button>
+        )}
       </div>
 
       <div className="border-b border-[#052950]" />
@@ -86,6 +92,7 @@ export default function Sidebar() {
                   /* ── Parent: no children → Link (navigates) ── */
                   <Link
                     href={item.path}
+                    onClick={handleNavClick}
                     className={`flex items-center gap-3 rounded-xl py-3 text-sm font-medium transition-all ${collapsed ? "justify-center px-2" : "px-4"
                       } ${isActive
                         ? "bg-[#063C76] text-white shadow-md"
@@ -111,6 +118,7 @@ export default function Sidebar() {
                         <li key={child.name}>
                           <Link
                             href={child.path}
+                            onClick={handleNavClick}
                             className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${childActive
                                 ? "bg-[#0A4D99] text-white"
                                 : "text-gray-400 hover:bg-[#063C76]"

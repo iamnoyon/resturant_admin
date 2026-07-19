@@ -46,7 +46,7 @@ const ReactTable = ({
             globalFilter,
             rowSelection,
             pagination: {
-                pageIndex: pageAndLimit?.page ?? 0, // <-- controlled from parent
+                pageIndex: (pageAndLimit?.page ?? 1) - 1, // <-- controlled from parent
                 pageSize: pageAndLimit?.limit ?? 10, // <-- controlled from parent
             },
         },
@@ -55,7 +55,7 @@ const ReactTable = ({
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        ...((paginationOn ?? false) ? {} : { getPaginationRowModel: getPaginationRowModel() }),
         onSortingChange: setSorting,
         onGlobalFilterChange: setGlobalFilter,
         onRowSelectionChange: setRowSelection,
@@ -107,8 +107,8 @@ const ReactTable = ({
                 )}
 
                 {/* Table */}
-                <div className="bg-white px-4">
-                    <table className="w-full border-collapse">
+                <div className="bg-white px-4 overflow-x-auto">
+                    <table className="w-full min-w-[600px] border-collapse">
                         <thead>
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <tr key={headerGroup.id} className="border-b-[0.5px] border-[#d9d9d9]">
@@ -180,7 +180,7 @@ const ReactTable = ({
 
                 {/* Pagination */}
                 <div
-                    className={`flex flex-col gap-3 sm:flex-row sm:gap-0 ${showPageSizeDropdown ? 'sm:justify-between' : 'sm:justify-end'} mt-4 items-center px-4`}
+                    className={`flex flex-col items-center gap-3 sm:flex-row sm:gap-0 ${showPageSizeDropdown ? 'sm:justify-between' : 'sm:justify-end'} mt-4 px-4`}
                 >
                     {/* Page Size Dropdown */}
                     {showPageSizeDropdown && (
@@ -209,7 +209,7 @@ const ReactTable = ({
                     {/* Pagination Controls */}
                     {paginationOn && pageAndLimit && totalRecords !== undefined && (
                         <div className="flex items-center gap-1 sm:gap-2">
-                            <div className="mr-2 text-[#043570] sm:mr-10">
+                            <div className="text-[#043570] sm:mr-10">
                                 {(pageAndLimit.page - 1) * pageAndLimit.limit + 1} {' – '}
                                 {Math.min(pageAndLimit.page * pageAndLimit.limit, totalRecords)} {' of '}
                                 {totalRecords}

@@ -158,9 +158,9 @@ const UserList = () => {
                         columns={columns}
                         dataSource={userData?.dataSource || []}
                         totalRecords={userData?.totalRecords}
+                        pageAndLimit={pageAndLimit}
                         showPageSizeDropdown={userData?.totalRecords > pageAndLimit.limit}
                         paginationOn={userData?.paginationOn}
-                        pageAndLimit={userData?.pageAndLimit ?? pageAndLimit}
                         searchQuery={searchQuery}
                         onSearchChange={setSearchQuery}
                         onPageLimitChange={({ page, limit }) => {

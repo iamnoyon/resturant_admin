@@ -2,14 +2,14 @@
 'use client';
 
 import CardLayout from '@/components/common/CardLayout';
-import { useMemo, useState } from 'react';
-import { Plus, List, Edit2, SquarePen } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Plus, List, SquarePen } from 'lucide-react';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';
 import ThreeDotMenu from '@/components/common/ThreeDotMenu';
 import useToaster from '@/components/hooks/useToaster';
-import { useGetCategoryListQuery, useUpdateCategoryByIDMutation } from '@/store/admin/category';
+import { useLazyGetCategoryListQuery, useUpdateCategoryByIDMutation } from '@/store/admin/category';
 import { useRouter } from 'next/navigation';
 
 const columnHelper = createColumnHelper();
@@ -23,8 +23,16 @@ const ProductCategoryList = () => {
 
 
     // API
-    const { data: categoryData, isLoading } = useGetCategoryListQuery()
+    const [triggerList, { data: categoryData, isLoading }] = useLazyGetCategoryListQuery();
     const [UpdateCategory] = useUpdateCategoryByIDMutation();
+
+    // Trigger API call
+    useEffect(() => {
+        triggerList({
+            page: pageAndLimit.page,
+            limit: pageAndLimit.limit,
+        });
+    }, [pageAndLimit]);
 
     // Action handlers
     const handleStatusUpdate = (category, status) => {
@@ -140,7 +148,7 @@ const ProductCategoryList = () => {
                         totalRecords={categoryData?.totalRecords}
                         showPageSizeDropdown={categoryData?.totalRecords > pageAndLimit.limit}
                         paginationOn={categoryData?.paginationOn}
-                        pageAndLimit={categoryData?.pageAndLimit ?? pageAndLimit}
+                        pageAndLimit={pageAndLimit}
                         searchQuery={searchQuery}
                         onSearchChange={setSearchQuery}
                         onPageLimitChange={({ page, limit }) => {
