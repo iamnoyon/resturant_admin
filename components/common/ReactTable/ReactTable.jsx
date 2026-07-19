@@ -18,10 +18,12 @@ import {
     Search,
 } from 'lucide-react';
 import React, { useState } from 'react';
+import TableSkeleton from './TableSkeleton';
 
 const ReactTable = ({
     columns,
     dataSource,
+    isLoading = false,
     defaultSearch = false,
     showPageSizeDropdown = true,
     allowRowSelect = false,
@@ -76,6 +78,9 @@ const ReactTable = ({
 
     return (
         <div className="mx-auto pb-3">
+            {isLoading ? (
+                <TableSkeleton rowLength={10} columnLength={columns?.length || 5} />
+            ) : (
             <div className="">
                 {/* Global Search */}
                 {defaultSearch && (
@@ -254,6 +259,7 @@ const ReactTable = ({
                     )}
                 </div>
             </div>
+            )}
         </div>
     );
 };

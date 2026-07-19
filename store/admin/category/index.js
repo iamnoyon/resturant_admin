@@ -41,6 +41,13 @@ export const categorySlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    deleteCategory: builder.mutation({
+      query: (id) => ({
+        url: `/categories/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Categories"],
+    })
   }),
   overrideExisting: true,
 });
@@ -51,5 +58,6 @@ export const {
   useLazyGetCategoryListQuery,
   useGetCategoryByIdQuery,
   useUpdateCategoryByIDMutation,
-  useGetCategoryDropdownQuery
+  useGetCategoryDropdownQuery,
+  useDeleteCategoryMutation
 } = categorySlice;

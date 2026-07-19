@@ -3,14 +3,14 @@
 
 import CardLayout from '@/components/common/CardLayout';
 import { useEffect, useMemo, useState } from 'react';
-import { Plus, List, SquarePen } from 'lucide-react';
+import { Plus, List, SquarePen, Trash } from 'lucide-react';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
-import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';
 import ThreeDotMenu from '@/components/common/ThreeDotMenu';
 import useToaster from '@/components/hooks/useToaster';
-import { useLazyGetCategoryListQuery, useUpdateCategoryByIDMutation } from '@/store/admin/category';
+import { useDeleteCategoryMutation, useLazyGetCategoryListQuery, useUpdateCategoryByIDMutation } from '@/store/admin/category';
 import { useRouter } from 'next/navigation';
+import ConfirmationModal from '@/components/common/ConfirmationModal';
 
 const columnHelper = createColumnHelper();
 
@@ -18,6 +18,8 @@ const columnHelper = createColumnHelper();
 const ProductCategoryList = () => {
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [itemId, setItemId] = useState(null)
     const { successToaster, errorToaster } = useToaster()
     const router = useRouter()
 
@@ -25,6 +27,7 @@ const ProductCategoryList = () => {
     // API
     const [triggerList, { data: categoryData, isLoading }] = useLazyGetCategoryListQuery();
     const [UpdateCategory] = useUpdateCategoryByIDMutation();
+    const [DeleteCategory] = useDeleteCategoryMutation();
 
     // Trigger API call
     useEffect(() => {
@@ -53,6 +56,17 @@ const ProductCategoryList = () => {
             })
     }
 
+    // delete category
+    const handleDeleteItem = () => {
+        DeleteCategory(itemId)
+            .unwrap()
+            .then((res) => {
+                if (res?.success) {
+                    successToaster(res?.message)
+                    setIsModalOpen(false)
+                }
+            })
+    }
 
     // Columns definition
     const columns = useMemo(
@@ -102,8 +116,12 @@ const ProductCategoryList = () => {
 
                         return (
                             <div className="flex items-center gap-1">
-                                <SquarePen size={16} className="mr-2 cursor-pointer"
+                                <SquarePen
+                                    size={16}
+                                    className="mr-2 cursor-pointer"
                                     onClick={() => router.push(`/product-management/categories/edit/${category?.id}`)} />
+
+
                                 <ThreeDotMenu
                                     object={category}
                                     actions={[
@@ -119,6 +137,14 @@ const ProductCategoryList = () => {
                                         },
                                     ]}
                                     isDisabled={false}
+                                />
+                                <Trash
+                                    size={16}
+                                    className='hover:text-red-400 hover:cursor-pointer'
+                                    onClick={() => {
+                                        setIsModalOpen(true)
+                                        setItemId(category?.id)
+                                    }}
                                 />
                             </div>
                         );
@@ -136,25 +162,28 @@ const ProductCategoryList = () => {
             buttonIcon={Plus}
             buttonHref="/product-management/categories/create"
         >
-            {
-                (isLoading) ? (
-                    <TableSkeleton rowLength={10} columnLength={columns?.length || 5} />
-                ) : (
-                    <ReactTable
-                        columns={columns}
-                        dataSource={categoryData?.dataSource || []}
-                        totalRecords={categoryData?.totalRecords}
-                        showPageSizeDropdown={categoryData?.totalRecords > pageAndLimit.limit}
-                        paginationOn={categoryData?.paginationOn}
-                        pageAndLimit={pageAndLimit}
-                        searchQuery={searchQuery}
-                        onSearchChange={setSearchQuery}
-                        onPageLimitChange={({ page, limit }) => {
-                            setPageAndLimit({ page, limit });
-                        }}
-                    />
-                )
-            }
+            <ReactTable
+                columns={columns}
+                dataSource={categoryData?.dataSource || []}
+                isLoading={isLoading}
+                totalRecords={categoryData?.totalRecords}
+                showPageSizeDropdown={categoryData?.totalRecords > pageAndLimit.limit}
+                paginationOn={categoryData?.paginationOn}
+                pageAndLimit={pageAndLimit}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                onPageLimitChange={({ page, limit }) => {
+                    setPageAndLimit({ page, limit });
+                }}
+            />
+            <ConfirmationModal
+                title='Delete this record permanently?'
+                isOpen={isModalOpen}
+                firstButtonText='Delete'
+                onClose={() => setIsModalOpen(false)}
+                firstButtonAction={handleDeleteItem}
+                firstButtonVariant='danger'
+            />
         </CardLayout>
     );
 };
