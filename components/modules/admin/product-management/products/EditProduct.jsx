@@ -16,6 +16,7 @@ import { productSchema } from './schema';
 import { useGetProductByIdQuery, useUpdateProductByIDMutation } from '@/store/admin/products';
 import { Loader2 } from 'lucide-react';
 import useToaster from '@/components/hooks/useToaster';
+import FormFileUpload from '@/Forms/FormFileUpload';
 
 const EditProduct = () => {
     const router = useRouter();
@@ -34,6 +35,7 @@ const EditProduct = () => {
             costPrice: '',
             soldPrice: '',
             stock: '',
+            imageUrl: '',
             isActive: true
         }
     });
@@ -47,6 +49,7 @@ const EditProduct = () => {
                 costPrice: productDetails?.data?.costPrice,
                 soldPrice: productDetails?.data?.soldPrice,
                 stock: productDetails?.data?.stock,
+                imageUrl: productDetails?.data?.imageUrl,
                 isActive: productDetails?.data?.isActive
             });
         }
@@ -99,6 +102,11 @@ const EditProduct = () => {
                         name='soldPrice'
                         label='Sold Price'
                         required
+                    />
+                    <FormFileUpload
+                        name="imageUrl"
+                        label="Category Image"
+                        valueKey="url"
                     />
                     <FormInput
                         name='stock'

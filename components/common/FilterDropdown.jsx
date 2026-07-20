@@ -120,7 +120,7 @@ const FilterDropdown = ({
               <button
                 key={option?.[valueKey] ?? index}
                 onClick={() => handleSelect(option)}
-                className={`w-full text-left px-4 py-2 text-sm transition-colors truncate ${
+                className={`w-full text-left px-4 py-2 text-sm transition-colors truncate hover:cursor-pointer ${
                   option?.[valueKey] === value
                     ? "bg-gray-100 text-gray-900 font-medium"
                     : "text-gray-700 hover:bg-gray-50"

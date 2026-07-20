@@ -7,5 +7,6 @@ export const productSchema = z.object({
   costPrice: z.coerce.number().min(1, 'Costing Price is required'),
   soldPrice: z.coerce.number().min(1, 'Selling Price is required'),
   stock: z.coerce.number().optional(),
+  imageUrl: z.string().optional(),
   isActive: z.boolean(),
 });

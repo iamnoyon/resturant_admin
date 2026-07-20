@@ -32,7 +32,6 @@ const CreateProductCategory = () => {
     });
 
     const onSubmit = (data) => {
-        console.log(data);
         CreateCategory(data)
             .unwrap()
             .then((res) => {

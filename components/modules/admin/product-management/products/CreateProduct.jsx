@@ -14,6 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { productSchema } from './schema';
 import { useCreateProductMutation } from '@/store/admin/products';
 import { Loader2 } from 'lucide-react';
+import FormFileUpload from '@/Forms/FormFileUpload';
 
 const CreateProduct = () => {
     const router = useRouter();
@@ -29,6 +30,7 @@ const CreateProduct = () => {
             costPrice: '',
             soldPrice: '',
             stock: '',
+            imageUrl: '',
             isActive: true
         }
     });
@@ -76,6 +78,11 @@ const CreateProduct = () => {
                         name='soldPrice'
                         label='Sold Price'
                         required
+                    />
+                    <FormFileUpload
+                        name="imageUrl"
+                        label="Category Image"
+                        valueKey="url"
                     />
                     <FormInput
                         name='stock'
