@@ -21,17 +21,15 @@ import Image from "next/image";
 import OrderList from "./OrderList";
 
 const tableBtnClass = (isSelected) =>
-  `flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border-2 transition-all cursor-pointer aspect-square w-full ${
-    isSelected
-      ? "bg-[#043570] border-[#043570] text-white"
-      : "bg-white border-gray-200 text-gray-500 hover:border-[#0A4D99] hover:text-[#0A4D99]"
+  `flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border-2 transition-all cursor-pointer aspect-square w-full ${isSelected
+    ? "bg-[#043570] border-[#043570] text-white"
+    : "bg-white border-gray-200 text-gray-500 hover:border-[#0A4D99] hover:text-[#0A4D99]"
   }`;
 
 const catBtnClass = (isActive) =>
-  `flex flex-col items-center gap-1 px-3 py-2 rounded-lg shrink-0 transition-colors cursor-pointer text-sm min-w-[72px] ${
-    isActive
-      ? "text-[#043570] bg-blue-50"
-      : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+  `flex flex-col items-center gap-1 px-3 py-2 rounded-lg shrink-0 transition-colors cursor-pointer text-sm min-w-[72px] ${isActive
+    ? "text-[#043570] bg-blue-50"
+    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
   }`;
 
 const productCardClass =
@@ -372,7 +370,7 @@ const NewOrder = () => {
             <p className="text-xs md:text-sm font-medium text-gray-800 truncate">{item.productName}</p>
             <p className="text-xs text-gray-500">৳{item.price}</p>
           </div>
-          <div className="flex items-center gap-1.5 md:gap-2">
+          <div className="flex md:hidden 2xl:flex items-center gap-1">
             <button
               onClick={() => updateQty(item.productId, -1)}
               className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer"
@@ -387,13 +385,33 @@ const NewOrder = () => {
               <Plus size={10} className="text-gray-500" />
             </button>
           </div>
-          <span className="text-xs md:text-sm font-semibold text-gray-800 min-w-[40px] md:min-w-[50px] text-right">৳{item.price * item.qty}</span>
-          <button
-            onClick={() => removeFromCart(item.productId)}
-            className="shrink-0 text-gray-400 hover:text-[#EF4444] transition-colors cursor-pointer"
-          >
-            <Trash2 size={14} className="md:w-4 md:h-4" />
-          </button>
+
+          <div className="">
+            <div className="hidden md:flex 2xl:hidden items-center gap-1 mb-1">
+              <button
+                onClick={() => updateQty(item.productId, -1)}
+                className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                <Minus size={10} className="text-gray-500" />
+              </button>
+              <span className="text-xs md:text-sm font-semibold text-[#043570] w-4 text-center">{item.qty}</span>
+              <button
+                onClick={() => updateQty(item.productId, 1)}
+                className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                <Plus size={10} className="text-gray-500" />
+              </button>
+            </div>
+            <div className="flex items-center gap-1">
+            <span className="text-xs md:text-sm font-semibold text-gray-800 min-w-[40px] md:min-w-[50px] text-right">৳{item.price * item.qty}</span>
+            <button
+              onClick={() => removeFromCart(item.productId)}
+              className="shrink-0 text-gray-400 hover:text-[#EF4444] transition-colors cursor-pointer"
+            >
+              <Trash2 size={14} className="md:w-4 md:h-4" />
+            </button>
+            </div>
+          </div>
         </div>
       ))}
     </div>
@@ -445,9 +463,8 @@ const NewOrder = () => {
         <button
           onClick={handlePlaceOrder}
           disabled={!selectedTable || orderLoading}
-          className={`flex-[2] py-2 md:py-2.5 rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer flex items-center justify-center gap-2 ${
-            selectedTable && !orderLoading ? "bg-[#042A55] hover:bg-[#063C76]" : "bg-gray-300 cursor-not-allowed"
-          }`}
+          className={`flex-[2] py-2 md:py-2.5 rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer flex items-center justify-center gap-2 ${selectedTable && !orderLoading ? "bg-[#042A55] hover:bg-[#063C76]" : "bg-gray-300 cursor-not-allowed"
+            }`}
         >
           {orderLoading ? "Placing..." : "Proceed to Bill"}
         </button>
@@ -499,9 +516,8 @@ const NewOrder = () => {
                   <button
                     onClick={handlePlaceOrder}
                     disabled={!selectedTable || orderLoading}
-                    className={`flex-[2] py-2.5 rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer ${
-                      selectedTable && !orderLoading ? "bg-[#042A55] hover:bg-[#063C76]" : "bg-gray-300 cursor-not-allowed"
-                    }`}
+                    className={`flex-[2] py-2.5 rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer ${selectedTable && !orderLoading ? "bg-[#042A55] hover:bg-[#063C76]" : "bg-gray-300 cursor-not-allowed"
+                      }`}
                   >
                     {orderLoading ? "Placing..." : "Proceed to Bill"}
                   </button>
