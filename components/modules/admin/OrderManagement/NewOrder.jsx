@@ -486,7 +486,7 @@ const NewOrder = () => {
       {cartOpen ? (
         <>
           <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setCartOpen(false)} />
-          <div className="relative z-50 bg-white rounded-t-2xl shadow-2xl max-h-[70vh] flex flex-col animate-slide-in">
+          <div className="relative z-50 bg-white rounded-t-2xl shadow-2xl max-h-[70vh] flex flex-col animate-slide-up">
             <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
               <div className="flex items-center gap-2">
                 <ShoppingCart size={18} className="text-[#043570]" />
