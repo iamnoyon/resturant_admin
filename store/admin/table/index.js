@@ -35,9 +35,9 @@ export const tableSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["tables"],
     }),
-    getCategoryDropdown: builder.query({
+    getTableDropdown: builder.query({
       query: () => ({
-        url: `/categories/dropdown`,
+        url: `/tables/dropdown`,
         method: "GET",
       }),
     }),
@@ -57,5 +57,6 @@ useCreateTableMutation,
 useLazyGetTableListQuery,
 useUpdateTableByIDMutation,
 useDeleteTableMutation,
-useGetTableByIdQuery
+useGetTableByIdQuery,
+useGetTableDropdownQuery
 } = tableSlice;
