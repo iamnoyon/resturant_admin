@@ -13,6 +13,7 @@ import useToaster from '@/components/hooks/useToaster';
 import ConfirmationModal from '@/components/common/ConfirmationModal';
 import useDebounce from '@/components/hooks/useDebounce';
 import { useDeleteTableMutation, useLazyGetTableListQuery, useUpdateTableByIDMutation } from '@/store/admin/table';
+import { useLazyGetOrderListQuery } from '@/store/admin/order';
 
 const columnHelper = createColumnHelper();
 
@@ -25,7 +26,7 @@ const OrderList = () => {
     const [itemId, setItemId] = useState(null)
     const { successToaster, errorToaster } = useToaster();
 
-    const [triggerList, { data: tableList, isLoading }] = useLazyGetTableListQuery();
+    const [triggerList, { data: orderList, isLoading }] = useLazyGetOrderListQuery();
     const [updateTable] = useUpdateTableByIDMutation();
     const [deleteTable] = useDeleteTableMutation();
 
@@ -78,32 +79,61 @@ const OrderList = () => {
                     </span>
                 ),
             }),
-            columnHelper.accessor('tableName', {
-                id: 'tableName',
-                header: () => 'Table Name',
+            columnHelper.accessor('orderId', {
+                id: 'orderId',
+                header: () => 'Order ID',
                 cell: (info) => (
                     <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
                         {info.getValue()}
                     </span>
                 ),
             }),
-            columnHelper.accessor('totalSeat', {
-                id: 'totalSeat',
-                header: () => 'Total seats',
+            columnHelper.accessor('totalBill', {
+                id: 'totalBill',
+                header: () => 'Total Bill',
                 cell: (info) => (
                     <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
-                        {info.getValue()}
+                        ৳{info.getValue()}
                     </span>
                 ),
             }),
-            columnHelper.accessor('isActive', {
-                id: 'isActive',
-                header: () => 'Status',
+            columnHelper.accessor('discount', {
+                id: 'discount',
+                header: () => 'Discount',
+                cell: (info) => (
+                    <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
+                        ৳{info.getValue()}
+                    </span>
+                ),
+            }),
+            columnHelper.accessor('subTotal', {
+                id: 'subTotal',
+                header: () => 'Sub Total',
+                cell: (info) => (
+                    <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
+                        ৳{info.getValue()}
+                    </span>
+                ),
+            }),
+            columnHelper.accessor("billStatus", {
+                id: "billStatus",
+                header: () => "Payment",
                 cell: (info) => {
-                    const status = info.getValue();
+                    const isPaid = info.getValue() === "paid";
+
                     return (
-                        <span className={`inline-block rounded-full px-3 py-1 text-[0.875rem] font-medium text-white ${status ? 'bg-[#16A34A]' : 'bg-[#EF4444]'}`}>
-                            {status ? 'Active' : 'Inactive'}
+                        <span
+                            className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold border
+          ${isPaid
+                                    ? "bg-green-50 text-green-700 border-green-200"
+                                    : "bg-red-50 text-red-700 border-red-200"
+                                }`}
+                        >
+                            <span
+                                className={`h-2 w-2 rounded-full ${isPaid ? "bg-green-500" : "bg-red-500"
+                                    }`}
+                            />
+                            {isPaid ? "Paid" : "Unpaid"}
                         </span>
                     );
                 },
@@ -118,30 +148,6 @@ const OrderList = () => {
                         <div className="flex items-center gap-1">
                             <SquarePen size={16} className="mr-2 cursor-pointer"
                                 onClick={() => router.push(`/tables/edit/${table?.id}`)} />
-                            <ThreeDotMenu
-                                object={table}
-                                actions={[
-                                    {
-                                        label: 'Active',
-                                        onClick: () => handleStatusUpdate(table, true),
-                                        isDisabled: table?.isActive === true
-                                    },
-                                    {
-                                        label: 'Inactive',
-                                        onClick: () => handleStatusUpdate(table, false),
-                                        isDisabled: table?.isActive === false
-                                    },
-                                ]}
-                                isDisabled={false}
-                            />
-                            <Trash
-                                size={16}
-                                className='hover:text-red-400 hover:cursor-pointer'
-                                onClick={() => {
-                                    setIsModalOpen(true)
-                                    setItemId(table?.id)
-                                }}
-                            />
                         </div>
                     );
                 },
@@ -152,19 +158,14 @@ const OrderList = () => {
 
     return (
         <CardLayout
-            title="Table List"
-            titleIcon={List}
-            buttonText="Add Table"
-            buttonIcon={Plus}
-            buttonHref="/tables/create"
         >
             <ReactTable
                 columns={columns}
-                dataSource={tableList?.dataSource || []}
+                dataSource={orderList?.dataSource || []}
                 isLoading={isLoading}
-                totalRecords={tableList?.totalRecords}
-                showPageSizeDropdown={tableList?.totalRecords > pageAndLimit.limit}
-                paginationOn={tableList?.paginationOn}
+                totalRecords={orderList?.totalRecords}
+                showPageSizeDropdown={orderList?.totalRecords > pageAndLimit.limit}
+                paginationOn={orderList?.paginationOn}
                 pageAndLimit={pageAndLimit}
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}

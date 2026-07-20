@@ -9,13 +9,16 @@ import {
   ShoppingCart,
   ChevronUp,
   X,
+  List,
 } from "lucide-react";
 import { useGetTableDropdownQuery } from "@/store/admin/table";
 import { useGetCategoryDropdownQuery } from "@/store/admin/category";
 import { useLazyGetProductsByCategoryQuery } from "@/store/admin/products";
-import { useCreateOrderMutation } from "@/store/admin/order";
+import { useCreateOrderMutation, useLazyGetOrderListQuery } from "@/store/admin/order";
 import useToaster from "@/components/hooks/useToaster";
+import CustomDrawer from "@/components/common/CustomDrawer";
 import Image from "next/image";
+import OrderList from "./OrderList";
 
 const tableBtnClass = (isSelected) =>
   `flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border-2 transition-all cursor-pointer aspect-square w-full ${
@@ -68,16 +71,19 @@ const NewOrder = () => {
   const [cart, setCart] = useState([]);
   const [discount, setDiscount] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { successToaster, errorToaster } = useToaster();
 
   const { data: tableDropdown, isLoading: tablesLoading } = useGetTableDropdownQuery();
   const { data: categoryDropdown, isLoading: categoriesLoading } = useGetCategoryDropdownQuery();
   const [triggerProducts, { data: productList, isLoading: productsLoading }] = useLazyGetProductsByCategoryQuery();
   const [createOrder, { isLoading: orderLoading }] = useCreateOrderMutation();
+  const [triggerOrders, { data: orderList, isLoading: ordersLoading }] = useLazyGetOrderListQuery();
 
   const tables = tableDropdown?.data || [];
   const categories = categoryDropdown?.data || [];
   const products = productList?.data || [];
+  const orders = orderList?.dataSource || orderList?.data || [];
 
   const beveragesCategory = useMemo(
     () => categories.find((c) => c.categoryName?.toLowerCase().includes("beverages") || c.categoryName?.toLowerCase().includes("water")),
@@ -108,6 +114,12 @@ const NewOrder = () => {
       setSelectedCategory(categories[0]);
     }
   }, [categories]);
+
+  useEffect(() => {
+    if (drawerOpen) {
+      triggerOrders({ page: 1, limit: 20 });
+    }
+  }, [drawerOpen]);
 
   const addToCart = (product) => {
     setCart((prev) => {
@@ -514,7 +526,18 @@ const NewOrder = () => {
   /* ============ MAIN LAYOUT ============ */
 
   return (
-    <>
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-semibold text-[#043570]">New Order</h2>
+        <button
+          onClick={() => setDrawerOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-[#0A4D99] text-white hover:bg-[#063C76] transition-colors cursor-pointer"
+        >
+          <List size={16} />
+          Order List
+        </button>
+      </div>
+
       {/* ======================== MOBILE & TABLET (<lg) ======================== */}
       <div className="lg:hidden flex flex-col gap-3 pb-20">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
@@ -625,7 +648,15 @@ const NewOrder = () => {
           )}
         </div>
       </div>
-    </>
+
+      <CustomDrawer
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title="Order List"
+      >
+        <OrderList />
+      </CustomDrawer>
+    </div>
   );
 };
 
