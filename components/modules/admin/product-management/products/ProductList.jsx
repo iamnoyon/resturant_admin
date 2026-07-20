@@ -18,6 +18,8 @@ import { useRouter } from 'next/navigation';
 import useToaster from '@/components/hooks/useToaster';
 import ConfirmationModal from '@/components/common/ConfirmationModal';
 import InputModal from '@/components/common/InputModal';
+import FilterDropdown from '@/components/common/FilterDropdown';
+import { useGetCategoryDropdownQuery } from '@/store/admin/category';
 
 const columnHelper = createColumnHelper();
 
@@ -28,12 +30,14 @@ const ProductList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [itemId, setItemId] = useState(null)
     const [isStockModalOpen, setIsStockModalOpen] = useState(false)
+    const [categoryId, setCategoryId] = useState()
     const { successToaster, errorToaster } = useToaster();
 
     const [triggerList, { data: productList, isLoading }] = useLazyGetProductListQuery();
     const [updateProduct] = useUpdateProductByIDMutation();
     const [deleteProduct] = useDeleteProductMutation();
     const [updateStock] = useUpdateStockMutation()
+    const { data: categoryDropdown } = useGetCategoryDropdownQuery()
 
     useEffect(() => {
         triggerList({
@@ -230,6 +234,15 @@ const ProductList = () => {
                 onPageLimitChange={({ page, limit }) => {
                     setPageAndLimit({ page, limit });
                 }}
+                ExtraContent={
+                    <FilterDropdown
+                        options={categoryDropdown?.data || []}
+                        valueKey='id'
+                        labelKey='categoryName'
+                        value={categoryId}
+                        onChange={(id) => setCategoryId(id)}
+                    />
+                }
             />
             <ConfirmationModal
                 title='Delete this record permanently?'
