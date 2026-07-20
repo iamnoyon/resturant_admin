@@ -16,7 +16,6 @@ import {
 import { FaChrome } from "react-icons/fa";
 import { AiFillProduct } from "react-icons/ai";
 import { MdFormatListBulletedAdd } from "react-icons/md";
-import { MdCategory } from "react-icons/md";
 
 export const menuItems = [
   {
@@ -28,8 +27,8 @@ export const menuItems = [
   {
     name: "Orders",
     icon: ShoppingCart,
-    path: "/admin/orders",
-    activePath: ["/admin/orders"],
+    path: "/order",
+    activePath: ["/order"],
   },
 
   {
