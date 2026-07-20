@@ -54,6 +54,13 @@ export const productSlice = apiSlice.injectEndpoints({
         body: data
       }),
       invalidatesTags: ["Products"],
+    }),
+    getProductsByCategory: builder.query({
+      query: (params) => ({
+        url: `/products/by-category`,
+        method: "GET",
+        params
+      }),
     })
   }),
   overrideExisting: true,
@@ -65,5 +72,6 @@ export const {
   useLazyGetProductListQuery,
   useGetProductByIdQuery,
   useDeleteProductMutation,
-  useUpdateStockMutation
+  useUpdateStockMutation,
+  useLazyGetProductsByCategoryQuery
 } = productSlice;
