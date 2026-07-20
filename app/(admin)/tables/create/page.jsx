@@ -1,8 +1,9 @@
+import CreateTable from '@/components/modules/admin/TableManagement/CreateTable'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>page</div>
+    <div><CreateTable /></div>
   )
 }
 

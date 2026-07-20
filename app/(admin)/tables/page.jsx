@@ -1,8 +1,11 @@
+import TableList from '@/components/modules/admin/TableManagement/TableList'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>page</div>
+    <div>
+      <TableList />
+    </div>
   )
 }
 
