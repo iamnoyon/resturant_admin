@@ -21,9 +21,9 @@ export const tableSlice = apiSlice.injectEndpoints({
 
       providesTags: ["tables"],
     }),
-    getCategoryById: builder.query({
+    getTableById: builder.query({
       query: ({ id }) => ({
-        url: `/categories/${id}`,
+        url: `/tables/${id}`,
         method: "GET",
       }),
     }),
@@ -56,5 +56,6 @@ export const {
 useCreateTableMutation,
 useLazyGetTableListQuery,
 useUpdateTableByIDMutation,
-useDeleteTableMutation
+useDeleteTableMutation,
+useGetTableByIdQuery
 } = tableSlice;

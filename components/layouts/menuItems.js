@@ -11,6 +11,7 @@ import {
   Plus,
   Vault,
   ChartBarStacked,
+  Banknote,
 } from "lucide-react";
 import { FaChrome } from "react-icons/fa";
 import { AiFillProduct } from "react-icons/ai";
@@ -24,28 +25,6 @@ export const menuItems = [
     path: "/dashboard",
     activePath: ["/dashboard"],
   },
-
-  {
-    name: "User Management",
-    icon: Users,
-    path: "#",
-    activePath: ["/user-management/"],
-
-    children: [
-      {
-        name: "Users",
-        path: "/user-management/users",
-        icon: UserPlus,
-        activePath: ["/user-management/users/"],
-      },
-      {
-        name: "Role & Permissions",
-        path: "/user-management/roles",
-        icon: FaChrome,
-      },
-    ],
-  },
-
   {
     name: "Orders",
     icon: ShoppingCart,
@@ -80,9 +59,29 @@ export const menuItems = [
     activePath: ["/tables"],
   },
   {
-    name: "CMS",
-    icon: Settings,
-    path: "/content-management",
-    activePath: ["/content-management/"]
-  }
+    name: "Others Expense",
+    icon: Banknote,
+    path: "/expenses",
+    activePath: ["/expenses"]
+  },
+   {
+    name: "User Management",
+    icon: Users,
+    path: "#",
+    activePath: ["/user-management/"],
+
+    children: [
+      {
+        name: "Users",
+        path: "/user-management/users",
+        icon: UserPlus,
+        activePath: ["/user-management/users/"],
+      },
+      {
+        name: "Role & Permissions",
+        path: "/user-management/roles",
+        icon: FaChrome,
+      },
+    ],
+  },
 ];

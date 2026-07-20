@@ -12,11 +12,12 @@ import { useRouter } from 'next/navigation';
 import useToaster from '@/components/hooks/useToaster';
 import ConfirmationModal from '@/components/common/ConfirmationModal';
 import useDebounce from '@/components/hooks/useDebounce';
-import { useDeleteTableMutation, useLazyGetTableListQuery, useUpdateTableByIDMutation } from '@/store/admin/table';
+import { useDeleteTableMutation, useUpdateTableByIDMutation } from '@/store/admin/table';
+import { useLazyGetExpenseListQuery } from '@/store/admin/expense';
 
 const columnHelper = createColumnHelper();
 
-const TableList = () => {
+const ExpenseList = () => {
     const router = useRouter();
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
@@ -25,7 +26,7 @@ const TableList = () => {
     const [itemId, setItemId] = useState(null)
     const { successToaster, errorToaster } = useToaster();
 
-    const [triggerList, { data: tableList, isLoading }] = useLazyGetTableListQuery();
+    const [triggerList, { data: expenseList, isLoading }] = useLazyGetExpenseListQuery();
     const [updateTable] = useUpdateTableByIDMutation();
     const [deleteTable] = useDeleteTableMutation();
 
@@ -78,35 +79,23 @@ const TableList = () => {
                     </span>
                 ),
             }),
-            columnHelper.accessor('tableName', {
-                id: 'tableName',
-                header: () => 'Table Name',
+            columnHelper.accessor('expenseName', {
+                id: 'expenseName',
+                header: () => 'Expense Name',
                 cell: (info) => (
                     <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
                         {info.getValue()}
                     </span>
                 ),
             }),
-            columnHelper.accessor('totalSeat', {
-                id: 'totalSeat',
-                header: () => 'Total seats',
+            columnHelper.accessor('expenseValue', {
+                id: 'expenseValue',
+                header: () => 'Expense value',
                 cell: (info) => (
                     <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
-                        {info.getValue()}
+                        ৳{info.getValue()}
                     </span>
                 ),
-            }),
-            columnHelper.accessor('isActive', {
-                id: 'isActive',
-                header: () => 'Status',
-                cell: (info) => {
-                    const status = info.getValue();
-                    return (
-                        <span className={`inline-block rounded-full px-3 py-1 text-[0.875rem] font-medium text-white ${status ? 'bg-[#16A34A]' : 'bg-[#EF4444]'}`}>
-                            {status ? 'Active' : 'Inactive'}
-                        </span>
-                    );
-                },
             }),
             columnHelper.display({
                 id: 'actions',
@@ -117,31 +106,7 @@ const TableList = () => {
                     return (
                         <div className="flex items-center gap-1">
                             <SquarePen size={16} className="mr-2 cursor-pointer"
-                                onClick={() => router.push(`/tables/edit/${table?.id}`)} />
-                            <ThreeDotMenu
-                                object={table}
-                                actions={[
-                                    {
-                                        label: 'Active',
-                                        onClick: () => handleStatusUpdate(table, true),
-                                        isDisabled: table?.isActive === true
-                                    },
-                                    {
-                                        label: 'Inactive',
-                                        onClick: () => handleStatusUpdate(table, false),
-                                        isDisabled: table?.isActive === false
-                                    },
-                                ]}
-                                isDisabled={false}
-                            />
-                            <Trash
-                                size={16}
-                                className='hover:text-red-400 hover:cursor-pointer'
-                                onClick={() => {
-                                    setIsModalOpen(true)
-                                    setItemId(table?.id)
-                                }}
-                            />
+                                onClick={() => router.push(`/expenses/edit/${table?.id}`)} />
                         </div>
                     );
                 },
@@ -152,19 +117,19 @@ const TableList = () => {
 
     return (
         <CardLayout
-            title="Table List"
+            title="Expense List"
             titleIcon={List}
-            buttonText="Add Table"
+            buttonText="Add Expense"
             buttonIcon={Plus}
-            buttonHref="/tables/create"
+            buttonHref="/expenses/create"
         >
             <ReactTable
                 columns={columns}
-                dataSource={tableList?.dataSource || []}
+                dataSource={expenseList?.dataSource || []}
                 isLoading={isLoading}
-                totalRecords={tableList?.totalRecords}
-                showPageSizeDropdown={tableList?.totalRecords > pageAndLimit.limit}
-                paginationOn={tableList?.paginationOn}
+                totalRecords={expenseList?.totalRecords}
+                showPageSizeDropdown={expenseList?.totalRecords > pageAndLimit.limit}
+                paginationOn={expenseList?.paginationOn}
                 pageAndLimit={pageAndLimit}
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
@@ -184,4 +149,4 @@ const TableList = () => {
     );
 };
 
-export default TableList;
+export default ExpenseList;
