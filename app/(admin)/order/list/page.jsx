@@ -1,8 +1,11 @@
+import OrderList from '@/components/modules/admin/OrderManagement/OrderList'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>page</div>
+    <div>
+        <OrderList />
+    </div>
   )
 }
 

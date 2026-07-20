@@ -166,17 +166,17 @@ const NewOrder = () => {
       return;
     }
 
+    const productIds = cart.flatMap((item) =>
+      Array(item.qty).fill(item.productId)
+    );
+
     const payload = {
       tableId: selectedTable.id,
-      items: cart.map((item) => ({
-        productId: item.productId,
-        productName: item.productName,
-        qty: item.qty,
-        price: item.price,
-      })),
+      productIds,
+      totalBill: subtotal,
       discount: discountValue,
-      vat,
-      grandTotal,
+      subTotal: afterDiscount,
+      billStatus: "paid",
     };
 
     try {
