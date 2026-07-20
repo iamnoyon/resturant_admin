@@ -32,19 +32,19 @@ export const menuItems = [
   },
 
   {
-    name: "Product Management",
+    name: "Menu Management",
     icon: AiFillProduct,
     path: "#",
     activePath: ["/product-management/"],
 
     children: [
       {
-        name: "Categories",
+        name: "Category",
         path: "/product-management/categories",
         icon: ChartBarStacked,
       },
       {
-        name: "Products",
+        name: "Menu Items",
         path: "/product-management/products",
         icon: MdFormatListBulletedAdd,
       },
