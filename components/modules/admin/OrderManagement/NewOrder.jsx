@@ -358,7 +358,7 @@ const NewOrder = () => {
   const renderCartItems = () => (
     <div className="space-y-2 md:space-y-3">
       {cart.map((item) => (
-        <div key={item.productId} className="flex items-center gap-2 md:gap-3 p-2 rounded-lg bg-gray-50">
+        <div key={item.productId} className="flex items-center gap-2 md:gap-2 p-2 rounded-lg bg-gray-50">
           <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden">
             <FallbackImage
               src={item.imageUrl}
@@ -372,44 +372,52 @@ const NewOrder = () => {
           </div>
           <div className="flex md:hidden 2xl:flex items-center gap-1">
             <button
-              onClick={() => updateQty(item.productId, -1)}
-              className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer"
-            >
-              <Minus size={10} className="text-gray-500" />
-            </button>
-            <span className="text-xs md:text-sm font-semibold text-[#043570] w-4 text-center">{item.qty}</span>
-            <button
-              onClick={() => updateQty(item.productId, 1)}
-              className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer"
-            >
-              <Plus size={10} className="text-gray-500" />
-            </button>
+                onClick={() => updateQty(item.productId, -1)}
+                className="flex h-6 w-6 items-center justify-center bg-white text-gray-600 transition hover:bg-gray-100 active:bg-gray-200"
+              >
+                <Minus size={10} />
+              </button>
+
+              <span className="flex h-6 min-w-[30px] items-center justify-center border-x border-gray-200 bg-gray-50 text-sm font-semibold text-[#043570]">
+                {item.qty}
+              </span>
+
+              <button
+                onClick={() => updateQty(item.productId, 1)}
+                className="flex h-6 w-6 items-center justify-center bg-white text-gray-600 transition hover:bg-gray-100 active:bg-gray-200"
+              >
+                <Plus size={10} />
+              </button>
           </div>
 
           <div className="">
             <div className="hidden md:flex 2xl:hidden items-center gap-1 mb-1">
               <button
                 onClick={() => updateQty(item.productId, -1)}
-                className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer"
+                className="flex h-6 w-6 items-center justify-center bg-white text-gray-600 transition hover:bg-gray-100 active:bg-gray-200"
               >
-                <Minus size={10} className="text-gray-500" />
+                <Minus size={10} />
               </button>
-              <span className="text-xs md:text-sm font-semibold text-[#043570] w-4 text-center">{item.qty}</span>
+
+              <span className="flex h-6 min-w-[30px] items-center justify-center border-x border-gray-200 bg-gray-50 text-sm font-semibold text-[#043570]">
+                {item.qty}
+              </span>
+
               <button
                 onClick={() => updateQty(item.productId, 1)}
-                className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer"
+                className="flex h-6 w-6 items-center justify-center bg-white text-gray-600 transition hover:bg-gray-100 active:bg-gray-200"
               >
-                <Plus size={10} className="text-gray-500" />
+                <Plus size={10} />
               </button>
             </div>
-            <div className="flex items-center gap-1">
-            <span className="text-xs md:text-sm font-semibold text-gray-800 min-w-[40px] md:min-w-[50px] text-right">৳{item.price * item.qty}</span>
-            <button
-              onClick={() => removeFromCart(item.productId)}
-              className="shrink-0 text-gray-400 hover:text-[#EF4444] transition-colors cursor-pointer"
-            >
-              <Trash2 size={14} className="md:w-4 md:h-4" />
-            </button>
+            <div className="flex items-center gap-1 justify-end">
+              <span className="text-xs md:text-sm font-semibold text-gray-800 min-w-[40px] md:min-w-[50px] text-right">৳{item.price * item.qty}</span>
+              <button
+                onClick={() => removeFromCart(item.productId)}
+                className="shrink-0 text-gray-400 hover:text-[#EF4444] transition-colors cursor-pointer"
+              >
+                <Trash2 size={14} className="md:w-4 md:h-4" />
+              </button>
             </div>
           </div>
         </div>
