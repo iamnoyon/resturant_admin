@@ -14,7 +14,7 @@ import {
 import { useGetTableDropdownQuery } from "@/store/admin/table";
 import { useGetCategoryDropdownQuery } from "@/store/admin/category";
 import { useLazyGetProductsByCategoryQuery } from "@/store/admin/products";
-import { useCreateOrderMutation, useLazyGetOrderListQuery } from "@/store/admin/order";
+import { useCreateOrderMutation, useLazyGetOrderListQuery, useGetOrderByIdQuery } from "@/store/admin/order";
 import useToaster from "@/components/hooks/useToaster";
 import CustomDrawer from "@/components/common/CustomDrawer";
 import Image from "next/image";
@@ -72,6 +72,8 @@ const NewOrder = () => {
   const [discount, setDiscount] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editDrawerOpen, setEditDrawerOpen] = useState(false);
+  const [editOrderId, setEditOrderId] = useState(null);
   const { successToaster, errorToaster } = useToaster();
 
   const { data: tableDropdown, isLoading: tablesLoading } = useGetTableDropdownQuery();
@@ -83,7 +85,6 @@ const NewOrder = () => {
   const tables = tableDropdown?.data || [];
   const categories = categoryDropdown?.data || [];
   const products = productList?.data || [];
-  const orders = orderList?.dataSource || orderList?.data || [];
 
   const beveragesCategory = useMemo(
     () => categories.find((c) => c.categoryName?.toLowerCase().includes("beverages") || c.categoryName?.toLowerCase().includes("water")),
@@ -120,6 +121,11 @@ const NewOrder = () => {
       triggerOrders({ page: 1, limit: 20 });
     }
   }, [drawerOpen]);
+
+  const handleEditOrder = (orderId) => {
+    setEditOrderId(orderId);
+    setEditDrawerOpen(true);
+  };
 
   const addToCart = (product) => {
     setCart((prev) => {
@@ -178,13 +184,14 @@ const NewOrder = () => {
       return;
     }
 
-    const productIds = cart.flatMap((item) =>
-      Array(item.qty).fill(item.productId)
-    );
+    const products = cart.map((item) => ({
+      productId: item.productId,
+      quantity: item.qty,
+    }));
 
     const payload = {
       tableId: selectedTable.id,
-      productIds,
+      products,
       totalBill: subtotal,
       discount: discountValue,
       subTotal: afterDiscount,
@@ -654,7 +661,7 @@ const NewOrder = () => {
         onClose={() => setDrawerOpen(false)}
         title="Order List"
       >
-        <OrderList />
+        <OrderList onEditOrder={handleEditOrder} />
       </CustomDrawer>
     </div>
   );

@@ -17,7 +17,7 @@ import { useLazyGetOrderListQuery } from '@/store/admin/order';
 
 const columnHelper = createColumnHelper();
 
-const OrderList = () => {
+const OrderList = ({ onEditOrder }) => {
     const router = useRouter();
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
@@ -142,12 +142,18 @@ const OrderList = () => {
                 id: 'actions',
                 header: () => 'Actions',
                 cell: (info) => {
-                    const table = info.row.original;
+                    const order = info.row.original;
 
                     return (
                         <div className="flex items-center gap-1">
                             <SquarePen size={16} className="mr-2 cursor-pointer"
-                                onClick={() => router.push(`/tables/edit/${table?.id}`)} />
+                                onClick={() => {
+                                    if (onEditOrder) {
+                                        onEditOrder(order?.id);
+                                    } else {
+                                        router.push(`/tables/edit/${order?.id}`);
+                                    }
+                                }} />
                         </div>
                     );
                 },
