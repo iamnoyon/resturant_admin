@@ -4,7 +4,6 @@ import {
     ColumnDef,
     flexRender,
     getCoreRowModel,
-    getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
@@ -24,7 +23,6 @@ const ReactTable = ({
     columns,
     dataSource,
     isLoading = false,
-    defaultSearch = false,
     showPageSizeDropdown = true,
     allowRowSelect = false,
     onRowSelectionChange,
@@ -37,7 +35,6 @@ const ReactTable = ({
     ExtraContent
 }) => {
     const [sorting, setSorting] = useState([]);
-    const [globalFilter, setGlobalFilter] = useState('');
     const [rowSelection, setRowSelection] = useState({});
 
     const table = useReactTable({
@@ -46,21 +43,18 @@ const ReactTable = ({
         pageCount: totalRecords ? Math.ceil(totalRecords / (pageAndLimit?.limit ?? 10)) : -1,
         state: {
             sorting,
-            globalFilter,
             rowSelection,
             pagination: {
-                pageIndex: (pageAndLimit?.page ?? 1) - 1, // <-- controlled from parent
-                pageSize: pageAndLimit?.limit ?? 10, // <-- controlled from parent
+                pageIndex: (pageAndLimit?.page ?? 1) - 1,
+                pageSize: pageAndLimit?.limit ?? 10,
             },
         },
         manualPagination: paginationOn ?? false,
         enableRowSelection: allowRowSelect,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
         ...((paginationOn ?? false) ? {} : { getPaginationRowModel: getPaginationRowModel() }),
         onSortingChange: setSorting,
-        onGlobalFilterChange: setGlobalFilter,
         onRowSelectionChange: setRowSelection,
     });
 
@@ -73,7 +67,6 @@ const ReactTable = ({
     }, [rowSelection]);
 
     const updatePageLimit = (page, limit) => {
-        // Notify parent
         onPageLimitChange?.({ page, limit });
     };
 
@@ -84,37 +77,24 @@ const ReactTable = ({
             ) : (
                 <div className="">
                     <div className='flex justify-end gap-5 mb-3'>
-                    {/* Global Search */}
-                    {defaultSearch && (
-                        <div className="mb-4 flex justify-end">
+                        {onSearchChange && (
                             <div className="relative w-[200px]">
                                 <Search
                                     className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-400"
                                     size={18}
                                 />
-                                {onSearchChange ? (
-                                    <input
-                                        type="text"
-                                        value={searchQuery ?? ''}
-                                        onChange={(e) => onSearchChange(e.target.value)}
-                                        placeholder="Search"
-                                        className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 font-['DM_Sans',sans-serif] text-[0.875rem] focus:border-gray-300 focus:ring-1 focus:ring-gray-300 focus:outline-none"
-                                    />
-                                ) : (
-                                    <input
-                                        type="text"
-                                        value={globalFilter ?? ''}
-                                        onChange={(e) => setGlobalFilter(e.target.value)}
-                                        placeholder="Search"
-                                        className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 font-['DM_Sans',sans-serif] text-[0.875rem] focus:border-gray-300 focus:ring-1 focus:ring-gray-300 focus:outline-none"
-                                    />
-                                )}
+                                <input
+                                    type="text"
+                                    value={searchQuery ?? ''}
+                                    onChange={(e) => onSearchChange(e.target.value)}
+                                    placeholder="Search"
+                                    className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 font-['DM_Sans',sans-serif] text-[0.875rem] focus:border-gray-300 focus:ring-1 focus:ring-gray-300 focus:outline-none"
+                                />
                             </div>
-                        </div>
-                    )}
-                    {
-                        ExtraContent && ExtraContent
-                    }
+                        )}
+                        {
+                            ExtraContent && ExtraContent
+                        }
                     </div>
 
                     {/* Table */}
@@ -193,7 +173,6 @@ const ReactTable = ({
                     <div
                         className={`flex flex-col items-center gap-3 sm:flex-row sm:gap-0 ${showPageSizeDropdown ? 'sm:justify-between' : 'sm:justify-end'} mt-4 px-4`}
                     >
-                        {/* Page Size Dropdown */}
                         {showPageSizeDropdown && (
                             <div className="flex items-center gap-2">
                                 <label
@@ -217,7 +196,6 @@ const ReactTable = ({
                             </div>
                         )}
 
-                        {/* Pagination Controls */}
                         {paginationOn && pageAndLimit && totalRecords !== undefined && (
                             <div className="flex items-center gap-1 sm:gap-2">
                                 <div className="text-[#043570] sm:mr-10">

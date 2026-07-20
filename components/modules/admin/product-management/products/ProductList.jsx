@@ -30,7 +30,7 @@ const ProductList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [itemId, setItemId] = useState(null)
     const [isStockModalOpen, setIsStockModalOpen] = useState(false)
-    const [categoryId, setCategoryId] = useState()
+    const [categoryId, setCategoryId] = useState('')
     const { successToaster, errorToaster } = useToaster();
 
     const [triggerList, { data: productList, isLoading }] = useLazyGetProductListQuery();
@@ -43,8 +43,10 @@ const ProductList = () => {
         triggerList({
             page: pageAndLimit.page,
             limit: pageAndLimit.limit,
+            search: searchQuery,
+            ...(categoryId ? { categoryId } : {}),
         });
-    }, [pageAndLimit]);
+    }, [pageAndLimit, categoryId, searchQuery]);
 
     const handleStatusUpdate = (product, status) => {
         const payload = {
