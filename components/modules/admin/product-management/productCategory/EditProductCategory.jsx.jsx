@@ -29,6 +29,7 @@ const EditProductCategory = () => {
         defaultValues: {
             categoryName: '',
             shortNote: '',
+            imageUrl: '',
             isActive: null,
         }
     });
@@ -38,6 +39,7 @@ const EditProductCategory = () => {
             methods.reset({
                 categoryName: categoryDetails?.data?.categoryName,
                 shortNote: categoryDetails?.data?.shortNote,
+                imageUrl: categoryDetails?.data?.imageUrl,
                 isActive: categoryDetails?.data?.isActive
             })
         }
@@ -86,10 +88,17 @@ const EditProductCategory = () => {
                         ]}
                     />
                 </div>
-                <div className='mt-5'>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                    <FormFileUpload
+                        name="imageUrl"
+                        label="Category Image"
+                        valueKey="url"
+                    />
+
                     <FormTextarea
                         name="shortNote"
-                        label="Description"
+                        label="Short Note"
+                        rows={6}
                     />
                 </div>
                 <div className='flex items-center justify-center gap-10 mt-20'>

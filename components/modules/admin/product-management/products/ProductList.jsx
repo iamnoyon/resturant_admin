@@ -20,6 +20,7 @@ import ConfirmationModal from '@/components/common/ConfirmationModal';
 import InputModal from '@/components/common/InputModal';
 import FilterDropdown from '@/components/common/FilterDropdown';
 import { useGetCategoryDropdownQuery } from '@/store/admin/category';
+import useDebounce from '@/components/hooks/useDebounce';
 
 const columnHelper = createColumnHelper();
 
@@ -27,6 +28,7 @@ const ProductList = () => {
     const router = useRouter();
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
+    const debouncedSearch = useDebounce(searchQuery, 500);
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [itemId, setItemId] = useState(null)
     const [isStockModalOpen, setIsStockModalOpen] = useState(false)
@@ -43,10 +45,10 @@ const ProductList = () => {
         triggerList({
             page: pageAndLimit.page,
             limit: pageAndLimit.limit,
-            search: searchQuery,
+            search: debouncedSearch,
             ...(categoryId ? { categoryId } : {}),
         });
-    }, [pageAndLimit, categoryId, searchQuery]);
+    }, [pageAndLimit, categoryId, debouncedSearch]);
 
     const handleStatusUpdate = (product, status) => {
         const payload = {

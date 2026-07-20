@@ -16,6 +16,7 @@ const FormFileUpload = ({
     multiple = false,
     accept = "*",
     autoUpload = true,
+    valueKey = null,
 
     wrapperClass = "",
     labelClass = "",
@@ -92,10 +93,15 @@ const FormFileUpload = ({
                         try {
                             if (!multiple) {
                                 const result = await uploadFile(selectedFiles[0]);
-                                field.onChange(result?.data || result);
+                                const raw = result?.data || result;
+                                field.onChange(valueKey ? raw?.[valueKey] : raw);
                             } else {
                                 const result = await uploadFiles(selectedFiles);
-                                field.onChange(result?.data || result);
+                                const raw = result?.data || result;
+                                const mapped = valueKey
+                                    ? (raw || []).map((item) => item?.[valueKey])
+                                    : raw;
+                                field.onChange(mapped);
                             }
                         } catch (err) {
                             const msg = err?.data?.message || "Upload failed. Please try again.";

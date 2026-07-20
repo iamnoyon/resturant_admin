@@ -8,6 +8,7 @@ import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import ThreeDotMenu from '@/components/common/ThreeDotMenu';
 import useToaster from '@/components/hooks/useToaster';
+import useDebounce from '@/components/hooks/useDebounce';
 import { useDeleteCategoryMutation, useLazyGetCategoryListQuery, useUpdateCategoryByIDMutation } from '@/store/admin/category';
 import { useRouter } from 'next/navigation';
 import ConfirmationModal from '@/components/common/ConfirmationModal';
@@ -18,6 +19,7 @@ const columnHelper = createColumnHelper();
 const ProductCategoryList = () => {
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
+    const debouncedSearch = useDebounce(searchQuery, 500);
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [itemId, setItemId] = useState(null)
     const { successToaster, errorToaster } = useToaster()
@@ -34,8 +36,9 @@ const ProductCategoryList = () => {
         triggerList({
             page: pageAndLimit.page,
             limit: pageAndLimit.limit,
+            search: debouncedSearch
         });
-    }, [pageAndLimit]);
+    }, [pageAndLimit, debouncedSearch]);
 
     // Action handlers
     const handleStatusUpdate = (category, status) => {
@@ -89,7 +92,6 @@ const ProductCategoryList = () => {
                             {info.getValue()}
                         </span>
                     ),
-                    enableSorting: true,
                 }),
                 columnHelper.accessor('isActive', {
                     id: 'isActive',
@@ -106,7 +108,6 @@ const ProductCategoryList = () => {
                             </span>
                         );
                     },
-                    enableSorting: true,
                 }),
                 columnHelper.display({
                     id: 'actions',

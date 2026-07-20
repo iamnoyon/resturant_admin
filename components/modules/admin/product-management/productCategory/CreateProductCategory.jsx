@@ -26,12 +26,13 @@ const CreateProductCategory = () => {
         defaultValues: {
             categoryName: '',
             shortNote: '',
+            imageUrl: null,
             isActive: true
         }
     });
 
     const onSubmit = (data) => {
-
+        console.log(data);
         CreateCategory(data)
             .unwrap()
             .then((res) => {
@@ -63,10 +64,19 @@ const CreateProductCategory = () => {
                         placeholder='Electronics'
                         required
                     />
-                    <FormTextarea
-                        name="Description"
-                        label="shortNote"
-                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormFileUpload
+                            name="imageUrl"
+                            label="Category Image"
+                            valueKey="url"
+                        />
+
+                        <FormTextarea
+                            name="shortNote"
+                            label="Short Note"
+                            rows={6}
+                        />
+                    </div>
                 </div>
                 <div className='flex items-center justify-center gap-10 mt-10'>
                     <button
