@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
+import Swal from "sweetalert2";
 import {
   Minus,
   Plus,
@@ -182,6 +183,24 @@ const NewOrder = () => {
       return;
     }
 
+    const result = await Swal.fire({
+      title: "Confirm Order",
+      text: `Place order for ${selectedTable.tableName}?`,
+      icon: "question",
+      width: "350px",
+      padding: "1.25rem",
+      showCancelButton: true,
+      confirmButtonColor: "#043570",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, place order",
+      cancelButtonText: "Cancel",
+      didOpen: (popup) => {
+        const icon = popup.querySelector(".swal2-icon");
+        if (icon) icon.style.transform = "scale(0.7)";
+      },
+    });
+    if (!result.isConfirmed) return;
+
     const products = cart.map((item) => ({
       productId: item.productId,
       quantity: item.qty,
@@ -193,7 +212,7 @@ const NewOrder = () => {
       totalBill: subtotal,
       discount: discountValue,
       subTotal: afterDiscount,
-      billStatus: "paid",
+      billStatus: "unpaid",
     };
 
     try {
@@ -372,22 +391,22 @@ const NewOrder = () => {
           </div>
           <div className="flex md:hidden 2xl:flex items-center gap-1">
             <button
-                onClick={() => updateQty(item.productId, -1)}
-                className="flex h-6 w-6 items-center justify-center bg-white text-gray-600 transition hover:bg-gray-100 active:bg-gray-200"
-              >
-                <Minus size={10} />
-              </button>
+              onClick={() => updateQty(item.productId, -1)}
+              className="flex h-6 w-6 items-center justify-center bg-white text-gray-600 transition hover:bg-gray-100 active:bg-gray-200"
+            >
+              <Minus size={10} />
+            </button>
 
-              <span className="flex h-6 min-w-[30px] items-center justify-center border-x border-gray-200 bg-gray-50 text-sm font-semibold text-[#043570]">
-                {item.qty}
-              </span>
+            <span className="flex h-6 min-w-[30px] items-center justify-center border-x border-gray-200 bg-gray-50 text-sm font-semibold text-[#043570]">
+              {item.qty}
+            </span>
 
-              <button
-                onClick={() => updateQty(item.productId, 1)}
-                className="flex h-6 w-6 items-center justify-center bg-white text-gray-600 transition hover:bg-gray-100 active:bg-gray-200"
-              >
-                <Plus size={10} />
-              </button>
+            <button
+              onClick={() => updateQty(item.productId, 1)}
+              className="flex h-6 w-6 items-center justify-center bg-white text-gray-600 transition hover:bg-gray-100 active:bg-gray-200"
+            >
+              <Plus size={10} />
+            </button>
           </div>
 
           <div className="">

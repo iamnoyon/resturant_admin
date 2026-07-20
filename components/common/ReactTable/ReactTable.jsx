@@ -78,7 +78,7 @@ const ReactTable = ({
                 <div className="">
                     <div className='flex justify-end gap-5 mb-3'>
                         {onSearchChange && (
-                            <div className="relative w-[200px]">
+                            <div className="relative md:w-[200px] w-full">
                                 <Search
                                     className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-400"
                                     size={18}

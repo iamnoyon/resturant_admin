@@ -8,7 +8,7 @@ const CustomDrawer = ({
   onClose,
   title,
   children,
-  width = "lg:w-1/2",
+  width = "lg:w-2/3",
 }) => {
   const [visible, setVisible] = useState(false);
 
@@ -28,7 +28,7 @@ const CustomDrawer = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[10000] flex justify-end">
+    <div className="fixed inset-0 z-[100] flex justify-end">
       <div
         className="absolute inset-0 bg-black/40 transition-opacity duration-300"
         onClick={onClose}
