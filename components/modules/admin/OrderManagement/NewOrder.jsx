@@ -513,6 +513,19 @@ const NewOrder = () => {
             </div>
             {cart.length > 0 && (
               <div className="border-t border-gray-100 px-4 py-3 space-y-3">
+                <div>
+                  <label className="text-xs text-gray-500 mb-1 block">Overall Discount</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">৳</span>
+                    <input
+                      type="number"
+                      value={discount}
+                      onChange={(e) => setDiscount(e.target.value)}
+                      placeholder="0"
+                      className="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-gray-300"
+                    />
+                  </div>
+                </div>
                 {renderBillSummary()}
                 <div className="flex gap-3">
                   <button
