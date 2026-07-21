@@ -149,13 +149,20 @@ const ProductList = () => {
                 header: () => 'Stock',
                 cell: (info) => {
                     const product = info.row.original;
+                    const isLowStock =
+                        product?.stockRequired && product?.stock < 20;
+
                     return (
                         <button
                             onClick={() => {
-                                setItemId(product?.id)
+                                setItemId(product?.id);
                                 setIsStockModalOpen(true);
                             }}
-                            className="rounded bg-orange-500 px-3 py-1 font-['DM_Sans',sans-serif] text-xs font-medium text-white transition-colors hover:bg-orange-400 cursor-pointer flex justify-center items-center gap-2"
+                            className={`rounded px-2 py-1 font-['DM_Sans',sans-serif] text-xs font-medium text-white transition-colors cursor-pointer flex justify-center items-center gap-2 ${
+                                isLowStock
+                                    ? 'bg-red-500 hover:bg-red-400'
+                                    : 'bg-blue-600 hover:bg-blue-500'
+                            }`}
                         >
                             <span>{info.getValue()}</span>
                             <span>Update Stock</span>

@@ -15,6 +15,7 @@ import { productSchema } from './schema';
 import { useCreateProductMutation } from '@/store/admin/products';
 import { Loader2 } from 'lucide-react';
 import FormFileUpload from '@/Forms/FormFileUpload';
+import FormRadioGroup from '@/Forms/FormRadioGroup';
 
 const CreateProduct = () => {
     const router = useRouter();
@@ -30,10 +31,13 @@ const CreateProduct = () => {
             costPrice: '',
             soldPrice: '',
             stock: '',
+            stockRequired: false,
             imageUrl: '',
             isActive: true
         }
     });
+
+    const isStockRequired = methods.watch('stockRequired');
 
     const handleOnSubmit = (data) => {
         CreateProduct(data)
@@ -84,10 +88,24 @@ const CreateProduct = () => {
                         label="Category Image"
                         valueKey="url"
                     />
-                    <FormInput
-                        name='stock'
-                        label='Stock'
+                    <div className='flex flex-col gap-5'>
+                    <FormRadioGroup
+                        name="stockRequired"
+                        label="Stock Required?"
+                        columns={{ sm: 1, md: 2 }}
+                        options={[
+                            { label: 'Yes', id: true },
+                            { label: 'No', id: false },
+                        ]}
                     />
+                    {isStockRequired && (
+                        <FormInput
+                            name='stock'
+                            label='Stock Quantity'
+                            required
+                        />
+                    )}
+                    </div>
                 </div>
                 <FormTextEditor
                     name="description"

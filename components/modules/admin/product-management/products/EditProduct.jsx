@@ -35,6 +35,7 @@ const EditProduct = () => {
             costPrice: '',
             soldPrice: '',
             stock: '',
+            stockRequired: false,
             imageUrl: '',
             isActive: true
         }
@@ -49,11 +50,14 @@ const EditProduct = () => {
                 costPrice: productDetails?.data?.costPrice,
                 soldPrice: productDetails?.data?.soldPrice,
                 stock: productDetails?.data?.stock,
+                stockRequired: productDetails?.data?.stockRequired ?? false,
                 imageUrl: productDetails?.data?.imageUrl,
                 isActive: productDetails?.data?.isActive
             });
         }
     }, [productDetails]);
+
+    const isStockRequired = methods.watch('stockRequired');
 
     const handleOnSubmit = (data) => {
         UpdateProduct({ id, data })
@@ -108,10 +112,24 @@ const EditProduct = () => {
                         label="Category Image"
                         valueKey="url"
                     />
-                    <FormInput
-                        name='stock'
-                        label='Stock'
+                    <div className='flex flex-col gap-5'>
+                    <FormRadioGroup
+                        name="stockRequired"
+                        label="Stock Required?"
+                        columns={{ sm: 1, md: 2 }}
+                        options={[
+                            { label: 'Yes', id: true },
+                            { label: 'No', id: false },
+                        ]}
                     />
+                    {isStockRequired && (
+                        <FormInput
+                            name='stock'
+                            label='Stock Quantity'
+                            required
+                        />
+                    )}
+                    </div>
                     <FormRadioGroup
                         name="isActive"
                         label="Status"
