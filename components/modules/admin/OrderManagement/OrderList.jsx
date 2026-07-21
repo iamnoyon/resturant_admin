@@ -7,14 +7,9 @@ import { Trash2 } from "lucide-react";
 import ReactTable from "@/components/common/ReactTable/ReactTable";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import useToaster from "@/components/hooks/useToaster";
 import useDebounce from "@/components/hooks/useDebounce";
-import {
-  useDeleteTableMutation,
-  useUpdateTableByIDMutation,
-} from "@/store/admin/table";
 import {
   useLazyGetOrderListQuery,
   useUpdateOrderStatusMutation,
@@ -26,18 +21,13 @@ const columnHelper = createColumnHelper();
 const isAdmin = true;
 
 const OrderList = ({ onEditOrder }) => {
-  const router = useRouter();
   const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 500);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [itemId, setItemId] = useState(null);
   const { successToaster, errorToaster } = useToaster();
 
   const [triggerList, { data: orderList, isLoading }] =
     useLazyGetOrderListQuery();
-  const [updateTable] = useUpdateTableByIDMutation();
-  const [deleteTable] = useDeleteTableMutation();
   const [updateOrderStatus] = useUpdateOrderStatusMutation();
   const [deleteOrder] = useDeleteOrderMutation();
 
@@ -48,18 +38,6 @@ const OrderList = ({ onEditOrder }) => {
       search: debouncedSearch,
     });
   }, [pageAndLimit, debouncedSearch]);
-
-  // delete category
-  const handleDeleteItem = () => {
-    deleteTable(itemId)
-      .unwrap()
-      .then((res) => {
-        if (res?.success) {
-          successToaster(res?.message);
-          setIsModalOpen(false);
-        }
-      });
-  };
 
   const columns = useMemo(() => {
     const cols = [

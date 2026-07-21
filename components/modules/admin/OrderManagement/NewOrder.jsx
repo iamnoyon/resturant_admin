@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Swal from "sweetalert2";
 import {
   Minus,
@@ -15,7 +15,7 @@ import {
 import { useGetTableDropdownQuery } from "@/store/admin/table";
 import { useGetCategoryDropdownQuery } from "@/store/admin/category";
 import { useLazyGetProductsByCategoryQuery } from "@/store/admin/products";
-import { useCreateOrderMutation, useLazyGetOrderListQuery, useGetOrderByIdQuery } from "@/store/admin/order";
+import { useCreateOrderMutation, useLazyGetOrderListQuery } from "@/store/admin/order";
 import useToaster from "@/components/hooks/useToaster";
 import CustomDrawer from "@/components/common/CustomDrawer";
 import Image from "next/image";
@@ -79,7 +79,7 @@ const NewOrder = () => {
   const { data: categoryDropdown, isLoading: categoriesLoading } = useGetCategoryDropdownQuery();
   const [triggerProducts, { data: productList, isLoading: productsLoading }] = useLazyGetProductsByCategoryQuery();
   const [createOrder, { isLoading: orderLoading }] = useCreateOrderMutation();
-  const [triggerOrders, { data: orderList, isLoading: ordersLoading }] = useLazyGetOrderListQuery();
+  const [triggerOrders] = useLazyGetOrderListQuery();
 
   const tables = tableDropdown?.data || [];
   const categories = categoryDropdown?.data || [];
