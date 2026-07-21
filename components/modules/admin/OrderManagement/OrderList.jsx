@@ -3,14 +3,13 @@
 
 import CardLayout from "@/components/common/CardLayout";
 import { useMemo, useState } from "react";
-import { Plus, List, SquarePen, Trash } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import ReactTable from "@/components/common/ReactTable/ReactTable";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import useToaster from "@/components/hooks/useToaster";
-import ConfirmationModal from "@/components/common/ConfirmationModal";
 import useDebounce from "@/components/hooks/useDebounce";
 import {
   useDeleteTableMutation,
@@ -19,9 +18,12 @@ import {
 import {
   useLazyGetOrderListQuery,
   useUpdateOrderStatusMutation,
+  useDeleteOrderMutation,
 } from "@/store/admin/order";
 
 const columnHelper = createColumnHelper();
+
+const isAdmin = true;
 
 const OrderList = ({ onEditOrder }) => {
   const router = useRouter();
@@ -37,6 +39,7 @@ const OrderList = ({ onEditOrder }) => {
   const [updateTable] = useUpdateTableByIDMutation();
   const [deleteTable] = useDeleteTableMutation();
   const [updateOrderStatus] = useUpdateOrderStatusMutation();
+  const [deleteOrder] = useDeleteOrderMutation();
 
   useEffect(() => {
     triggerList({
@@ -58,8 +61,8 @@ const OrderList = ({ onEditOrder }) => {
       });
   };
 
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    const cols = [
       columnHelper.accessor("sl", {
         id: "sl",
         header: () => "SL No.",
@@ -155,32 +158,62 @@ const OrderList = ({ onEditOrder }) => {
           );
         },
       }),
-      columnHelper.display({
-        id: "actions",
-        header: () => "Actions",
-        cell: (info) => {
-          const order = info.row.original;
+    ];
 
-          return (
-            <div className="flex items-center gap-1">
-              <SquarePen
-                size={16}
-                className="mr-2 cursor-pointer"
-                onClick={() => {
-                  if (onEditOrder) {
-                    onEditOrder(order?.id);
-                  } else {
-                    router.push(`/tables/edit/${order?.id}`);
+    if (isAdmin) {
+      cols.push(
+        columnHelper.display({
+          id: "actions",
+          header: () => "Actions",
+          cell: (info) => {
+            const order = info.row.original;
+            const isPaid = order.billStatus === "paid";
+
+            return (
+              <div className="flex items-center gap-1">
+                <Trash2
+                  size={16}
+                  className={`mr-2 ${isPaid ? "cursor-not-allowed opacity-30" : "cursor-pointer"}`}
+                  onClick={
+                    isPaid
+                      ? undefined
+                      : () =>
+                          Swal.fire({
+                            title: "Are you sure?",
+                            text: "You won't be able to revert this!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#d33",
+                            cancelButtonColor: "#3085d6",
+                            confirmButtonText: "Yes, delete it!",
+                          }).then((result) => {
+                            if (result.isConfirmed) {
+                              deleteOrder(order?.id)
+                                .unwrap()
+                                .then((res) => {
+                                  if (res?.success) {
+                                    successToaster(res?.message);
+                                  }
+                                })
+                                .catch((err) => {
+                                  errorToaster(
+                                    err?.data?.message ||
+                                      "Failed to delete order",
+                                  );
+                                });
+                            }
+                          })
                   }
-                }}
-              />
-            </div>
-          );
-        },
-      }),
-    ],
-    [pageAndLimit],
-  );
+                />
+              </div>
+            );
+          },
+        }),
+      );
+    }
+
+    return cols;
+  }, [pageAndLimit]);
 
   return (
     <CardLayout>

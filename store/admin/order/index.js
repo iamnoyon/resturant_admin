@@ -34,6 +34,13 @@ export const orderSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Orders"],
     }),
+    deleteOrder: builder.mutation({
+      query: (id) => ({
+        url: `/orders/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Orders"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -43,4 +50,5 @@ export const {
   useLazyGetOrderListQuery,
   useGetOrderByIdQuery,
   useUpdateOrderStatusMutation,
+  useDeleteOrderMutation,
 } = orderSlice;
