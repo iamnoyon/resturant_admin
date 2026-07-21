@@ -28,20 +28,6 @@ export const authSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-    uploadProfilePhoto: builder.mutation({
-      query: (data) => ({
-        url: "/attachment/upload",
-        method: "POST",
-        body: data,
-      }),
-    }),
-    UpdateProfile: builder.mutation({
-      query: (data) => ({
-        url: "/update-profile-photo",
-        method: "PUT",
-        body: data,
-      }),
-    }),
     forgotPassword: builder.mutation({
       query: (data) => ({
         url: "/forget-password",
@@ -49,6 +35,13 @@ export const authSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    updateProfile: builder.mutation({
+      query: (data)=>({
+        url: "/auth/profile",
+        method: "PATCH",
+        body: data
+      })
+    })
   }),
   overrideExisting: true,
 });
@@ -58,7 +51,6 @@ export const {
   useProfileQuery,
   useLogoutMutation,
   useChangePasswordMutation,
-  useUploadProfilePhotoMutation,
   useUpdateProfileMutation,
   useForgotPasswordMutation,
 } = authSlice;

@@ -5,7 +5,7 @@ const initialState = {
   name: "",
   email: "",
   role: "",
-  profile_photo: "",
+  profileImageUrl: "",
 };
 
 const userSlice = createSlice({

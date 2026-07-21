@@ -1,7 +1,8 @@
 "use client";
 
 import useToaster from "@/components/hooks/useToaster";
-import { useChangePasswordMutation, useUpdateProfileMutation, useUploadProfilePhotoMutation } from "@/store/auth";
+import { useSingleFileUploadMutation } from "@/store/attachment";
+import { useChangePasswordMutation, useUpdateProfileMutation } from "@/store/auth";
 import {
     User,
     Mail,
@@ -12,6 +13,10 @@ import {
     Lock,
     Eye,
     EyeOff,
+    Store,
+    Phone,
+    Globe,
+    Clock,
 } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
@@ -38,7 +43,7 @@ export default function ProfilePage() {
 
     // api
     const [ChangePassword] = useChangePasswordMutation()
-    const [UploadProfilePhoto] = useUploadProfilePhotoMutation()
+    const [UploadProfilePhoto] = useSingleFileUploadMutation()
     const [UpdateProfile] = useUpdateProfileMutation()
 
     const handleImageChange = (e) => {
@@ -48,34 +53,37 @@ export default function ProfilePage() {
         setFile(selectedFile);
         setPreview(URL.createObjectURL(selectedFile));
         try {
-            // Here you can also call the UpdateProfile API to upload the new profile picture
             const formData = new FormData();
-            formData.append("attachment", selectedFile);
+            formData.append("file", selectedFile);
             UploadProfilePhoto(formData)
-            .unwrap()
-            .then(res => {
-                if (res?.success == true || res?.status_code == 200) {
-                    setFileUrl(res?.filename);
-                }
-            })
-            .catch(err => {
-                errorToaster(err?.data?.message || "Failed to upload profile photo.");
-                console.log(err.message);
-            })
-        }catch (err) {
+                .unwrap()
+                .then(res => {
+                    if (res?.url) {
+                        setFileUrl(res.url);
+                    }
+                })
+                .catch(err => {
+                    errorToaster(err?.data?.message || "Failed to upload profile photo.");
+                    console.log(err.message);
+                })
+        } catch (err) {
             errorToaster("An unexpected error occurred.");
             console.log(err.message);
         }
     };
 
     const handleUpdate = () => {
-        UpdateProfile({fileName: fileUrl})
-        .then(res => {
-            if (res?.success == true || res?.status_code == 200) {
-                successToaster("Profile photo updated.");
-                window.location.reload()
-            }
+        UpdateProfile({
+            name: user?.name,
+            email: user?.email,
+            profileImageUrl: fileUrl ?? user?.profileImageUrl,
         })
+            .then(res => {
+                if (res?.success == true || res?.status_code == 200) {
+                    successToaster("Profile photo updated.");
+                    window.location.reload()
+                }
+            })
     };
 
     const handleChangePassword = (e) => {
@@ -102,101 +110,64 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-3 sm:p-4 flex flex-col">
-            <div className="mx-auto w-full max-w-5xl flex-1 flex flex-col gap-4">
+        <div className="min-h-screen bg-gray-50 p-3 sm:p-4">
+            <div className="mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-                {/* HEADER */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-xl border bg-white px-4 py-4 shadow-sm">
+                {/* ========== LEFT COLUMN (col-span-1) ========== */}
+                <div className="lg:col-span-1 flex flex-col gap-4">
 
-                    {/* LEFT */}
-                    <div className="flex flex-col sm:flex-row items-center sm:items-center gap-4">
-
+                    {/* PROFILE INFO */}
+                    <div className="rounded-xl border bg-white p-4 sm:p-5 shadow-sm">
                         {/* Avatar */}
-                        <div className="relative">
-                            <div
-                                onClick={() => fileRef.current.click()}
-                                className="relative flex h-16 w-16 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gray-100"
-                            >
-                                {preview || user?.profile_photo ? (
-                                    <Image
-                                        src={preview || user?.profile_photo}
-                                        alt="avatar"
-                                        fill
-                                        className="object-cover"
-                                        unoptimized={true}
-                                    />
-                                ) : (
-                                    <User size={28} />
-                                )}
+                        <div className="flex flex-col items-center">
+                            <div className="relative group">
+                                <div
+                                    onClick={() => fileRef.current.click()}
+                                    className="relative flex h-24 w-24 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gray-100"
+                                >
+                                    {preview || user?.profileImageUrl ? (
+                                        <Image
+                                            src={preview || user?.profileImageUrl}
+                                            alt="avatar"
+                                            fill
+                                            className="object-cover"
+                                            unoptimized={true}
+                                        />
+                                    ) : (
+                                        <User size={40} />
+                                    )}
+                                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-gray-500/60 opacity-0 transition-opacity group-hover:opacity-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M12 5v14" />
+                                            <path d="M5 12h14" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <input
+                                    ref={fileRef}
+                                    type="file"
+                                    accept="image/*"
+                                    hidden
+                                    onChange={handleImageChange}
+                                />
                             </div>
-
-                            <input
-                                ref={fileRef}
-                                type="file"
-                                accept="image/*"
-                                hidden
-                                onChange={handleImageChange}
-                            />
                         </div>
 
-                        {/* INFO */}
-                        <div className="text-center sm:text-left">
-                            <h1 className="text-lg font-semibold text-gray-800">
-                                {user?.name}
-                            </h1>
-                            <p className="text-sm text-gray-500">
-                                {user?.email}
-                            </p>
-                            <span className="mt-2 inline-flex rounded-full border bg-gray-50 px-3 py-1 text-[11px] font-medium text-gray-600">
-                                {user?.role}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* RIGHT BUTTON */}
-                    <button
-                        onClick={handleUpdate}
-                        className="w-full sm:w-auto bg-[#042A55] text-white py-2 px-5 rounded-md hover:bg-[#053d7e]"
-                    >
-                        Update
-                    </button>
-                </div>
-
-                {/* CONTENT */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1">
-
-                    {/* PERSONAL INFO */}
-                    <div className="lg:col-span-2 rounded-xl border bg-white p-4 sm:p-5 shadow-sm overflow-auto">
-
-                        <div className="mb-4 flex items-center gap-2">
-                            <div className="rounded-lg bg-gray-100 p-2 text-gray-700">
-                                <User size={16} />
-                            </div>
-                            <h2 className="text-base font-semibold text-gray-800">
-                                Personal Information
-                            </h2>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
+                        {/* Profile Details */}
+                        <div className="mt-5 space-y-3">
                             {[
                                 { label: "Full Name", value: user?.name, icon: User },
                                 { label: "Email Address", value: user?.email, icon: Mail },
                                 { label: "Role", value: user?.role, icon: Shield },
-                                { label: "NID Number", value: user?.nid, icon: CreditCard },
-                                { label: "Date of Birth", value: user?.dob, icon: Calendar },
-                                { label: "Address", value: user?.address, icon: MapPin },
                             ].map((item, index) => {
                                 const Icon = item.icon;
-
                                 return (
                                     <div key={index}>
-                                        <label className="mb-1.5 block text-xs font-medium text-gray-500">
+                                        <label className="mb-1 block text-xs font-medium text-gray-500">
                                             {item.label}
                                         </label>
-
-                                        <div className="flex items-center gap-2 rounded-xl border bg-gray-50 px-3 py-2.5">
-                                            <Icon size={15} className="text-gray-400" />
+                                        <div className="flex items-center gap-2 rounded-lg border bg-gray-50 px-3 py-2">
+                                            <Icon size={14} className="text-gray-400 flex-shrink-0" />
                                             <span className="truncate text-sm text-gray-700">
                                                 {item.value || "-"}
                                             </span>
@@ -205,11 +176,17 @@ export default function ProfilePage() {
                                 );
                             })}
                         </div>
+
+                        <button
+                            onClick={handleUpdate}
+                            className="mt-5 w-full bg-[#042A55] text-white py-2.5 px-5 rounded-lg hover:bg-[#053d7e] text-sm font-medium transition-colors"
+                        >
+                            Update Profile
+                        </button>
                     </div>
 
-                    {/* PASSWORD */}
+                    {/* CHANGE PASSWORD */}
                     <div className="rounded-xl border bg-white p-4 sm:p-5 shadow-sm">
-
                         <div className="mb-4 flex items-center gap-2">
                             <div className="rounded-lg bg-red-100 p-2 text-red-600">
                                 <Lock size={16} />
@@ -220,7 +197,6 @@ export default function ProfilePage() {
                         </div>
 
                         <form onSubmit={handleChangePassword} className="space-y-3">
-
                             <div>
                                 <label className="mb-1.5 block text-xs font-medium text-gray-500">
                                     New Password
@@ -293,14 +269,54 @@ export default function ProfilePage() {
 
                             <button
                                 type="submit"
-                                className="w-full rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-black"
+                                className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-black transition-colors"
                             >
                                 Update Password
                             </button>
                         </form>
                     </div>
-
                 </div>
+
+                {/* ========== RIGHT COLUMN (col-span-2) ========== */}
+                <div className="lg:col-span-2">
+                    <div className="rounded-xl border bg-white p-4 sm:p-5 shadow-sm">
+                        <div className="mb-5 flex items-center gap-2">
+                            <div className="rounded-lg bg-blue-100 p-2 text-blue-600">
+                                <Store size={16} />
+                            </div>
+                            <h2 className="text-base font-semibold text-gray-800">
+                                Restaurant Information
+                            </h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {[
+                                { label: "Restaurant Name", value: user?.restaurant_name, icon: Store },
+                                { label: "Email", value: user?.restaurant_email, icon: Mail },
+                                { label: "Phone", value: user?.restaurant_phone, icon: Phone },
+                                { label: "Address", value: user?.restaurant_address, icon: MapPin },
+                                { label: "Website", value: user?.website, icon: Globe },
+                                { label: "Opening Hours", value: user?.opening_hours, icon: Clock },
+                            ].map((item, index) => {
+                                const Icon = item.icon;
+                                return (
+                                    <div key={index}>
+                                        <label className="mb-1.5 block text-xs font-medium text-gray-500">
+                                            {item.label}
+                                        </label>
+                                        <div className="flex items-center gap-2 rounded-lg border bg-gray-50 px-3 py-2.5">
+                                            <Icon size={14} className="text-gray-400 flex-shrink-0" />
+                                            <span className="truncate text-sm text-gray-700">
+                                                {item.value || "-"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     );

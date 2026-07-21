@@ -11,7 +11,7 @@ import { useLogoutMutation } from "@/store/auth";
 export default function Topbar({ onMenuToggle }) {
     const state = useSelector(state => state?.user)
     const [open, setOpen] = useState(false);
-    console.log(state?.profile_photo);
+    console.log(state?.profileImageUrl);
 
     // api
     const [Logout] = useLogoutMutation()
@@ -78,7 +78,7 @@ export default function Topbar({ onMenuToggle }) {
                         {/* Avatar */}
                         <div className="hover:cursor-pointer">
                             <Image
-                                src={state?.profile_photo || "/default-avatar.png"}
+                                src={state?.profileImageUrl || "/default-avatar.png"}
                                 alt="User Avatar"
                                 width={40}
                                 height={40}
