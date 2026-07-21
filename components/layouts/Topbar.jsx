@@ -76,16 +76,15 @@ export default function Topbar({ onMenuToggle }) {
                         className="flex items-center gap-2 rounded-xl px-2 py-1 transition hover:bg-gray-100"
                     >
                         {/* Avatar */}
-                        <div className="hover:cursor-pointer">
-                            <Image
-                                src={state?.profileImageUrl || "/default-avatar.png"}
-                                alt="User Avatar"
-                                width={40}
-                                height={40}
-                                className="rounded-full"
-                                unoptimized={true}
-                            />
-                        </div>
+                        <div className="relative h-10 w-10 overflow-hidden rounded-full hover:cursor-pointer">
+                                <Image
+                                    src={state?.profileImageUrl || "/default-avatar.png"}
+                                    alt="User Avatar"
+                                    fill
+                                    className="object-cover"
+                                    unoptimized={true}
+                                />
+                            </div>
                     </button>
 
                     {/* Dropdown */}
