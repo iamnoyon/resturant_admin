@@ -12,6 +12,10 @@ import {
   Vault,
   ChartBarStacked,
   Banknote,
+  UtensilsCrossed,
+  AlignVerticalSpaceBetween,
+  PanelTopDashed,
+  Dock,
 } from "lucide-react";
 import { FaChrome } from "react-icons/fa";
 import { AiFillProduct } from "react-icons/ai";
@@ -33,7 +37,7 @@ export const menuItems = [
 
   {
     name: "Menu Management",
-    icon: AiFillProduct,
+    icon: Dock,
     path: "#",
     activePath: ["/product-management/"],
 
@@ -41,12 +45,12 @@ export const menuItems = [
       {
         name: "Category",
         path: "/product-management/categories",
-        icon: ChartBarStacked,
+        icon: AlignVerticalSpaceBetween,
       },
       {
         name: "Menu Items",
         path: "/product-management/products",
-        icon: MdFormatListBulletedAdd,
+        icon: UtensilsCrossed,
       },
     ],
   },
@@ -64,23 +68,9 @@ export const menuItems = [
     activePath: ["/expenses"]
   },
    {
-    name: "User Management",
+    name: "Users",
     icon: Users,
-    path: "#",
-    activePath: ["/user-management/"],
-
-    children: [
-      {
-        name: "Users",
-        path: "/user-management/users",
-        icon: UserPlus,
-        activePath: ["/user-management/users/"],
-      },
-      {
-        name: "Role & Permissions",
-        path: "/user-management/roles",
-        icon: FaChrome,
-      },
-    ],
+    path: "/user-management/users",
+    activePath: ["/user-management/users"],
   },
 ];

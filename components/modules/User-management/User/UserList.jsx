@@ -3,18 +3,20 @@
 
 import CardLayout from '@/components/common/CardLayout';
 import { useEffect, useMemo, useState } from 'react';
-import { Plus, List } from 'lucide-react';
+import { Plus, List, SquarePen } from 'lucide-react';
 import { useLazyGetUserListQuery, useUpdateUserStatusMutation } from '@/store/admin/user-management';
 import ReactTable from '@/components/common/ReactTable/ReactTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import TableSkeleton from '@/components/common/ReactTable/TableSkeleton';
 import ThreeDotMenu from '@/components/common/ThreeDotMenu';
 import useToaster from '@/components/hooks/useToaster';
+import { useRouter } from 'next/navigation';
 
 const columnHelper = createColumnHelper();
 
 
 const UserList = () => {
+    const router = useRouter()
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
     const { successToaster } = useToaster()
@@ -114,6 +116,9 @@ const UserList = () => {
                         const user = info.row.original;
 
                         return (
+                            <div className="flex items-center gap-1">
+                            <SquarePen size={16} className="mr-2 cursor-pointer"
+                                onClick={() => router.push(`/user-management/users/edit/${user?.id}`)} />
                             <ThreeDotMenu
                                 object={user}
                                 actions={[
@@ -135,6 +140,7 @@ const UserList = () => {
                                 ]}
                                 isDisabled={false}
                             />
+                            </div>
                         );
                     },
                 }),

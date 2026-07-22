@@ -6,6 +6,7 @@ const initialState = {
   email: "",
   role: "",
   profileImageUrl: "",
+  permissions: null
 };
 
 const userSlice = createSlice({
