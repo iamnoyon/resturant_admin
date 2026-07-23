@@ -153,6 +153,7 @@ const UserList = () => {
             title="User List"
             titleIcon={List}
             buttonText="Add User"
+            buttonPermission="user:create"
             buttonIcon={Plus}
             buttonHref="/user-management/users/create"
         >

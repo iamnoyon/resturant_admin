@@ -3,6 +3,7 @@ import {
     List,
 } from "lucide-react";
 import NextLink from "next/link";
+import { useSelector } from "react-redux";
 
 export default function CardLayout({
     title,
@@ -10,11 +11,16 @@ export default function CardLayout({
     buttonText,
     buttonHref,
     buttonIcon,
+    buttonPermission,
     children,
     className = "",
 }) {
     const ButtonIcon = buttonIcon;
     const TitleIcon = titleIcon;
+    const userPermissions = useSelector((state) => state?.user?.permissions) || [];
+    const canRenderButton = buttonPermission
+        ? userPermissions.includes(buttonPermission)
+        : !!buttonText;
 
     return (
         <div
@@ -32,7 +38,7 @@ export default function CardLayout({
 
                 {/* Right: Actions */}
                 {
-                    buttonText && (
+                    canRenderButton && (
                         <div className="flex items-center gap-2">
                             <NextLink
                                 href={buttonHref || ''}
