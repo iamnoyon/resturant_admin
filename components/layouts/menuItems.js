@@ -73,4 +73,10 @@ export const menuItems = [
     path: "/user-management/users",
     activePath: ["/user-management/users"],
   },
+   {
+    name: "Packages",
+    icon: Users,
+    path: "/package-management",
+    activePath: ["/user-management"],
+  },
 ];
