@@ -48,6 +48,13 @@ export const packageSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Packages"],
     }),
+    makePayment: builder.mutation({
+      query: (data)=>({
+        url: '/payment/initiate',
+        method: 'POST',
+        body: data
+      })
+    })
   }),
   overrideExisting: true,
 });
@@ -58,4 +65,5 @@ useLazyGetPackageListQuery,
 useUpdatePackageByIDMutation,
 useDeletePackageMutation,
 useGetPackageByIdQuery,
+useMakePaymentMutation
 } = packageSlice;

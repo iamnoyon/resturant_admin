@@ -2,16 +2,27 @@
 
 import { CreditCard, Calendar, CheckCircle2, Check } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useLazyGetPackageListQuery } from "@/store/admin/package";
+import { useLazyGetPackageListQuery, useMakePaymentMutation } from "@/store/admin/package";
 import Loading from "@/components/common/Loading";
 
 export default function BillingInfo({ user, statusColor }) {
     const [selectedPackage, setSelectedPackage] = useState(null);
     const [triggerList, { data: packageList, isLoading }] = useLazyGetPackageListQuery();
+    const [MakePayment] = useMakePaymentMutation()
 
     useEffect(() => {
         triggerList();
     }, []);
+
+    const handlePayment = () => {
+        MakePayment({packageId: selectedPackage?.id})
+        .unwrap()
+        .then((res)=>{
+            if(res?.success){
+                window.location.href = res?.data?.gatewayUrl;
+            }
+        })
+    }
 
     const packages = packageList?.dataSource || [];
 
@@ -31,7 +42,7 @@ export default function BillingInfo({ user, statusColor }) {
                 </div>
                 <div className="flex items-center gap-2 sm:ml-auto">
                     <button
-                        onClick={() => console.log('Proceed to payment', selectedPackage)}
+                        onClick={handlePayment}
                         disabled={!selectedPackage}
                         className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                             selectedPackage
