@@ -110,7 +110,8 @@ const UserEdit = () => {
                         label='Role'
                         options={[
                             { label: 'Admin', id: 'admin' },
-                            { label: 'cashier', id: 'cashier' },
+                            { label: 'Cashier', id: 'cashier' },
+                            { label: 'Waiter', id: 'waiter' },
                         ]}
                     />
                 </div>

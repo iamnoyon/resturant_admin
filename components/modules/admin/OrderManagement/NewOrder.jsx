@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import {
   Minus,
@@ -20,6 +20,7 @@ import useToaster from "@/components/hooks/useToaster";
 import CustomDrawer from "@/components/common/CustomDrawer";
 import Image from "next/image";
 import OrderList from "./OrderList";
+import { useGetWaiterListQuery } from "@/store/admin/user-management";
 
 const tableBtnClass = (isSelected) =>
   `flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border-2 transition-all cursor-pointer aspect-square w-full ${isSelected
@@ -77,6 +78,7 @@ const NewOrder = () => {
 
   const { data: tableDropdown, isLoading: tablesLoading } = useGetTableDropdownQuery();
   const { data: categoryDropdown, isLoading: categoriesLoading } = useGetCategoryDropdownQuery();
+  const {data: waiterList} = useGetWaiterListQuery()
   const [triggerProducts, { data: productList, isLoading: productsLoading }] = useLazyGetProductsByCategoryQuery();
   const [createOrder, { isLoading: orderLoading }] = useCreateOrderMutation();
   const [triggerOrders] = useLazyGetOrderListQuery();
@@ -85,23 +87,7 @@ const NewOrder = () => {
   const categories = categoryDropdown?.data || [];
   const products = productList?.data || [];
 
-  const beveragesCategory = useMemo(
-    () => categories.find((c) => c.categoryName?.toLowerCase().includes("beverages") || c.categoryName?.toLowerCase().includes("water")),
-    [categories]
-  );
-
-  const [beverageProducts, setBeverageProducts] = useState([]);
-  const [triggerBeverages] = useLazyGetProductsByCategoryQuery();
-
-  useEffect(() => {
-    if (beveragesCategory?.id) {
-      triggerBeverages({ categoryId: beveragesCategory.id }).then((res) => {
-        if (res?.data?.data) {
-          setBeverageProducts(res.data.data.slice(0, 6));
-        }
-      });
-    }
-  }, [beveragesCategory]);
+  const [selectedWaiter, setSelectedWaiter] = useState(null);
 
   useEffect(() => {
     if (selectedCategory?.id) {
@@ -163,6 +149,7 @@ const NewOrder = () => {
     setCart([]);
     setDiscount("");
     setSelectedTable(null);
+    setSelectedWaiter(null);
     setCartOpen(false);
   };
 
@@ -209,6 +196,7 @@ const NewOrder = () => {
     const payload = {
       tableId: selectedTable.id,
       products,
+      waiterId: selectedWaiter?.id || null,
       totalBill: subtotal,
       discount: discountValue,
       subTotal: afterDiscount,
@@ -259,41 +247,54 @@ const NewOrder = () => {
     </div>
   );
 
-  const renderBeverages = () => (
-    <div>
-      <h3 className="text-sm font-semibold text-[#043570] mb-3">Water / Beverages</h3>
-      {beverageProducts.length === 0 ? (
-        <p className="text-sm text-gray-400 py-2">No beverages found</p>
-      ) : (
-        <div className="flex gap-3 lg:flex-col lg:gap-1 overflow-x-auto pb-2 lg:pb-0 lg:space-y-3">
-          {beverageProducts.map((bev) => (
-            <div
-              key={bev.id}
-              className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors shrink-0 min-w-[180px] lg:min-w-0"
-            >
-              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden">
-                <FallbackImage
-                  src={bev.imageUrl}
-                  alt={bev.productName}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-800 truncate">{bev.productName}</p>
-                <p className="text-xs text-gray-500">৳{bev.soldPrice}</p>
-              </div>
-              <button
-                onClick={() => addToCart(bev)}
-                className="w-7 h-7 rounded-full bg-[#0A4D99] text-white flex items-center justify-center shrink-0 hover:bg-[#063C76] transition-colors cursor-pointer"
-              >
-                <Plus size={16} />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+  const renderWaiter = () => {
+    const waiters = waiterList?.data || [];
+    return (
+      <div>
+        <h3 className="text-sm font-semibold text-[#043570] mb-3">Select Waiter</h3>
+        {waiters.length === 0 ? (
+          <p className="text-sm text-gray-400 py-2">No waiters found</p>
+        ) : (
+          <div className="flex gap-3 lg:flex-col lg:gap-1 overflow-x-auto pb-2 lg:pb-0 lg:space-y-3">
+            {waiters.map((waiter) => {
+              const isSelected = selectedWaiter?.id === waiter.id;
+              return (
+                <button
+                  key={waiter.id}
+                  onClick={() => setSelectedWaiter(isSelected ? null : waiter)}
+                  className={`flex items-center gap-3 p-2 rounded-lg transition-colors shrink-0 min-w-[180px] lg:min-w-0 cursor-pointer ${
+                    isSelected ? "bg-[#043570] text-white" : "hover:bg-gray-50"
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden">
+                    {waiter.profileImageUrl ? (
+                      <FallbackImage
+                        src={waiter.profileImageUrl}
+                        alt={waiter.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className={`text-sm font-bold ${isSelected ? "text-[#043570]" : "text-gray-400"}`}>
+                        {waiter.name?.charAt(0)?.toUpperCase() || "?"}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0 text-left">
+                    <p className={`text-sm font-medium truncate ${isSelected ? "text-white" : "text-gray-800"}`}>
+                      {waiter.name}
+                    </p>
+                  </div>
+                  {isSelected && (
+                    <X size={16} className="shrink-0 text-white/70 hover:text-white" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderCategoryNav = () => (
     <div className="flex gap-1 overflow-x-auto px-4 py-3">
@@ -622,7 +623,7 @@ const NewOrder = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          {renderBeverages()}
+          {renderWaiter()}
         </div>
 
         {renderMobileCartBar()}
@@ -635,7 +636,7 @@ const NewOrder = () => {
             {renderTables()}
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            {renderBeverages()}
+            {renderWaiter()}
           </div>
         </div>
 

@@ -105,7 +105,7 @@ const OrderList = ({ onEditOrder }) => {
               onClick={() =>
                 Swal.fire({
                   title: "Confirm Payment",
-                  icon: "success",
+                  icon: "info",
                   draggable: true,
                   width: "350px",
                   padding: "1.25rem",

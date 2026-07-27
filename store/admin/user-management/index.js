@@ -52,6 +52,12 @@ export const userApiSlice = apiSlice.injectEndpoints({
         method: 'PUT',
         body: data
       })
+    }),
+    getWaiterList: builder.query({
+      query: ()=>({
+        url: '/users/waiters',
+        method: 'GET'
+      })
     })
   }),
   overrideExisting: true,
@@ -64,5 +70,6 @@ export const {
   useGetUserInfoByIdQuery,
   useUpdateUserInfoMutation,
   useGetPermissionsByUserIdQuery,
-  useUpdatePermissionsByUserIdMutation
+  useUpdatePermissionsByUserIdMutation,
+  useGetWaiterListQuery
 } = userApiSlice;
