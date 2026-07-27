@@ -195,12 +195,6 @@ const OrderList = ({ onEditOrder }) => {
 
   return (
     <CardLayout
-      title="Order List"
-      titleIcon={List}
-      buttonText="New Order"
-      buttonIcon={Plus}
-      buttonHref="/order"
-      buttonPermission="order:create"
     >
       <ReactTable
         columns={columns}

@@ -34,10 +34,10 @@ export default function AuthProvider({ children }) {
   // ✅ Redirect unauthenticated users
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace("/auth/login");
+      router.replace("/");
     }
     if(isError){
-      router.replace("/auth/login")
+      router.replace("/")
     }
   }, [isLoading, isAuthenticated, router, isError]);
 

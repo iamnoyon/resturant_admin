@@ -79,13 +79,6 @@ export const menuItems = [
     requiredPermissions: ["user:read"],
   },
   {
-    name: "Roles & Permissions",
-    icon: ShieldCheck,
-    path: "/user-management/roles",
-    activePath: ["/user-management/roles"],
-    requiredPermissions: ["user:update"],
-  },
-  {
     name: "Packages",
     icon: Package,
     path: "/package-management",

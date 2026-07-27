@@ -124,12 +124,16 @@ export default function ProfilePage() {
         { id: "billing", label: "Billing Info", icon: Receipt },
     ];
 
+    const hiddenRoles = ["cashier", "waiter"];
+    const isRestricted = hiddenRoles.includes(user?.role);
+    const visibleTabs = isRestricted ? tabs.filter((t) => t.id === "profile") : tabs;
+
     return (
         <div className="bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50/20 p-3 sm:p-4">
             <div className="mx-auto w-full">
 
                 <div className="mb-4 flex flex-col sm:flex-row items-center gap-1 rounded-2xl bg-white p-1.5 shadow-md border border-gray-100">
-                    {tabs.map((tab) => {
+                    {visibleTabs.map((tab) => {
                         const Icon = tab.icon;
                         const isActive = activeTab === tab.id;
                         return (

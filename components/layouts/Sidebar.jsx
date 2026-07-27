@@ -64,7 +64,10 @@ export default function Sidebar({ onNavClick, hideToggle }) {
           }`}
       >
         {!collapsed && (
-          <span className="text-lg font-bold text-white">MyAdmin</span>
+          <h1 className="text-2xl font-extrabold tracking-tight">
+      <span className="text-white">Cloud</span>
+      <span className="text-[#C98A4A]">Cafe</span>
+    </h1>
         )}
         {!hideToggle && (
           <button
@@ -173,7 +176,7 @@ export default function Sidebar({ onNavClick, hideToggle }) {
       {/* Footer */}
       {!collapsed && (
         <div className="border-t border-[#052950] p-4">
-          <p className="text-center text-xs text-gray-400">© 2026 MyAdmin</p>
+          <p className="text-center text-xs text-gray-400">© 2026 <span className="text-[#C98A4A]">cloudcafe</span></p>
         </div>
       )}
     </aside>
