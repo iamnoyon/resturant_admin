@@ -11,7 +11,10 @@ const PermissionGuard = ({
 
     if (!permissions || permissions.length === 0) return children;
 
-    const hasAllPermissions = permissions.every((p) => userPermissions.includes(p));
+    const permissionValues = userPermissions.map((p) =>
+        typeof p === "string" ? p : p.value
+    );
+    const hasAllPermissions = permissions.every((p) => permissionValues.includes(p));
 
     return hasAllPermissions ? children : fallback;
 };

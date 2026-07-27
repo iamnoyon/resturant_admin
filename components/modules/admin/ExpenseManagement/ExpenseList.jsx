@@ -122,6 +122,7 @@ const ExpenseList = () => {
             buttonText="Add Expense"
             buttonIcon={Plus}
             buttonHref="/expenses/create"
+            buttonPermission="expense:create"
         >
             <ReactTable
                 columns={columns}

@@ -162,6 +162,7 @@ const ProductCategoryList = () => {
             buttonText="Add Category"
             buttonIcon={Plus}
             buttonHref="/product-management/categories/create"
+            buttonPermission="category:create"
         >
             <ReactTable
                 columns={columns}

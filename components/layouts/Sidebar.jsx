@@ -4,12 +4,43 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { menuItems } from "./menuItems";
 import { PanelLeftClose, PanelLeftOpen, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useSelector } from "react-redux";
 
 export default function Sidebar({ onNavClick, hideToggle }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
+  const userPermissions = useSelector((state) => state?.user?.permissions) || [];
+  const userRole = useSelector((state) => state?.user?.role);
+
+  const permissionValues = useMemo(() => {
+    return userPermissions.map((p) => (typeof p === "string" ? p : p.value));
+  }, [userPermissions]);
+
+  const hasPermission = (requiredPermissions) => {
+    if (!requiredPermissions || requiredPermissions.length === 0) return true;
+    return requiredPermissions.some((p) => permissionValues.includes(p));
+  };
+
+  const filteredMenuItems = useMemo(() => {
+    return menuItems
+      .map((item) => {
+        if (item.superadminOnly && userRole !== "superadmin") return null;
+        if (item.children) {
+          const filteredChildren = item.children.filter((child) =>
+            hasPermission(child.requiredPermissions)
+          );
+          if (filteredChildren.length === 0 && !hasPermission(item.requiredPermissions)) {
+            return null;
+          }
+          return { ...item, children: filteredChildren };
+        }
+        if (!hasPermission(item.requiredPermissions)) return null;
+        return item;
+      })
+      .filter(Boolean);
+  }, [permissionValues, userRole]);
 
   const isPathActive = (path) =>
     pathname === path || pathname.startsWith(path + "/");
@@ -50,7 +81,7 @@ export default function Sidebar({ onNavClick, hideToggle }) {
       {/* Menu */}
       <nav className="flex-1 overflow-y-auto px-3 py-4">
         <ul className="space-y-2">
-          {menuItems.map((item) => {
+          {filteredMenuItems.map((item) => {
             const Icon = item.icon;
             const hasChildren = Boolean(item.children?.length);
 

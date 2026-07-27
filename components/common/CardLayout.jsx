@@ -18,8 +18,12 @@ export default function CardLayout({
     const ButtonIcon = buttonIcon;
     const TitleIcon = titleIcon;
     const userPermissions = useSelector((state) => state?.user?.permissions) || [];
+    const hasPermission = (perm) =>
+        userPermissions.some((p) =>
+            (typeof p === "string" ? p : p.value) === perm
+        );
     const canRenderButton = buttonPermission
-        ? userPermissions.includes(buttonPermission)
+        ? hasPermission(buttonPermission)
         : !!buttonText;
 
     return (

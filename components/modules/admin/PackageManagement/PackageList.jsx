@@ -167,6 +167,7 @@ const PackageList = () => {
             buttonText="Add Package"
             buttonIcon={Plus}
             buttonHref="/package-management/create"
+            buttonPermission="order:create"
         >
             <ReactTable
                 columns={columns}

@@ -231,6 +231,7 @@ const ProductList = () => {
             buttonText="Add Product"
             buttonIcon={Plus}
             buttonHref="/product-management/products/create"
+            buttonPermission="product:create"
         >
             <ReactTable
                 columns={columns}

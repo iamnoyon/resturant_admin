@@ -3,7 +3,7 @@
 
 import CardLayout from "@/components/common/CardLayout";
 import { useMemo, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { Trash2, List, Plus } from "lucide-react";
 import ReactTable from "@/components/common/ReactTable/ReactTable";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useEffect } from "react";
@@ -194,7 +194,14 @@ const OrderList = ({ onEditOrder }) => {
   }, [pageAndLimit]);
 
   return (
-    <CardLayout>
+    <CardLayout
+      title="Order List"
+      titleIcon={List}
+      buttonText="New Order"
+      buttonIcon={Plus}
+      buttonHref="/order"
+      buttonPermission="order:create"
+    >
       <ReactTable
         columns={columns}
         dataSource={orderList?.dataSource || []}

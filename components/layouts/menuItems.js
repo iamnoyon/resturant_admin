@@ -16,6 +16,7 @@ import {
   AlignVerticalSpaceBetween,
   PanelTopDashed,
   Dock,
+  ShieldCheck,
 } from "lucide-react";
 import { FaChrome } from "react-icons/fa";
 import { AiFillProduct } from "react-icons/ai";
@@ -33,50 +34,62 @@ export const menuItems = [
     icon: ShoppingCart,
     path: "/order",
     activePath: ["/order"],
+    requiredPermissions: ["order:create", "order:read"],
   },
-
   {
     name: "Menu Management",
     icon: Dock,
     path: "#",
     activePath: ["/product-management/"],
-
+    requiredPermissions: ["category:read", "product:read"],
     children: [
       {
         name: "Category",
         path: "/product-management/categories",
         icon: AlignVerticalSpaceBetween,
+        requiredPermissions: ["category:read"],
       },
       {
         name: "Menu Items",
         path: "/product-management/products",
         icon: UtensilsCrossed,
+        requiredPermissions: ["product:read"],
       },
     ],
   },
-
   {
     name: "Tables",
     icon: Vault,
     path: "/tables",
     activePath: ["/tables"],
+    requiredPermissions: ["table:read"],
   },
   {
     name: "Others Expense",
     icon: Banknote,
     path: "/expenses",
-    activePath: ["/expenses"]
+    activePath: ["/expenses"],
+    requiredPermissions: ["expense:read"],
   },
-   {
+  {
     name: "Users",
     icon: Users,
     path: "/user-management/users",
     activePath: ["/user-management/users"],
+    requiredPermissions: ["user:read"],
   },
-   {
+  {
+    name: "Roles & Permissions",
+    icon: ShieldCheck,
+    path: "/user-management/roles",
+    activePath: ["/user-management/roles"],
+    requiredPermissions: ["user:update"],
+  },
+  {
     name: "Packages",
-    icon: Users,
+    icon: Package,
     path: "/package-management",
-    activePath: ["/user-management"],
+    activePath: ["/package-management"],
+    superadminOnly: true,
   },
 ];

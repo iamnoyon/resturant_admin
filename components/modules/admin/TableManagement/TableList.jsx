@@ -157,6 +157,7 @@ const TableList = () => {
             buttonText="Add Table"
             buttonIcon={Plus}
             buttonHref="/tables/create"
+            buttonPermission="table:create"
         >
             <ReactTable
                 columns={columns}
