@@ -52,7 +52,7 @@ export default function Topbar({ onMenuToggle }) {
     }, []);
 
     return (
-        <header className="flex h-16 items-center justify-between border-b bg-white px-6 shadow-sm">
+        <header className="flex h-16 items-center justify-between bg-white px-6 shadow-sm">
             {/* Hamburger menu for mobile */}
             <button
                 onClick={onMenuToggle}

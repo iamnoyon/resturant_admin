@@ -24,11 +24,11 @@ const UserList = () => {
 
     // API
     const [triggerList, { data: userData, isLoading }] = useLazyGetUserListQuery();
-    const [Update] = useUpdateUserStatusMutation();
+    const [Update] = useUpdateUserStatusMutation()
 
     // Action handlers
     const handleStatusUpdate = (id, status) => {
-        Update({ id, status })
+        Update({ id, data:{status: status} })
             .unwrap()
             .then((res) => {
                 if (res?.success == true, res?.status_code == 200) {
@@ -91,15 +91,27 @@ const UserList = () => {
                     },
                     enableSorting: true,
                 }),
+                columnHelper.accessor('business', {
+                    id: 'business',
+                    header: () => 'Business',
+                    cell: (info) => {
+                        return (
+                            <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
+                                {info.getValue()?.businessName}
+                            </span>
+                        );
+                    },
+                    enableSorting: true,
+                }),
                 columnHelper.accessor('status', {
                     id: 'status',
                     header: () => 'Status',
                     cell: (info) => {
                         const status = info.getValue();
                         let bgColor = 'bg-gray-500';
-                        if (status === 'approved') bgColor = 'bg-[#16A34A]';
-                        if (status === 'pending') bgColor = 'bg-[#F59E0B]';
-                        if (status === 'suspended') bgColor = 'bg-[#EF4444]';
+                        if (status === 'active') bgColor = 'bg-[#16A34A]';
+                        if (status === 'suspended') bgColor = 'bg-[#F59E0B]';
+                        if (status === 'inactive') bgColor = 'bg-[#EF4444]';
 
                         return (
                             <span className={`inline-block rounded-full px-3 py-1 text-[0.875rem] font-medium text-white ${bgColor}`}>
@@ -117,29 +129,29 @@ const UserList = () => {
 
                         return (
                             <div className="flex items-center gap-1">
-                            <SquarePen size={16} className="mr-2 cursor-pointer"
-                                onClick={() => router.push(`/user-management/users/edit/${user?.id}`)} />
-                            <ThreeDotMenu
-                                object={user}
-                                actions={[
-                                    {
-                                        label: 'Approve',
-                                        onClick: () => handleStatusUpdate(info?.row?.original?.id, 'approved'),
-                                        isDisabled: user?.status === "approved" || user?.status === "suspended",
-                                    },
-                                    {
-                                        label: 'Suspend',
-                                        onClick: () => handleStatusUpdate(info?.row?.original?.id, 'suspended'),
-                                        isDisabled: user?.status === "pending" || user?.status === "suspended",
-                                    },
-                                    {
-                                        label: 'Invitation',
-                                        onClick: () => handleStatusUpdate(info?.row?.original?.id, "invitation"),
-                                        isDisabled: user?.status === "approved" || user?.status === "pending",
-                                    },
-                                ]}
-                                isDisabled={false}
-                            />
+                                <SquarePen size={16} className="mr-2 cursor-pointer"
+                                    onClick={() => router.push(`/user-management/users/edit/${user?.id}`)} />
+                                <ThreeDotMenu
+                                    object={user}
+                                    actions={[
+                                        {
+                                            label: 'Active',
+                                            onClick: () => handleStatusUpdate(info?.row?.original?.id, 'active'),
+                                            isDisabled: user?.status === "approved" || user?.status === "suspended",
+                                        },
+                                        {
+                                            label: 'Inactive',
+                                            onClick: () => handleStatusUpdate(info?.row?.original?.id, 'inactive'),
+                                            isDisabled: user?.status === "pending" || user?.status === "suspended",
+                                        },
+                                        {
+                                            label: 'Suspend',
+                                            onClick: () => handleStatusUpdate(info?.row?.original?.id, "suspended"),
+                                            isDisabled: user?.status === "approved" || user?.status === "pending",
+                                        },
+                                    ]}
+                                    isDisabled={false}
+                                />
                             </div>
                         );
                     },

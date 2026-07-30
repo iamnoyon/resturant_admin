@@ -19,14 +19,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
       providesTags: ["userlist"],
       transformResponse: (response) => transformListResponse(response),
     }),
-    updateUserStatus: builder.mutation({
-      query: (data) => ({
-        url: `/user/update-status/${data?.id}`,
-        method: "PUT",
-        body: { status: data.status },
-      }),
-      invalidatesTags: ["userlist"]
-    }),
     getUserInfoById: builder.query({
       query: ({id}) => ({
         url: `/users/${id}`,
@@ -58,6 +50,14 @@ export const userApiSlice = apiSlice.injectEndpoints({
         url: '/users/waiters',
         method: 'GET'
       })
+    }),
+    updateUserStatus: builder.mutation({
+      query: ({id, data})=>({
+        url: `/users/${id}/status`,
+        method: 'PATCH',
+        body: data
+      }),
+      invalidatesTags: ['userlist']
     })
   }),
   overrideExisting: true,
@@ -71,5 +71,6 @@ export const {
   useUpdateUserInfoMutation,
   useGetPermissionsByUserIdQuery,
   useUpdatePermissionsByUserIdMutation,
-  useGetWaiterListQuery
+  useGetWaiterListQuery,
+  useup
 } = userApiSlice;
