@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import NextLink from "next/link"
 import { signOut } from "next-auth/react";
 import { clearUser, clearToken } from "@/store/user";
+import { apiSlice } from "@/store/apiSlice";
 
 export default function Topbar({ onMenuToggle }) {
     const state = useSelector(state => state?.user)
@@ -16,7 +17,9 @@ export default function Topbar({ onMenuToggle }) {
 
     const handleLogout = async () => {
         try {
+            sessionStorage.removeItem("backend_token");
             await signOut({ redirect: false });
+            dispatch(apiSlice.util.resetApiState());
             dispatch(clearUser());
             dispatch(clearToken());
             window.location.reload();
