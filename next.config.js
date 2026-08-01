@@ -26,6 +26,16 @@ const nextConfig = {
         port: "5000",
         pathname: "/uploads/**",
       },
+      {
+        protocol: "https",
+        hostname: "resturant-backend-3khk.onrender.com",
+        pathname: "/uploads/**",
+      },
+      {
+        protocol: "https",
+        hostname: "resturant-backend-3khk.onrender.com",
+        pathname: "/api/uploads/**",
+      },
     ],
   },
 };
