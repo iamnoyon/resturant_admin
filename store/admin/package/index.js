@@ -54,6 +54,12 @@ export const packageSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body: data
       })
+    }),
+    checkPaymentStatus: builder.query({
+      query: ({tran_id}) => ({
+        url: `/payment/status/${tran_id}`,
+        method: 'GET'
+      })
     })
   }),
   overrideExisting: true,
@@ -65,5 +71,6 @@ useLazyGetPackageListQuery,
 useUpdatePackageByIDMutation,
 useDeletePackageMutation,
 useGetPackageByIdQuery,
-useMakePaymentMutation
+useMakePaymentMutation,
+useCheckPaymentStatusQuery
 } = packageSlice;

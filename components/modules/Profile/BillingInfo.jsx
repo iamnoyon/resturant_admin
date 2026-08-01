@@ -9,7 +9,6 @@ export default function BillingInfo({ user, statusColor }) {
     const [selectedPackage, setSelectedPackage] = useState(null);
     const [triggerList, { data: packageList, isLoading }] = useLazyGetPackageListQuery();
     const [MakePayment] = useMakePaymentMutation()
-
     useEffect(() => {
         triggerList();
     }, []);
@@ -18,6 +17,7 @@ export default function BillingInfo({ user, statusColor }) {
         MakePayment({packageId: selectedPackage?.id})
         .unwrap()
         .then((res)=>{
+            console.log(res)
             if(res?.success){
                 window.location.href = res?.data?.gatewayUrl;
             }

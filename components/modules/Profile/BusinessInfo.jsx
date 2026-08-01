@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, MapPin, Map, Navigation, Crosshair, Pencil, X, Check, Upload, Loader } from "lucide-react";
+import { Building2, MapPin, Map, Navigation, Crosshair, Pencil, X, Check, Upload, Loader, Calendar, BadgeCheck } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useSingleFileUploadMutation } from "@/store/attachment";
 import useToaster from "@/components/hooks/useToaster";
@@ -199,8 +199,46 @@ export default function BusinessInfo({ user }) {
                             disabled={uploading}
                             onChange={handleLogoUpload}
                         />
-                    </div>
                 </div>
+
+                {businessInfo?.data?.subscription && (
+                    <div>
+                        <p className="mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            Subscription
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50/50 px-3 py-2.5 transition-all duration-200">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600 flex-shrink-0">
+                                    <BadgeCheck size={15} />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide">Status</p>
+                                    <span className={`inline-block mt-0.5 rounded-full px-2 py-0.5 text-xs font-semibold capitalize ${
+                                        businessInfo?.data?.subscription === "active"
+                                            ? "bg-emerald-100 text-emerald-700"
+                                            : "bg-red-100 text-red-700"
+                                    }`}>
+                                        {businessInfo?.data?.subscription}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3 rounded-xl border border-amber-100 bg-amber-50/50 px-3 py-2.5 transition-all duration-200">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50 text-amber-600 flex-shrink-0">
+                                    <Calendar size={15} />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide">Expire Date</p>
+                                    <p className="truncate text-sm font-medium text-gray-700">
+                                        {businessInfo?.data?.subEndDate
+                                            ? new Date(businessInfo.data.subEndDate).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+                                            : <span className="text-gray-300 italic">Not set</span>}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
 
                 {/* Fields Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
