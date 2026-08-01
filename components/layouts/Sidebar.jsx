@@ -55,7 +55,7 @@ export default function Sidebar({ onNavClick, hideToggle }) {
 
   return (
     <aside
-      className={`flex h-full flex-col border-r bg-[#02162e] transition-all duration-300 ${collapsed ? "w-20" : "w-60"
+      className={`flex h-full flex-col border-r bg-[#02162e] transition-all duration-300 ${collapsed ? "w-20 lg:w-20" : "w-full lg:w-60"
         }`}
     >
       {/* Header */}
@@ -65,9 +65,9 @@ export default function Sidebar({ onNavClick, hideToggle }) {
       >
         {!collapsed && (
           <h1 className="text-2xl font-extrabold tracking-tight">
-      <span className="text-white">Cloud</span>
-      <span className="text-[#C98A4A]">Cafe</span>
-    </h1>
+            <span className="text-white">Cloud</span>
+            <span className="text-[#C98A4A]">Cafe</span>
+          </h1>
         )}
         {!hideToggle && (
           <button
@@ -154,8 +154,8 @@ export default function Sidebar({ onNavClick, hideToggle }) {
                             href={child.path}
                             onClick={handleNavClick}
                             className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${childActive
-                                ? "bg-[#0A4D99] text-white"
-                                : "text-gray-400 hover:bg-[#063C76]"
+                              ? "bg-[#0A4D99] text-white"
+                              : "text-gray-400 hover:bg-[#063C76]"
                               }`}
                           >
                             {ChildIcon && <ChildIcon size={16} />}
