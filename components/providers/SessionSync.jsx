@@ -10,17 +10,22 @@ import { signOut } from "next-auth/react";
 export default function SessionSync() {
   const { data: session } = useSession();
   const dispatch = useDispatch();
-  const token = useSelector((state) => state?.user?.token);
+  const reduxToken = useSelector((state) => state?.user?.token);
 
+  // Use session token directly (synchronous) instead of Redux token (async)
+  const token = session?.user?.backendToken || reduxToken;
+
+  // Restore token from sessionStorage on mount (cross-tab support)
   useEffect(() => {
-    if (!token) {
+    if (!reduxToken) {
       const stored = sessionStorage.getItem("backend_token");
       if (stored) {
         dispatch(setToken(stored));
       }
     }
-  }, [token, dispatch]);
+  }, [reduxToken, dispatch]);
 
+  // Set token from session + persist to sessionStorage
   useEffect(() => {
     if (session?.user?.backendToken) {
       dispatch(setToken(session.user.backendToken));
