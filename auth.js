@@ -1,5 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { siteConfig } from "./config/siteConfig";
+
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -11,7 +13,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         try {
           const res = await fetch(
-            `${process.env.BACKEND_URL}/auth/login`,
+            `${siteConfig.baseUrl}/auth/login`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },

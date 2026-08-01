@@ -1,9 +1,11 @@
 import ProfilePage from '@/components/modules/Profile/ProfilePage'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 const page = () => {
   return (
-    <ProfilePage />
+    <Suspense>
+      <ProfilePage />
+    </Suspense>
   )
 }
 
