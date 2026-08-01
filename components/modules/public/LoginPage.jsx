@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useLoginMutation } from "@/store/auth";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import useToaster from "@/components/hooks/useToaster";
 import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
@@ -12,21 +12,30 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const router = useRouter();
     const { errorToaster, successToaster } = useToaster();
-    const [Login, { isLoading }] = useLoginMutation();
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        Login({ email, password })
-            .unwrap()
-            .then((res) => {
-                if (res?.success) {
-                    successToaster(res?.message || "Login successful!");
-                    router.replace("/dashboard");
-                }
-            })
-            .catch((err) => {
-                errorToaster(err?.data?.message || "Login failed.");
+        setIsLoading(true);
+
+        try {
+            const result = await signIn("credentials", {
+                email,
+                password,
+                redirect: false,
             });
+
+            if (result?.error) {
+                errorToaster("Invalid email or password.");
+            } else {
+                successToaster("Login successful!");
+                router.replace("/dashboard");
+            }
+        } catch {
+            errorToaster("Login failed.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

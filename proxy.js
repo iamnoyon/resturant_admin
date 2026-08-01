@@ -14,14 +14,15 @@ const protectedRoutes = [
 ];
 
 export function proxy(request) {
-  const accessToken = request.cookies.get("access_token")?.value;
+  const sessionToken = request.cookies.get("authjs.session-token")?.value
+    || request.cookies.get("__Secure-authjs.session-token")?.value;
   const path = request.nextUrl.pathname;
 
   const isProtected = protectedRoutes.some((route) =>
     path.startsWith(route)
   );
 
-  if (!accessToken && isProtected) {
+  if (!sessionToken && isProtected) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

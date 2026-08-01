@@ -6,7 +6,8 @@ const initialState = {
   email: "",
   role: "",
   profileImageUrl: "",
-  permissions: null
+  permissions: null,
+  token: null,
 };
 
 const userSlice = createSlice({
@@ -20,12 +21,20 @@ const userSlice = createSlice({
       };
     },
 
+    setToken: (state, action) => {
+      state.token = action.payload;
+    },
+
     clearUser: () => {
       return initialState;
+    },
+
+    clearToken: (state) => {
+      state.token = null;
     },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, setToken, clearUser, clearToken } = userSlice.actions;
 
 export default userSlice.reducer;
