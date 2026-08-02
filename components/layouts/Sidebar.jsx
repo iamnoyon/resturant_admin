@@ -60,16 +60,16 @@ export default function Sidebar({ onNavClick, hideToggle }) {
         }`}
     >
       {/* Header */}
-      <div className={`relative flex h-16 items-center justify-center ${collapsed ? "px-2" : "px-6"}`}>
+      <div className={`relative flex h-16 items-center justify-around ${collapsed ? "px-2" : "px-6"}`}>
         {!collapsed && (
           user?.business?.businessName ? (
-            <div className="flex items-center gap-5">
+            <div className="flex items-center">
               <h1 className="text-xl font-semibold tracking-tight text-[#C98A4A]">
                 {user.business.businessName}
               </h1>
             </div>
           ) : (
-            <div className="flex items-center gap-5">
+            <div className="flex items-center">
               <h1 className="text-2xl font-extrabold tracking-tight">
                 <span className="text-white">Cloud</span>
               </h1>
