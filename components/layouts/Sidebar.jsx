@@ -60,30 +60,25 @@ export default function Sidebar({ onNavClick, hideToggle }) {
         }`}
     >
       {/* Header */}
-      <div
-        className={`flex h-16 items-center ${collapsed ? "justify-center px-2" : "justify-between px-6"}
-        `}
-      >
-        <div className="flex flex-1 items-center justify-center">
-          {!collapsed && (
-            user?.business?.businessName ? (
-              <h1 className="text-xl font-extrabold tracking-tight">
-                <span className="text-white">{user.business.businessName}</span>
-                <span className="text-[#C98A4A] text-3xl">.</span>
-              </h1>
-            ) : (
-              <h1 className="text-2xl font-extrabold tracking-tight">
-                <span className="text-white">Cloud</span>
-                <span className="text-[#C98A4A]">Cafe</span>
-              </h1>
-            )
-          )}
-        </div>
+      <div className={`relative flex h-16 items-center justify-center ${collapsed ? "px-2" : "px-6"}`}>
+        {!collapsed && (
+          user?.business?.businessName ? (
+            <h1 className="text-xl font-extrabold tracking-tight">
+              <span className="text-[#C98A4A]">{user.business.businessName}</span>
+              <span className="text-white text-3xl">.</span>
+            </h1>
+          ) : (
+            <h1 className="text-2xl font-extrabold tracking-tight">
+              <span className="text-white">Cloud</span>
+              <span className="text-[#C98A4A]">Cafe</span>
+            </h1>
+          )
+        )}
 
         {!hideToggle && (
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="rounded-lg p-2 text-white transition hover:cursor-pointer hover:text-gray-300"
+            className="absolute right-6 rounded-lg p-2 text-white transition hover:cursor-pointer hover:text-gray-300"
           >
             {collapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
           </button>
