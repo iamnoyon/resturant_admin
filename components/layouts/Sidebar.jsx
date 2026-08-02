@@ -63,14 +63,13 @@ export default function Sidebar({ onNavClick, hideToggle }) {
       <div className={`relative flex h-16 items-center justify-center ${collapsed ? "px-2" : "px-6"}`}>
         {!collapsed && (
           user?.business?.businessName ? (
-            <div className="flex items-center gap-1">
-              <h1 className="text-xl font-extrabold tracking-tight text-[#C98A4A]">
+            <div className="flex items-center gap-5">
+              <h1 className="text-xl font-semibold tracking-tight text-[#C98A4A]">
                 {user.business.businessName}
               </h1>
-              <span className="text-3xl leading-none text-white">.</span>
             </div>
           ) : (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-5">
               <h1 className="text-2xl font-extrabold tracking-tight">
                 <span className="text-white">Cloud</span>
               </h1>
