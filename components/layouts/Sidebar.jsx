@@ -55,7 +55,7 @@ export default function Sidebar({ onNavClick, hideToggle }) {
 
   return (
     <aside
-      className={`flex h-full flex-col border-r bg-[#02162e] transition-all duration-300 ${collapsed ? "w-20 lg:w-20" : "w-full lg:w-60"
+      className={`flex h-full w-full flex-col border-r bg-[#02162e] transition-all duration-300 ${collapsed ? "lg:w-20" : "lg:w-60"
         }`}
     >
       {/* Header */}
