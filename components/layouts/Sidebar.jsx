@@ -12,7 +12,8 @@ export default function Sidebar({ onNavClick, hideToggle }) {
   const [collapsed, setCollapsed] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const userPermissions = useSelector((state) => state?.user?.permissions) || [];
-  const userRole = useSelector((state) => state?.user?.role);
+  const user = useSelector((state) => state?.user);
+  const userRole = user?.role || '';
 
   const permissionValues = useMemo(() => {
     return userPermissions.map((p) => (typeof p === "string" ? p : p.value));
@@ -64,10 +65,17 @@ export default function Sidebar({ onNavClick, hideToggle }) {
           }`}
       >
         {!collapsed && (
-          <h1 className="text-2xl font-extrabold tracking-tight">
-            <span className="text-white">Cloud</span>
-            <span className="text-[#C98A4A]">Cafe</span>
-          </h1>
+          user?.business?.businessName ? (
+            <h1 className="text-2xl font-extrabold tracking-tight">
+              <span className="text-white">{user.business.businessName}</span>
+              <span className="text-[#C98A4A]">.</span>
+            </h1>
+          ) : (
+            <h1 className="text-2xl font-extrabold tracking-tight">
+              <span className="text-white">Cloud</span>
+              <span className="text-[#C98A4A]">Cafe</span>
+            </h1>
+          )
         )}
         {!hideToggle && (
           <button
