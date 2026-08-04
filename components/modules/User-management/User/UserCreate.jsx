@@ -24,6 +24,7 @@ const UserCreate = () => {
         defaultValues: {
             name: '',
             email: '',
+            password: '',
             phone: '',
             role: ''
         }
@@ -64,6 +65,12 @@ const UserCreate = () => {
                         name="email"
                         label="Email"
                         placeholder='example@gmail.com'
+                        required
+                    />
+                    <FormInput
+                        name="password"
+                        label="Password"
+                        placeholder='Admin123!'
                         required
                     />
                     <FormInput
