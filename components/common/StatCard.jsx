@@ -5,16 +5,17 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 export default function StatCard({
     title,
     value,
-    icon: Icon,
+    iconName: Icon,
     trendValue,
     trend = "up",
+    borderColor = "border-b-gray-400",
     className = "",
 }) {
     const isUp = trend === "up";
 
     return (
         <div
-            className={`flex items-center justify-between rounded-lg border border-gray-200 bg-white p-5 shadow-sm ${className}`}
+            className={`flex items-center justify-between rounded-lg border border-gray-200 border-b-4 bg-white p-5 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-md ${borderColor} ${className}`}
         >
             <div className="flex flex-col gap-1">
                 <span className="text-sm font-medium text-gray-500">{title}</span>
@@ -41,10 +42,7 @@ export default function StatCard({
                     isUp ? "bg-green-50" : "bg-red-50"
                 }`}
             >
-                <Icon
-                    size={24}
-                    className={isUp ? "text-green-600" : "text-red-600"}
-                />
+                {Icon && <Icon size={24} className={isUp ? "text-green-600" : "text-red-600"} />}
             </div>
         </div>
     );
