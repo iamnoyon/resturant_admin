@@ -25,7 +25,6 @@ const UserCreate = () => {
             name: '',
             email: '',
             phone: '',
-            password: '',
             role: ''
         }
     });
@@ -71,12 +70,6 @@ const UserCreate = () => {
                         name="phone"
                         label="Phone"
                         placeholder='01889010237'
-                        required
-                    />
-                    <FormInput
-                        name="password"
-                        label="Password"
-                        placeholder='Admin123!'
                         required
                     />
                     <FormSelect

@@ -9,7 +9,6 @@ export const userSchema = z.object({
     .string()
     .email("Invalid email address"),
   phone: z.string().min(1, "Phone number is required"),
-  password: z.string().min(1, 'Password is required'),
   role: z.string()
 });
 
