@@ -4,28 +4,28 @@
 import { Bell, LogOut, Menu, User } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import NextLink from "next/link"
-import { useLogoutMutation } from "@/store/auth";
+import { signOut } from "next-auth/react";
+import { clearUser, clearToken } from "@/store/user";
+import { apiSlice } from "@/store/apiSlice";
 
 export default function Topbar({ onMenuToggle }) {
     const state = useSelector(state => state?.user)
+    const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
-    console.log(state?.profileImageUrl);
 
-    // api
-    const [Logout] = useLogoutMutation()
-    const handleLogout = () => {
-        Logout()
-            .unwrap()
-            .then((res) => {
-                if (res?.success == true) {
-                    window.location.reload();
-                }
-            })
-            .catch(err => {
-                console.log(err.message);
-            })
+    const handleLogout = async () => {
+        try {
+            sessionStorage.removeItem("backend_token");
+            await signOut({ redirect: false });
+            dispatch(apiSlice.util.resetApiState());
+            dispatch(clearUser());
+            dispatch(clearToken());
+            window.location.reload();
+        } catch (err) {
+            console.log(err.message);
+        }
     }
 
     const dropdownRef = useRef(null);

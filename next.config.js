@@ -2,6 +2,7 @@
 const nextConfig = {
   images: {
     remotePatterns: [
+      // Local development
       {
         protocol: "http",
         hostname: "localhost",
@@ -26,6 +27,8 @@ const nextConfig = {
         port: "5000",
         pathname: "/uploads/**",
       },
+
+      // Render production
       {
         protocol: "https",
         hostname: "resturant-backend-3khk.onrender.com",

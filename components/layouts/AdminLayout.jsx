@@ -23,7 +23,7 @@ export default function AdminLayout({ children }) {
                         className="fixed inset-0 z-40 bg-black/50 lg:hidden"
                         onClick={() => setMobileMenuOpen(false)}
                     />
-                    <div className="fixed left-0 top-0 z-50 h-full lg:hidden animate-slide-in relative">
+                    <div className="fixed left-0 top-0 z-50 h-full w-[70vw] max-w-[380px] lg:hidden animate-slide-in">
                         <button
                             onClick={() => setMobileMenuOpen(false)}
                             className="absolute right-3 top-3 z-10 rounded-lg p-2 text-white transition hover:bg-white/10"

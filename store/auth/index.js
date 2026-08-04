@@ -2,17 +2,11 @@ import { apiSlice } from "../apiSlice";
 
 export const authSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation({
-      query: (data) => ({
-        url: "/auth/login",
-        method: "POST",
-        body: data,
-      }),
-    }),
     profile: builder.query({
-      query: () => ({
+      query: (token) => ({
         url: "/auth/profile",
         method: "GET",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       }),
     }),
     logout: builder.mutation({
@@ -47,7 +41,6 @@ export const authSlice = apiSlice.injectEndpoints({
 });
 
 export const {
-  useLoginMutation,
   useProfileQuery,
   useLogoutMutation,
   useChangePasswordMutation,

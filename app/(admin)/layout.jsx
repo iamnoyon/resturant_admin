@@ -1,8 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import AdminLayout from "@/components/layouts/AdminLayout";
-import AuthProvider from "@/components/layouts/AuthProvider";
 import ReduxProvider from "@/components/providers/ReduxProvider";
+import SessionSync from "@/components/providers/SessionSync";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -23,12 +23,11 @@ export default function AdminRootLayout({
     children,
 }) {
     return (
-        <AuthProvider>
-            <ReduxProvider>
-                <AdminLayout>
-                    {children}
-                </AdminLayout>
-            </ReduxProvider>
-        </AuthProvider>
+        <ReduxProvider>
+            <SessionSync />
+            <AdminLayout>
+                {children}
+            </AdminLayout>
+        </ReduxProvider>
     );
 }

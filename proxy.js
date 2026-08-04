@@ -6,17 +6,23 @@ const protectedRoutes = [
   "/product-management",
   "/content-management",
   "/profile",
+  "/businesses",
+  "/expenses",
+  "/order",
+  "/package-management",
+  "/tables",
 ];
 
 export function proxy(request) {
-  const accessToken = request.cookies.get("access_token")?.value;
+  const sessionToken = request.cookies.get("authjs.session-token")?.value
+    || request.cookies.get("__Secure-authjs.session-token")?.value;
   const path = request.nextUrl.pathname;
 
   const isProtected = protectedRoutes.some((route) =>
     path.startsWith(route)
   );
 
-  if (!accessToken && isProtected) {
+  if (!sessionToken && isProtected) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
@@ -30,5 +36,10 @@ export const config = {
     "/product-management/:path*",
     "/content-management/:path*",
     "/profile/:path*",
+    "/businesses/:path*",
+    "/expenses/:path*",
+    "/order/:path*",
+    "/package-management/:path*",
+    "/tables/:path*",
   ],
 };

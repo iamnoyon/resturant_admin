@@ -12,7 +12,8 @@ export default function Sidebar({ onNavClick, hideToggle }) {
   const [collapsed, setCollapsed] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const userPermissions = useSelector((state) => state?.user?.permissions) || [];
-  const userRole = useSelector((state) => state?.user?.role);
+  const user = useSelector((state) => state?.user);
+  const userRole = user?.role || '';
 
   const permissionValues = useMemo(() => {
     return userPermissions.map((p) => (typeof p === "string" ? p : p.value));
@@ -55,24 +56,32 @@ export default function Sidebar({ onNavClick, hideToggle }) {
 
   return (
     <aside
-      className={`flex h-full flex-col border-r bg-[#02162e] transition-all duration-300 ${collapsed ? "w-20" : "w-60"
+      className={`flex h-full w-full flex-col border-r bg-[#02162e] transition-all duration-300 ${collapsed ? "lg:w-20" : "lg:w-60"
         }`}
     >
       {/* Header */}
-      <div
-        className={`flex h-16 items-center ${collapsed ? "justify-center px-2" : "justify-between px-6"
-          }`}
-      >
+      <div className={`relative flex h-16 items-center ${collapsed ? "px-2" : "px-6"}`}>
         {!collapsed && (
-          <h1 className="text-2xl font-extrabold tracking-tight">
-      <span className="text-white">Cloud</span>
-      <span className="text-[#C98A4A]">Cafe</span>
-    </h1>
+          user?.business?.businessName ? (
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold tracking-tight text-[#C98A4A]">
+                {user.business.businessName}
+              </h1>
+            </div>
+          ) : (
+            <div className="flex items-center">
+              <h1 className="text-2xl font-extrabold tracking-tight">
+                <span className="text-white">Cloud</span>
+              </h1>
+              <span className="text-2xl font-extrabold tracking-tight text-[#C98A4A]">Cafe</span>
+            </div>
+          )
         )}
+
         {!hideToggle && (
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="rounded-lg p-2 text-white transition hover:cursor-pointer hover:text-gray-300"
+            className="absolute right-6 rounded-lg p-2 text-white transition hover:cursor-pointer hover:text-gray-300"
           >
             {collapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
           </button>
@@ -154,8 +163,8 @@ export default function Sidebar({ onNavClick, hideToggle }) {
                             href={child.path}
                             onClick={handleNavClick}
                             className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${childActive
-                                ? "bg-[#0A4D99] text-white"
-                                : "text-gray-400 hover:bg-[#063C76]"
+                              ? "bg-[#0A4D99] text-white"
+                              : "text-gray-400 hover:bg-[#063C76]"
                               }`}
                           >
                             {ChildIcon && <ChildIcon size={16} />}
