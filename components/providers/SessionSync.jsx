@@ -1,11 +1,11 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser, setToken } from "@/store/user";
+import { setUser, setToken, clearUser, clearToken } from "@/store/user";
 import { useProfileQuery } from "@/store/auth";
-import { signOut } from "next-auth/react";
+import { apiSlice } from "@/store/apiSlice";
 
 export default function SessionSync() {
   const { data: session } = useSession();
@@ -44,10 +44,15 @@ export default function SessionSync() {
   useEffect(() => {
     if (isError && token) {
       sessionStorage.removeItem("backend_token");
-      signOut({ redirect: false });
-      window.location.href = "/";
+      dispatch(clearUser());
+      dispatch(clearToken());
+      dispatch(apiSlice.util.resetApiState());
+
+      signOut({ redirect: false }).finally(() => {
+        window.location.href = "/";
+      });
     }
-  }, [isError, token]);
+  }, [isError, token, dispatch]);
 
   return null;
 }
