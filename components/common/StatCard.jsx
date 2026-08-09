@@ -28,13 +28,12 @@ export default function StatCard({
                         {isDown && <TrendingDown size={16} className="text-red-500" />}
                         {isStable && <Minus size={16} className="text-gray-500" />}
                         <span
-                            className={`text-sm font-medium ${
-                                isUp
+                            className={`text-sm font-medium ${isUp
                                     ? "text-green-500"
                                     : isDown
-                                      ? "text-red-500"
-                                      : "text-gray-500"
-                            }`}
+                                        ? "text-red-500"
+                                        : "text-gray-500"
+                                }`}
                         >
                             {trendValue}%
                         </span>
@@ -42,9 +41,8 @@ export default function StatCard({
                 )}
             </div>
             <div
-                className={`flex h-12 w-12 items-center justify-center rounded-full ${
-                    isUp ? "bg-green-50" : isDown ? "bg-red-50" : "bg-gray-100"
-                }`}
+                className={`flex h-12 w-12 items-center justify-center rounded-full ${isUp ? "bg-green-50" : isDown ? "bg-red-50" : "bg-gray-100"
+                    }`}
             >
                 {Icon && (
                     <Icon

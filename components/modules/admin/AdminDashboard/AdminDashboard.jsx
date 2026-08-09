@@ -4,6 +4,7 @@ import StatCard from '@/components/common/StatCard'
 import React from 'react'
 import dummyStats from './dummyData'
 import { useGetAdminSummaryCardQuery } from '@/store/admin/dashboard'
+import { BanknoteArrowDown, ShieldCheck } from 'lucide-react'
 
 const AdminDashboard = () => {
     const {data: summaryCards, isLoading, isError} = useGetAdminSummaryCardQuery()
@@ -13,19 +14,19 @@ const AdminDashboard = () => {
           key={1}
           title='Total Revenue'
           value={summaryCards?.data?.totalRevenue?.value}
-          iconName={summaryCards?.[0]?.iconName}
+          iconName={ShieldCheck}
           trendValue={summaryCards?.data?.totalRevenue?.change}
           trend={summaryCards?.data?.totalRevenue?.trend}
-          borderColor={summaryCards?.[0]?.borderColor}
+          borderColor='border-b-blue-600'
         />
         <StatCard
           key={2}
-          title='Total Expense'
+          title='Others Expense'
           value={summaryCards?.data?.totalExpenses?.value}
-          iconName={summaryCards?.[0]?.iconName}
+          iconName={BanknoteArrowDown}
           trendValue={summaryCards?.data?.totalExpenses?.change}
           trend={summaryCards?.data?.totalExpenses?.trend}
-          borderColor={summaryCards?.[0]?.borderColor}
+          borderColor='border-b-red-600'
         />
         <StatCard
           key={3}
@@ -34,7 +35,7 @@ const AdminDashboard = () => {
           iconName={summaryCards?.[0]?.iconName}
           trendValue={summaryCards?.data?.totalOrders?.change}
           trend={summaryCards?.data?.totalOrders?.trend}
-          borderColor={summaryCards?.[0]?.borderColor}
+          borderColor='border-b-green-700'
         />
         <StatCard
           key={4}
@@ -43,7 +44,7 @@ const AdminDashboard = () => {
           iconName={summaryCards?.[0]?.iconName}
           trendValue={summaryCards?.data?.netProfit?.change}
           trend={summaryCards?.data?.netProfit?.trend}
-          borderColor={summaryCards?.[0]?.borderColor}
+          borderColor='border-b-purple-700'
         />
         <StatCard
           key={5}
@@ -52,7 +53,7 @@ const AdminDashboard = () => {
           iconName={summaryCards?.[0]?.iconName}
           trendValue={summaryCards?.data?.totalDiscount?.change}
           trend={summaryCards?.data?.totalDiscount?.trend}
-          borderColor={summaryCards?.[0]?.borderColor}
+          borderColor='border-b-lime-600'
         />
     </div>
   )
