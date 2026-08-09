@@ -8,14 +8,50 @@ import { useGetAdminSummaryCardQuery } from '@/store/admin/dashboard'
 const AdminDashboard = () => {
     const {data: summaryCards, isLoading, isError} = useGetAdminSummaryCardQuery()
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 p-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-4">
         <StatCard
           key={1}
-          title={summaryCards?.[0]?.title}
-          value={summaryCards?.[0]?.value}
+          title='Total Revenue'
+          value={summaryCards?.data?.totalRevenue?.value}
           iconName={summaryCards?.[0]?.iconName}
-          trendValue={summaryCards?.[0]?.trendValue}
-          trend={summaryCards?.[0]?.trend}
+          trendValue={summaryCards?.data?.totalRevenue?.change}
+          trend={summaryCards?.data?.totalRevenue?.trend}
+          borderColor={summaryCards?.[0]?.borderColor}
+        />
+        <StatCard
+          key={2}
+          title='Total Expense'
+          value={summaryCards?.data?.totalExpenses?.value}
+          iconName={summaryCards?.[0]?.iconName}
+          trendValue={summaryCards?.data?.totalExpenses?.change}
+          trend={summaryCards?.data?.totalExpenses?.trend}
+          borderColor={summaryCards?.[0]?.borderColor}
+        />
+        <StatCard
+          key={3}
+          title='Total Orders'
+          value={summaryCards?.data?.totalOrders?.value}
+          iconName={summaryCards?.[0]?.iconName}
+          trendValue={summaryCards?.data?.totalOrders?.change}
+          trend={summaryCards?.data?.totalOrders?.trend}
+          borderColor={summaryCards?.[0]?.borderColor}
+        />
+        <StatCard
+          key={4}
+          title='Net Profit'
+          value={summaryCards?.data?.netProfit?.value}
+          iconName={summaryCards?.[0]?.iconName}
+          trendValue={summaryCards?.data?.netProfit?.change}
+          trend={summaryCards?.data?.netProfit?.trend}
+          borderColor={summaryCards?.[0]?.borderColor}
+        />
+        <StatCard
+          key={5}
+          title='Total Discount'
+          value={summaryCards?.data?.totalDiscount?.value}
+          iconName={summaryCards?.[0]?.iconName}
+          trendValue={summaryCards?.data?.totalDiscount?.change}
+          trend={summaryCards?.data?.totalDiscount?.trend}
           borderColor={summaryCards?.[0]?.borderColor}
         />
     </div>

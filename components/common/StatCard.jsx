@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 export default function StatCard({
     title,
@@ -12,6 +12,8 @@ export default function StatCard({
     className = "",
 }) {
     const isUp = trend === "up";
+    const isDown = trend === "down";
+    const isStable = trend === "stable";
 
     return (
         <div
@@ -22,14 +24,16 @@ export default function StatCard({
                 <span className="text-2xl font-bold text-gray-900">{value}</span>
                 {trendValue != null && (
                     <div className="flex items-center gap-1">
-                        {isUp ? (
-                            <TrendingUp size={16} className="text-green-500" />
-                        ) : (
-                            <TrendingDown size={16} className="text-red-500" />
-                        )}
+                        {isUp && <TrendingUp size={16} className="text-green-500" />}
+                        {isDown && <TrendingDown size={16} className="text-red-500" />}
+                        {isStable && <Minus size={16} className="text-gray-500" />}
                         <span
                             className={`text-sm font-medium ${
-                                isUp ? "text-green-500" : "text-red-500"
+                                isUp
+                                    ? "text-green-500"
+                                    : isDown
+                                      ? "text-red-500"
+                                      : "text-gray-500"
                             }`}
                         >
                             {trendValue}%
@@ -39,10 +43,15 @@ export default function StatCard({
             </div>
             <div
                 className={`flex h-12 w-12 items-center justify-center rounded-full ${
-                    isUp ? "bg-green-50" : "bg-red-50"
+                    isUp ? "bg-green-50" : isDown ? "bg-red-50" : "bg-gray-100"
                 }`}
             >
-                {Icon && <Icon size={24} className={isUp ? "text-green-600" : "text-red-600"} />}
+                {Icon && (
+                    <Icon
+                        size={24}
+                        className={isUp ? "text-green-600" : isDown ? "text-red-600" : "text-gray-600"}
+                    />
+                )}
             </div>
         </div>
     );
