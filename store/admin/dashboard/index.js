@@ -9,6 +9,12 @@ export const dashboardSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getAdminChart: builder.query({
+      query: () => ({
+        url: '/dashboard/charts',
+        method: "GET"
+      })
+    })
     
   }),
   overrideExisting: true,
@@ -16,4 +22,5 @@ export const dashboardSlice = apiSlice.injectEndpoints({
 
 export const {
     useGetAdminSummaryCardQuery,
+    useGetAdminChartQuery
 } = dashboardSlice;

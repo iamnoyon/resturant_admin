@@ -10,10 +10,35 @@ export default function StatCard({
     trend = "up",
     borderColor = "border-b-gray-400",
     className = "",
+    isExpense = false
 }) {
     const isUp = trend === "up";
     const isDown = trend === "down";
     const isStable = trend === "stable";
+
+    const iconColorClass = isExpense
+        ? isUp
+            ? "text-red-500"
+            : isDown
+                ? "text-green-500"
+                : "text-gray-500"
+        : isUp
+            ? "text-green-500"
+            : isDown
+                ? "text-red-500"
+                : "text-gray-500";
+
+    const badgeColorClass = isExpense
+        ? isUp
+            ? "bg-red-50 text-red-600"
+            : isDown
+                ? "bg-green-50 text-green-600"
+                : "bg-gray-100 text-gray-600"
+        : isUp
+            ? "bg-green-50 text-green-600"
+            : isDown
+                ? "bg-red-50 text-red-600"
+                : "bg-gray-100 text-gray-600";
 
     return (
         <div
@@ -21,33 +46,25 @@ export default function StatCard({
         >
             <div className="flex flex-col gap-1">
                 <span className="text-sm font-medium text-gray-500">{title}</span>
-                <span className="text-2xl font-bold text-gray-900">{value}</span>
+                <span className="text-xl font-semibold text-gray-900">{value}</span>
                 {trendValue != null && (
                     <div className="flex items-center gap-1">
-                        {isUp && <TrendingUp size={16} className="text-green-500" />}
-                        {isDown && <TrendingDown size={16} className="text-red-500" />}
-                        {isStable && <Minus size={16} className="text-gray-500" />}
-                        <span
-                            className={`text-sm font-medium ${isUp
-                                    ? "text-green-500"
-                                    : isDown
-                                        ? "text-red-500"
-                                        : "text-gray-500"
-                                }`}
-                        >
+                        {isUp && <TrendingUp size={16} className={iconColorClass} />}
+                        {isDown && <TrendingDown size={16} className={iconColorClass} />}
+                        {isStable && <Minus size={16} className={iconColorClass} />}
+                        <span className={`text-sm font-medium ${iconColorClass}`}>
                             {trendValue}%
                         </span>
                     </div>
                 )}
             </div>
             <div
-                className={`flex h-12 w-12 items-center justify-center rounded-full ${isUp ? "bg-green-50" : isDown ? "bg-red-50" : "bg-gray-100"
-                    }`}
+                className={`flex h-12 w-12 items-center justify-center rounded-full ${badgeColorClass.split(" ")[0]}`}
             >
                 {Icon && (
                     <Icon
                         size={24}
-                        className={isUp ? "text-green-600" : isDown ? "text-red-600" : "text-gray-600"}
+                        className={badgeColorClass.split(" ")[1] || "text-gray-600"}
                     />
                 )}
             </div>
