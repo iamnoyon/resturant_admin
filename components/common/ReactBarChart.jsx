@@ -17,11 +17,12 @@ export default function ReactBarChart({
     backgroundColor = "transparent",
     borderRadius = 8,
     barWidth = 28,
+    loading = false,
 }) {
     const chartRef = useRef(null);
 
     useEffect(() => {
-        if (!chartRef.current || !data?.length) return;
+        if (loading || !chartRef.current || !data?.length) return;
 
         const chart = echarts.init(chartRef.current);
 
@@ -31,6 +32,7 @@ export default function ReactBarChart({
         const option = {
             backgroundColor,
             animationDuration: 500,
+
             title: title
                 ? {
                     text: title,
@@ -43,6 +45,7 @@ export default function ReactBarChart({
                     },
                 }
                 : undefined,
+
             tooltip: {
                 trigger: "axis",
                 axisPointer: {
@@ -52,11 +55,14 @@ export default function ReactBarChart({
                 textStyle: {
                     color: "#fff",
                 },
-                formatter: formatter || ((params) => {
-                    const value = params[0]?.value ?? 0;
-                    return `${params[0]?.name}<br/>${value}`;
-                }),
+                formatter:
+                    formatter ||
+                    ((params) => {
+                        const value = params[0]?.value ?? 0;
+                        return `${params[0]?.name}<br/>${value}`;
+                    }),
             },
+
             grid: {
                 left: 18,
                 right: 18,
@@ -64,68 +70,90 @@ export default function ReactBarChart({
                 bottom: 22,
                 containLabel: true,
             },
+
             xAxis: {
                 type: "category",
                 data: labels,
+
                 axisLabel: {
                     color: "#6b7280",
                     fontSize: 11,
                     rotate: 0,
                 },
+
                 axisLine: {
                     lineStyle: {
                         color: "#e5e7eb",
                     },
                 },
+
                 axisTick: {
                     show: false,
                 },
+
                 name: xAxisName,
                 nameLocation: "middle",
                 nameGap: 26,
+
                 nameTextStyle: {
                     color: "#374151",
                     fontSize: 12,
                 },
             },
+
             yAxis: {
                 type: "value",
+
                 axisLabel: {
                     color: "#6b7280",
                     fontSize: 11,
                 },
+
                 axisLine: {
                     lineStyle: {
                         color: "#e5e7eb",
                     },
                 },
+
                 splitLine: {
                     lineStyle: {
                         color: "#f3f4f6",
                     },
                 },
+
                 name: yAxisName,
+
                 nameTextStyle: {
                     color: "#374151",
                     fontSize: 12,
                 },
             },
+
             series: [
                 {
                     name: yKey,
                     type: "bar",
                     data: values,
                     barWidth,
+
                     itemStyle: {
                         color,
-                        borderRadius: [borderRadius, borderRadius, 0, 0],
+                        borderRadius: [
+                            borderRadius,
+                            borderRadius,
+                            0,
+                            0,
+                        ],
                     },
+
                     emphasis: {
                         itemStyle: {
                             shadowBlur: 10,
-                            shadowColor: "rgba(59, 130, 246, 0.35)",
+                            shadowColor:
+                                "rgba(59, 130, 246, 0.35)",
                         },
                     },
+
                     label: {
                         show: false,
                     },
@@ -145,20 +173,68 @@ export default function ReactBarChart({
             resizeObserver.disconnect();
             chart.dispose();
         };
-    }, [backgroundColor, barWidth, borderRadius, color, data, formatter, title, xAxisName, xKey, yAxisName, yKey]);
+    }, [
+        backgroundColor,
+        barWidth,
+        borderRadius,
+        color,
+        data,
+        formatter,
+        loading,
+        title,
+        xAxisName,
+        xKey,
+        yAxisName,
+        yKey,
+    ]);
 
     return (
         <div
-            ref={chartRef}
-            className={className}
+            className={`relative overflow-hidden ${className}`}
             style={{
                 width: "100%",
                 height,
                 backgroundColor: "#fff",
                 borderRadius: 12,
-                boxShadow: "0 2px 8px rgba(15, 23, 42, 0.08)",
+                boxShadow:
+                    "0 2px 8px rgba(15, 23, 42, 0.08)",
                 padding: 8,
             }}
-        />
+        >
+            {loading ? (
+                <div className="absolute inset-0 animate-pulse p-5">
+                    {/* Title skeleton */}
+                    {title && (
+                        <div className="mb-5 h-4 w-32 rounded bg-gray-200" />
+                    )}
+
+                    {/* Chart area */}
+                    <div className="flex h-[calc(100%-45px)] items-end justify-between gap-3 px-4 pb-8">
+                        <div className="h-[35%] w-7 rounded-t bg-gray-200" />
+                        <div className="h-[55%] w-7 rounded-t bg-gray-200" />
+                        <div className="h-[45%] w-7 rounded-t bg-gray-200" />
+                        <div className="h-[70%] w-7 rounded-t bg-gray-200" />
+                        <div className="h-[50%] w-7 rounded-t bg-gray-200" />
+                        <div className="h-[80%] w-7 rounded-t bg-gray-200" />
+                        <div className="h-[60%] w-7 rounded-t bg-gray-200" />
+                        <div className="h-[40%] w-7 rounded-t bg-gray-200" />
+                    </div>
+
+                    {/* X-axis skeleton */}
+                    <div className="absolute bottom-4 left-8 right-8 h-px bg-gray-200" />
+
+                    {/* Y-axis skeleton */}
+                    <div className="absolute bottom-8 left-5 top-14 w-px bg-gray-200" />
+                </div>
+            ) : (
+                <div
+                    ref={chartRef}
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                    }}
+                />
+            )}
+        </div>
     );
 }

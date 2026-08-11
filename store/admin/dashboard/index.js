@@ -14,13 +14,20 @@ export const dashboardSlice = apiSlice.injectEndpoints({
         url: '/dashboard/charts',
         method: "GET"
       })
+    }),
+    getRecentOderList: builder.query({
+      query: (params) => ({
+        url: '/dashboard/recent-orders',
+        method: 'GET',
+        params
+      })
     })
-    
   }),
   overrideExisting: true,
 });
 
 export const {
     useGetAdminSummaryCardQuery,
-    useGetAdminChartQuery
+    useGetAdminChartQuery,
+    useGetRecentOderListQuery
 } = dashboardSlice;

@@ -1,10 +1,10 @@
-import AdminDashboard from '@/components/modules/admin/AdminDashboard/AdminDashboard'
+import RenderDashboard from '@/components/modules/admin/AdminDashboard/RenderDashboard'
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      <AdminDashboard />
+      <RenderDashboard />
     </div>
     
   )
