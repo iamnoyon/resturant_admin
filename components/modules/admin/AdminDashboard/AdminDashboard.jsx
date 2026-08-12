@@ -5,6 +5,8 @@ import React from 'react'
 import { useGetAdminChartQuery, useGetAdminSummaryCardQuery } from '@/store/admin/dashboard'
 import { BanknoteArrowDown, Gauge, Receipt, ShieldCheck, Utensils } from 'lucide-react'
 import ReactBarChart from '@/components/common/ReactBarChart'
+import ReactPieChart from '@/components/common/ReactPieChart'
+import ReactKPICard from '@/components/common/ReactKPICard'
 import RecentOrderTable from './RecentOrderTable'
 
 
@@ -85,6 +87,12 @@ const AdminDashboard = () => {
       </div>
       <div className='grid grid-cols-1 gap-5 sm:grid-cols-2'>
         <RecentOrderTable />
+        <ReactPieChart 
+        data={chartData?.data?.pieChart || []}
+        title='Profit/Expense'
+        loading={chartLoading}
+        /> 
+        {/* <ReactKPICard data={chartData?.data?.pieChart || []}/>  */}
       </div>
     </div>
   )
