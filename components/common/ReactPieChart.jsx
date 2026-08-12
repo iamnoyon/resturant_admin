@@ -5,7 +5,7 @@ import * as echarts from "echarts";
 
 const DEFAULT_COLORS = [
     "#0DB8F5",
-    "#587BF3",
+    "#E91E63",
     "#FFA854",
     "#795548",
     "#607D8B",
