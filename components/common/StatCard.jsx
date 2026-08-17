@@ -20,7 +20,7 @@ export default function StatCard({
     if (loading) {
         return (
             <div
-                className={`flex items-center justify-between rounded-lg border border-gray-200 border-b-4 bg-white p-5 shadow-sm ${borderColor} ${className}`}
+                className={`flex items-center justify-between rounded-lg border border-l-4 md:border-b-4 bg-white p-5 shadow-sm ${borderColor} ${className}`}
             >
                 <div className="flex flex-1 flex-col gap-2">
                     {/* Title skeleton */}
