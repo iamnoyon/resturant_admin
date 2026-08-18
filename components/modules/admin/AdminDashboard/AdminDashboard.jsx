@@ -3,7 +3,7 @@
 import StatCard from '@/components/common/StatCard'
 import React from 'react'
 import { useGetAdminChartQuery, useGetAdminSummaryCardQuery } from '@/store/admin/dashboard'
-import { BanknoteArrowDown, Gauge, Receipt, ShieldCheck, Utensils } from 'lucide-react'
+import { BanknoteArrowDown, Gauge, Receipt, ShieldCheck, Utensils, Banknote } from 'lucide-react'
 import ReactBarChart from '@/components/common/ReactBarChart'
 import ReactPieChart from '@/components/common/ReactPieChart'
 import ReactKPICard from '@/components/common/ReactKPICard'
@@ -31,7 +31,7 @@ const AdminDashboard = () => {
           key={2}
           title='Others Expense'
           value={`৳ ${summaryCards?.data?.totalExpenses?.value}`}
-          iconName={BanknoteArrowDown}
+          iconName={Banknote}
           trendValue={summaryCards?.data?.totalExpenses?.change}
           trend={summaryCards?.data?.totalExpenses?.trend}
           borderColor='border-b-rose-700'
