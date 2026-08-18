@@ -21,6 +21,7 @@ import CustomDrawer from "@/components/common/CustomDrawer";
 import Image from "next/image";
 import OrderList from "./OrderList";
 import { useGetWaiterListQuery } from "@/store/admin/user-management";
+import useDownloadReceipt from "@/components/Receipt/useDownloadReceipt";
 
 const tableBtnClass = (isSelected) =>
   `flex flex-col items-center justify-center gap-1.5 p-2 rounded-xl border-2 transition-all cursor-pointer aspect-square w-full ${isSelected
@@ -75,10 +76,12 @@ const NewOrder = () => {
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [editOrderId, setEditOrderId] = useState(null);
   const { successToaster, errorToaster } = useToaster();
+  const downloadReceipt = useDownloadReceipt();
+
 
   const { data: tableDropdown, isLoading: tablesLoading } = useGetTableDropdownQuery();
   const { data: categoryDropdown, isLoading: categoriesLoading } = useGetCategoryDropdownQuery();
-  const {data: waiterList} = useGetWaiterListQuery()
+  const { data: waiterList } = useGetWaiterListQuery()
   const [triggerProducts, { data: productList, isLoading: productsLoading }] = useLazyGetProductsByCategoryQuery();
   const [createOrder, { isLoading: orderLoading }] = useCreateOrderMutation();
   const [triggerOrders] = useLazyGetOrderListQuery();
@@ -161,32 +164,28 @@ const NewOrder = () => {
   const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
   const handlePlaceOrder = async () => {
-    if (!selectedTable) {
-      errorToaster("Please select a table");
-      return;
-    }
     if (cart.length === 0) {
       errorToaster("Cart is empty");
       return;
     }
 
-    const result = await Swal.fire({
-      title: "Confirm Order",
-      text: `Place order for ${selectedTable.tableName}?`,
-      icon: "question",
-      width: "350px",
-      padding: "1.25rem",
-      showCancelButton: true,
-      confirmButtonColor: "#043570",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, place order",
-      cancelButtonText: "Cancel",
-      didOpen: (popup) => {
-        const icon = popup.querySelector(".swal2-icon");
-        if (icon) icon.style.transform = "scale(0.7)";
-      },
-    });
-    if (!result.isConfirmed) return;
+    // const result = await Swal.fire({
+    //   title: "Confirm Order",
+    //   text: `Place order for ${selectedTable.tableName}?`,
+    //   icon: "question",
+    //   width: "350px",
+    //   padding: "1.25rem",
+    //   showCancelButton: true,
+    //   confirmButtonColor: "#043570",
+    //   cancelButtonColor: "#d33",
+    //   confirmButtonText: "Yes, place order",
+    //   cancelButtonText: "Cancel",
+    //   didOpen: (popup) => {
+    //     const icon = popup.querySelector(".swal2-icon");
+    //     if (icon) icon.style.transform = "scale(0.7)";
+    //   },
+    // });
+    // if (!result.isConfirmed) return;
 
     const products = cart.map((item) => ({
       productId: item.productId,
@@ -194,7 +193,7 @@ const NewOrder = () => {
     }));
 
     const payload = {
-      tableId: selectedTable.id,
+      tableId: selectedTable?.id || null,
       products,
       waiterId: selectedWaiter?.id || null,
       totalBill: subtotal,
@@ -206,7 +205,27 @@ const NewOrder = () => {
     try {
       const res = await createOrder(payload).unwrap();
       if (res?.success) {
+        const newReceiptData = {
+          restaurant: {
+            name: "Noyon's Restaurant",
+            address: "123 Mirpur Road, Dhaka, Bangladesh",
+            phone: "+880 1700-000000",
+            logo: "/cafe_icon.png",
+          },
+          invoiceNo: `INV-${Date.now()}`,
+          date: new Date().toISOString().split("T")[0],
+          items: cart.map((item) => ({
+            qty: item.qty,
+            name: item.productName,
+            price: item.price,
+          })),
+          taxRate: 0.15,
+          discount: discountValue,
+          tax: vat.toFixed(2),
+          total: grandTotal.toFixed(2),
+        };
         successToaster(res?.message || "Order placed successfully!");
+        downloadReceipt(newReceiptData);
         clearCart();
       }
     } catch (err) {
@@ -234,7 +253,7 @@ const NewOrder = () => {
             return (
               <button
                 key={table.id}
-                onClick={() => setSelectedTable(table)}
+                onClick={() => setSelectedTable(isSelected ? null : table)}
                 className={tableBtnClass(isSelected)}
               >
                 <Table2 size={16} className="md:w-5 md:h-5 lg:w-6 lg:h-6" />
@@ -262,9 +281,8 @@ const NewOrder = () => {
                 <button
                   key={waiter.id}
                   onClick={() => setSelectedWaiter(isSelected ? null : waiter)}
-                  className={`flex items-center gap-3 p-2 rounded-lg transition-colors shrink-0 min-w-[180px] lg:min-w-0 cursor-pointer ${
-                    isSelected ? "bg-[#043570] text-white" : "hover:bg-gray-50"
-                  }`}
+                  className={`flex items-center gap-3 p-2 rounded-lg transition-colors shrink-0 min-w-[180px] lg:min-w-0 cursor-pointer ${isSelected ? "bg-[#043570] text-white" : "hover:bg-gray-50"
+                    }`}
                 >
                   <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden">
                     {waiter.profileImageUrl ? (
@@ -490,8 +508,8 @@ const NewOrder = () => {
         </button>
         <button
           onClick={handlePlaceOrder}
-          disabled={!selectedTable || orderLoading}
-          className={`flex-[2] py-2 md:py-2.5 rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer flex items-center justify-center gap-2 ${selectedTable && !orderLoading ? "bg-[#042A55] hover:bg-[#063C76]" : "bg-gray-300 cursor-not-allowed"
+          disabled={orderLoading}
+          className={`flex-[2] py-2 md:py-2.5 rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer flex items-center justify-center gap-2 ${!orderLoading ? "bg-[#042A55] hover:bg-[#063C76]" : "bg-gray-300 cursor-not-allowed"
             }`}
         >
           {orderLoading ? "Placing..." : "Proceed to Bill"}
@@ -556,8 +574,8 @@ const NewOrder = () => {
                   </button>
                   <button
                     onClick={handlePlaceOrder}
-                    disabled={!selectedTable || orderLoading}
-                    className={`flex-[2] py-2.5 rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer ${selectedTable && !orderLoading ? "bg-[#042A55] hover:bg-[#063C76]" : "bg-gray-300 cursor-not-allowed"
+                    disabled={orderLoading}
+                    className={`flex-[2] py-2.5 rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer ${!orderLoading ? "bg-[#042A55] hover:bg-[#063C76]" : "bg-gray-300 cursor-not-allowed"
                       }`}
                   >
                     {orderLoading ? "Placing..." : "Proceed to Bill"}
