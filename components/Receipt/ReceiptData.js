@@ -8,7 +8,7 @@ export const dummyReceipt = {
     invoiceNo: "INV-2026-0001",
     date: "2026-08-18",
     items: [
-        { qty: 2, name: "Fried Rice", price: 520 },
+        { qty: 2, name: "Fried Rice Fried Rice Fried Rice", price: 520 },
         { qty: 1, name: "Pepsi", price: 30 },
     ],
     taxRate: 0.1,

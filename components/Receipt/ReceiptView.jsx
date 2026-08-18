@@ -1,11 +1,22 @@
 import { MapPin, Phone } from "lucide-react";
 import { dummyReceipt } from "./ReceiptData";
+import { PAPER_WIDTH } from "./receiptConfig";
 
-export default function ReceiptView({ data = dummyReceipt }) {
+export default function ReceiptView({
+    data = dummyReceipt,
+    paperWidth = PAPER_WIDTH,
+}) {
     const { restaurant, invoiceNo, date, items, tax, discount, total } = data;
 
+    const paperStyle = `
+        .receipt { width: ${paperWidth}; }
+        @page { size: ${paperWidth} auto; }
+    `;
+
     return (
-        <div className="receipt">
+        <>
+            <style>{paperStyle}</style>
+            <div className="receipt">
             <div className="receipt-header">
                 {restaurant.logo ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -73,6 +84,7 @@ export default function ReceiptView({ data = dummyReceipt }) {
                 <span>powered by CloudCafe</span>
                 <span className="footer-line" />
             </div>
-        </div>
+            </div>
+        </>
     );
 }

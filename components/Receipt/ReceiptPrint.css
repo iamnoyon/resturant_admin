@@ -1,5 +1,4 @@
 .receipt {
-    width: 80mm;
     margin: 10px auto;
     padding: 2px 14px 8px;
     font-family: ui-monospace, "Courier New", monospace;
@@ -119,7 +118,7 @@
 .footer-line {
     display: inline-block;
     width: 20px;
-    border-top: 1px solid #666;
+    border-top: 1px solid #888;
 }
 
 .barcode-wrap {
@@ -161,6 +160,5 @@
     }
     @page {
         margin: 6mm;
-        size: 80mm auto;
     }
 }
