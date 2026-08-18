@@ -77,7 +77,7 @@ export default function useDownloadReceipt() {
                     <div class="dashed"></div>
                     <div>${itemsHTML}</div>
                     <div style="margin-top:16px;">
-                        <div class="receipt-row"><span>Tax (15%)</span><span>${tax}/-</span></div>
+                        <div class="receipt-row"><span>Tax (${tax}%)</span><span>${tax}/-</span></div>
                         <div class="receipt-row"><span>Discount</span><span>-${discount}/-</span></div>
                     </div>
                     <div class="solid"></div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import {
   Minus,
@@ -77,6 +78,7 @@ const NewOrder = () => {
   const [editOrderId, setEditOrderId] = useState(null);
   const { successToaster, errorToaster } = useToaster();
   const downloadReceipt = useDownloadReceipt();
+  const business = useSelector((state) => state?.user?.business);
 
 
   const { data: tableDropdown, isLoading: tablesLoading } = useGetTableDropdownQuery();
@@ -159,7 +161,7 @@ const NewOrder = () => {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const discountValue = parseFloat(discount) || 0;
   const afterDiscount = Math.max(0, subtotal - discountValue);
-  const vat = afterDiscount * 0.15;
+  const vat = afterDiscount * 0;
   const grandTotal = afterDiscount + vat;
   const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
@@ -207,8 +209,8 @@ const NewOrder = () => {
       if (res?.success) {
         const newReceiptData = {
           restaurant: {
-            name: "Noyon's Restaurant",
-            address: "123 Mirpur Road, Dhaka, Bangladesh",
+            name: business?.businessName || "Engineer's Restaurant",
+            address: `${business?.area}, ${business?.thana}`,
             phone: "+880 1700-000000",
             logo: "/cafe_icon.png",
           },
@@ -219,9 +221,9 @@ const NewOrder = () => {
             name: item.productName,
             price: item.price,
           })),
-          taxRate: 0.15,
+          taxRate: vat,
           discount: discountValue,
-          tax: vat.toFixed(2),
+          tax: vat,
           total: grandTotal.toFixed(2),
         };
         successToaster(res?.message || "Order placed successfully!");
@@ -474,7 +476,7 @@ const NewOrder = () => {
         <span className="text-[#EF4444]">- ৳{discountValue.toFixed(2)}</span>
       </div>
       <div className="flex justify-between text-gray-600">
-        <span>VAT (15%)</span>
+        <span>VAT (0%)</span>
         <span>৳{vat.toFixed(2)}</span>
       </div>
       <div className="flex justify-between font-bold text-sm md:text-base pt-2 border-t border-gray-100">
