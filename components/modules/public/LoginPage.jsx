@@ -4,7 +4,11 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import useToaster from "@/components/hooks/useToaster";
-import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, Loader2, FileDown } from "lucide-react";
+import { dummyReceipt } from "@/components/Receipt/ReceiptData";
+import ReceiptView from "@/components/Receipt/ReceiptView";
+import useDownloadReceipt from "@/components/Receipt/useDownloadReceipt";
+import "@/components/Receipt/ReceiptPrint.css";
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
@@ -13,6 +17,11 @@ export default function LoginPage() {
     const router = useRouter();
     const { errorToaster, successToaster } = useToaster();
     const [isLoading, setIsLoading] = useState(false);
+    const downloadReceipt = useDownloadReceipt();
+
+    const handleDownloadReceipt = () => {
+        downloadReceipt();
+    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -41,7 +50,7 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-                <div className="mb-8 text-center">
+                <div className="mb-2 text-center">
                     <h1 className="text-2xl font-bold text-[#042A55]">Admin Panel</h1>
                     <p className="text-gray-500 text-sm mt-1">
                         Sign in to your admin account
@@ -98,6 +107,21 @@ export default function LoginPage() {
                         {isLoading ? <><Loader2 size={18} className="animate-spin" /> Signing in...</> : "Sign In"}
                     </button>
                 </form>
+
+                <div className="mt-4 flex justify-center">
+                    <button
+                        type="button"
+                        onClick={handleDownloadReceipt}
+                        className="flex items-center gap-2 text-sm font-medium text-[#042A55] hover:text-[#063C76] hover:underline hover:cursor-pointer"
+                    >
+                        <FileDown size={16} />
+                        Download Sample Receipt (PDF)
+                    </button>
+                </div>
+
+                <div className="print-only">
+                    <ReceiptView data={dummyReceipt} />
+                </div>
             </div>
         </div>
     );
