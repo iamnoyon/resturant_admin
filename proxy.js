@@ -11,6 +11,7 @@ const protectedRoutes = [
   "/order",
   "/package-management",
   "/tables",
+  "/payments",
 ];
 
 export function proxy(request) {
@@ -41,5 +42,6 @@ export const config = {
     "/order/:path*",
     "/package-management/:path*",
     "/tables/:path*",
+    "/payments/:path*",
   ],
 };

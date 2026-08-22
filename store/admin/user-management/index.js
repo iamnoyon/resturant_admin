@@ -51,6 +51,13 @@ export const userApiSlice = apiSlice.injectEndpoints({
         method: 'GET'
       })
     }),
+    getAdminWithBusiness: builder.query({
+      query: () => ({
+        url: '/users/admin-with-business',
+        method: 'GET',
+      }),
+      providesTags: ['userlist'],
+    }),
     updateUserStatus: builder.mutation({
       query: ({id, data})=>({
         url: `/users/${id}/status`,
@@ -72,5 +79,6 @@ export const {
   useGetPermissionsByUserIdQuery,
   useUpdatePermissionsByUserIdMutation,
   useGetWaiterListQuery,
+  useGetAdminWithBusinessQuery,
   useup
 } = userApiSlice;

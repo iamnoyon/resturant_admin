@@ -34,6 +34,13 @@ export const menuItems = [
     superadminOnly: true,
   },
   {
+    name: "Payments",
+    icon: Banknote,
+    path: "/payments",
+    activePath: ["/payments"],
+    superadminOnly: true,
+  },
+  {
     name: "Orders",
     icon: ShoppingCart,
     path: "/order",
