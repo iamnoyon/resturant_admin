@@ -55,6 +55,14 @@ export const packageSlice = apiSlice.injectEndpoints({
         body: data
       })
     }),
+    adminPurchasePackage: builder.mutation({
+      query: (data) => ({
+        url: '/payment/admin/purchase',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Payments', 'Packages'],
+    }),
     checkPaymentStatus: builder.query({
       query: ({tran_id}) => ({
         url: `/payment/status/${tran_id}`,
@@ -72,5 +80,6 @@ useUpdatePackageByIDMutation,
 useDeletePackageMutation,
 useGetPackageByIdQuery,
 useMakePaymentMutation,
+useAdminPurchasePackageMutation,
 useCheckPaymentStatusQuery
 } = packageSlice;
