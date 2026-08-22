@@ -37,7 +37,6 @@ export default function CMSContent() {
 
     const onSubmit = (data) => {
         // TODO: Replace with actual API mutation
-        console.log("Slider data to save:", data);
         successToaster("Slider content saved successfully!");
     };
 

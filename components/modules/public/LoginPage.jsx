@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import useToaster from "@/components/hooks/useToaster";
 import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
@@ -13,7 +13,14 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const { errorToaster, successToaster } = useToaster();
     const [isLoading, setIsLoading] = useState(false);
+    const {data: session} = useSession()
 
+    useEffect(()=>{
+        if(session?.user?.backendToken){
+            router.replace('/dashboard')
+        }
+    }, [session])
+    
     const handleLogin = async (e) => {
         e.preventDefault();
         setIsLoading(true);

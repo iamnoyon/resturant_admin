@@ -17,7 +17,6 @@ export default function BillingInfo({ user, statusColor }) {
         MakePayment({packageId: selectedPackage?.id})
         .unwrap()
         .then((res)=>{
-            console.log(res)
             if(res?.success){
                 window.location.href = res?.data?.gatewayUrl;
             }

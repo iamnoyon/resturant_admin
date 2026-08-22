@@ -14,7 +14,6 @@ export default function Sidebar({ onNavClick, hideToggle }) {
   const userPermissions = useSelector((state) => state?.user?.permissions) || [];
   const user = useSelector((state) => state?.user);
   const userRole = user?.role || '';
-  console.log(user.business);
 
   const permissionValues = useMemo(() => {
     return userPermissions.map((p) => (typeof p === "string" ? p : p.value));
