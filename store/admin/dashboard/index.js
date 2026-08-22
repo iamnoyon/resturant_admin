@@ -21,6 +21,20 @@ export const dashboardSlice = apiSlice.injectEndpoints({
         method: 'GET',
         params
       })
+    }),
+    getSuperAdminSummaryCard: builder.query({
+      query: (params) => ({
+        url: '/dashboard/admin/overview',
+        method: 'GET',
+        params
+      })
+    }),
+    getSuperAdminCharts: builder.query({
+      query: (params) => ({
+        url: '/dashboard/admin/charts',
+        method: 'GET',
+        params
+      })
     })
   }),
   overrideExisting: true,
@@ -29,5 +43,7 @@ export const dashboardSlice = apiSlice.injectEndpoints({
 export const {
     useGetAdminSummaryCardQuery,
     useGetAdminChartQuery,
-    useGetRecentOderListQuery
+    useGetRecentOderListQuery,
+    useGetSuperAdminSummaryCardQuery,
+    useLazyGetSuperAdminChartsQuery
 } = dashboardSlice;
