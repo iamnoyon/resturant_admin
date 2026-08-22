@@ -7,7 +7,7 @@ import { apiSlice } from "@/store/apiSlice";
 
 let isLoggingOut = false;
 
-export function performLogout() {
+export async function performLogout() {
   if (isLoggingOut) return;
   isLoggingOut = true;
 
@@ -15,12 +15,13 @@ export function performLogout() {
     sessionStorage.removeItem("backend_token");
   } catch {}
 
-  signOut({ redirect: false }).finally(() => {
-    try {
-      store.dispatch(apiSlice.util.resetApiState());
-      store.dispatch(clearUser());
-      store.dispatch(clearToken());
-    } catch {}
-    window.location.href = "/";
-  });
+  store.dispatch(apiSlice.util.resetApiState());
+  store.dispatch(clearUser());
+  store.dispatch(clearToken());
+
+  try {
+    await signOut({ redirect: false });
+  } catch {}
+
+  window.location.replace("/");
 }

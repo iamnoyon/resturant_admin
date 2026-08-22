@@ -24,7 +24,8 @@ export default function ReactBarChart({
     useEffect(() => {
         if (loading || !chartRef.current || !data?.length) return;
 
-        const chart = echarts.init(chartRef.current);
+        const dom = chartRef.current;
+        const chart = echarts.init(dom);
 
         const labels = data.map((item) => item[xKey]);
         const values = data.map((item) => Number(item[yKey]) || 0);
@@ -171,7 +172,11 @@ export default function ReactBarChart({
 
         return () => {
             resizeObserver.disconnect();
-            chart.dispose();
+            if (dom && dom.isConnected) {
+                try {
+                    chart.dispose();
+                } catch {}
+            }
         };
     }, [
         backgroundColor,

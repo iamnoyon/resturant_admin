@@ -2,7 +2,6 @@
 "use client";
 
 import { Bell, LogOut, Menu, User } from "lucide-react";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import NextLink from "next/link"
@@ -64,13 +63,11 @@ export default function Topbar({ onMenuToggle }) {
                         className="flex items-center gap-2 rounded-xl px-2 py-1 transition hover:bg-gray-100"
                     >
                         {/* Avatar */}
-                        <div className="relative h-10 w-10 overflow-hidden rounded-full hover:cursor-pointer">
-                                <Image
-                                    src={state?.profileImageUrl || "/default-avatar.png"}
+                        <div className="relative h-10 w-10 overflow-hidden rounded-full hover:cursor-pointer bg-gray-200">
+                                <img
+                                    src={state?.profileImageUrl || "/profile.png"}
                                     alt="User Avatar"
-                                    fill
-                                    className="object-cover"
-                                    unoptimized={true}
+                                    className="absolute inset-0 h-full w-full object-cover"
                                 />
                             </div>
                     </button>

@@ -96,15 +96,14 @@ export default function ReactPieChart({
 
         return () => {
             window.removeEventListener("resize", handleResize);
+            if (instanceRef.current && dom.isConnected) {
+                try {
+                    instanceRef.current.dispose();
+                } catch {}
+                instanceRef.current = null;
+            }
         };
     }, [data, loading, title, colors, radius, name]);
-
-    useEffect(() => {
-        return () => {
-            instanceRef.current?.dispose();
-            instanceRef.current = null;
-        };
-    }, []);
 
     return (
         <div
