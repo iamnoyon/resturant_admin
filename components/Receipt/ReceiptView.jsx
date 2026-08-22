@@ -27,14 +27,18 @@ export default function ReceiptView({
                     />
                 ) : null}
                 <h1>{restaurant.name}</h1>
-                <p className="receipt-info">
-                    <MapPin size={12} className="receipt-info-icon" />
-                    <span>{restaurant.address}</span>
-                </p>
-                <p className="receipt-info">
-                    <Phone size={12} className="receipt-info-icon" />
-                    <span>{restaurant.phone}</span>
-                </p>
+                {restaurant.address && (
+                    <p className="receipt-info">
+                        <MapPin size={12} className="receipt-info-icon" />
+                        <span>{restaurant.address}</span>
+                    </p>
+                )}
+                {restaurant.phone && (
+                    <p className="receipt-info">
+                        <Phone size={12} className="receipt-info-icon" />
+                        <span>{restaurant.phone}</span>
+                    </p>
+                )}
             </div>
 
             <div className="dashed" />

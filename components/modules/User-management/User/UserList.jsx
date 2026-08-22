@@ -137,17 +137,12 @@ const UserList = () => {
                                         {
                                             label: 'Active',
                                             onClick: () => handleStatusUpdate(info?.row?.original?.id, 'active'),
-                                            isDisabled: user?.status === "approved" || user?.status === "suspended",
-                                        },
-                                        {
-                                            label: 'Inactive',
-                                            onClick: () => handleStatusUpdate(info?.row?.original?.id, 'inactive'),
-                                            isDisabled: user?.status === "pending" || user?.status === "suspended",
+                                            isDisabled: user?.status === "active",
                                         },
                                         {
                                             label: 'Suspend',
                                             onClick: () => handleStatusUpdate(info?.row?.original?.id, "suspended"),
-                                            isDisabled: user?.status === "approved" || user?.status === "pending",
+                                            isDisabled: user?.status === "suspended",
                                         },
                                     ]}
                                     isDisabled={false}
