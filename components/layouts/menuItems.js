@@ -63,7 +63,7 @@ export const menuItems = [
     activePath: ["/token"],
   },
   {
-    name: "Menu Management",
+    name: "Menus",
     icon: Dock,
     path: "#",
     activePath: ["/product-management/"],
