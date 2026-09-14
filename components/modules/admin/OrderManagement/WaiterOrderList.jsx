@@ -9,10 +9,14 @@ import { useRouter } from "next/navigation";
 import ReactTable from "@/components/common/ReactTable/ReactTable";
 import { createColumnHelper } from "@tanstack/react-table";
 import useDebounce from "@/components/hooks/useDebounce";
-import { useLazyGetOrderTokenListQuery } from "@/store/admin/order";
+import {
+  useLazyGetOrderTokenListQuery,
+  useUpdateTokenStatusMutation,
+} from "@/store/admin/order";
 import StatusProgress, {
   STATUS_BADGE,
 } from "@/components/common/StatusProgress";
+import useToaster from "@/components/hooks/useToaster";
 
 const columnHelper = createColumnHelper();
 
@@ -27,6 +31,9 @@ const WaiterOrderList = () => {
 
   const [triggerList, { data: orderList, isLoading }] =
     useLazyGetOrderTokenListQuery();
+  const [updateTokenStatus, { isLoading: updatingStatus }] =
+    useUpdateTokenStatusMutation();
+  const { successToaster, errorToaster } = useToaster();
 
   useEffect(() => {
     if (!businessId) return;
@@ -37,6 +44,29 @@ const WaiterOrderList = () => {
       businessId,
     });
   }, [pageAndLimit, debouncedSearch, businessId]);
+
+  const handleMarkServed = async (token) => {
+    if (token.status === "served") return;
+    try {
+      const res = await updateTokenStatus({
+        id: token.id,
+        status: "served",
+      }).unwrap();
+      successToaster(res?.message || "Token marked as served");
+      setSelectedOrder((prev) =>
+        prev
+          ? {
+              ...prev,
+              tokens: (prev.tokens || []).map((t) =>
+                t.id === token.id ? { ...t, status: "served" } : t
+              ),
+            }
+          : prev
+      );
+    } catch (err) {
+      errorToaster(err?.data?.message || "Failed to update token status");
+    }
+  };
 
   const columns = useMemo(
     () => [
@@ -158,27 +188,38 @@ const WaiterOrderList = () => {
                 </p>
               ) : (
                 <ul className="divide-y divide-gray-100">
-                  {selectedOrder.tokens.map((token) => (
-                    <li
-                      key={token.id}
-                      className="flex items-center justify-between gap-3 py-2.5"
-                    >
-                      <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
-                        {token.productName}
-                        <span className="ml-1 text-xs text-gray-400">
-                          ×{token.quantity}
-                        </span>
-                      </span>
-                      <span
-                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize ${
-                          STATUS_BADGE[token.status] ||
-                          "bg-gray-50 text-gray-600 border-gray-200"
-                        }`}
+                  {selectedOrder.tokens.map((token) => {
+                    const isServed = token.status === "served";
+                    return (
+                      <li
+                        key={token.id}
+                        className="flex items-center justify-between gap-3 py-2.5"
                       >
-                        {token.status}
-                      </span>
-                    </li>
-                  ))}
+                        <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
+                          {token.productName}
+                          <span className="ml-1 text-xs text-gray-400">
+                            ×{token.quantity}
+                          </span>
+                        </span>
+                        <button
+                          type="button"
+                          disabled={isServed || updatingStatus}
+                          onClick={() => handleMarkServed(token)}
+                          title={isServed ? "Already served" : "Mark as served"}
+                          className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize transition-colors ${
+                            STATUS_BADGE[token.status] ||
+                            "bg-gray-50 text-gray-600 border-gray-200"
+                          } ${
+                            isServed
+                              ? "cursor-not-allowed opacity-70"
+                              : "cursor-pointer hover:opacity-80"
+                          }`}
+                        >
+                          {token.status}
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>

@@ -19,9 +19,17 @@ const UserEdit = () => {
     const id = useParams()?.id;
     const router = useRouter();
     const { errorToaster, successToaster } = useToaster();
+    const loggedInRole = useSelector((state) => state?.user?.role);
     //api
     const [Update] = useUpdateUserInfoMutation()
     const {data: userInfo} = useGetUserInfoByIdQuery({id}, {skip: !id})
+
+    const roleOptions = [
+        { label: 'Admin', id: 'admin' },
+        { label: 'Cashier', id: 'cashier' },
+        { label: 'Waiter', id: 'waiter' },
+        ...(loggedInRole === 'admin' ? [{ label: 'Chef', id: 'chef' }] : []),
+    ];
 
     const methods = useForm({
         resolver: zodResolver(userUpdateSchema),
@@ -108,11 +116,7 @@ const UserEdit = () => {
                     <FormSelect
                         name='role'
                         label='Role'
-                        options={[
-                            { label: 'Admin', id: 'admin' },
-                            { label: 'Cashier', id: 'cashier' },
-                            { label: 'Waiter', id: 'waiter' },
-                        ]}
+                        options={roleOptions}
                     />
                 </div>
                 <div className='flex items-center justify-center gap-10 mt-20'>

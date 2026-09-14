@@ -12,12 +12,21 @@ import { useCreateUserMutation } from '@/store/admin/user-management';
 import { useRouter } from 'next/navigation';
 import useToaster from '@/components/hooks/useToaster';
 import FormSelect from '@/Forms/FormSelect';
+import { useSelector } from 'react-redux';
 
 const UserCreate = () => {
     const router = useRouter()
     const { errorToaster, successToaster } = useToaster();
+    const loggedInRole = useSelector((state) => state?.user?.role);
     //api
     const [Create] = useCreateUserMutation()
+
+    const roleOptions = [
+        { label: 'Admin', id: 'admin' },
+        { label: 'Cashier', id: 'cashier' },
+        { label: 'Waiter', id: 'waiter' },
+        ...(loggedInRole === 'admin' ? [{ label: 'Chef', id: 'chef' }] : []),
+    ];
 
     const methods = useForm({
         resolver: zodResolver(userSchema),
@@ -82,11 +91,7 @@ const UserCreate = () => {
                     <FormSelect
                         name='role'
                         label='Role'
-                        options={[
-                            { label: 'Admin', id: 'admin' },
-                            { label: 'Cashier', id: 'cashier' },
-                            { label: 'Waiter', id: 'waiter' },
-                        ]}
+                        options={roleOptions}
                     />
                 </div>
                 <div className='flex items-center justify-center gap-10 mt-20'>
