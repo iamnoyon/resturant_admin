@@ -43,6 +43,12 @@ export const orderSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getWaiterOrderById: builder.query({
+      query: ({ id }) => ({
+        url: `/orders/waiter/${id}`,
+        method: "GET",
+      }),
+    }),
     updateOrderStatus: builder.mutation({
       query: ({ id, data }) => ({
         url: `/orders/${id}`,
@@ -76,6 +82,7 @@ export const {
   useLazyGetOrderListQuery,
   useLazyGetWaiterOrderListQuery,
   useGetOrderByIdQuery,
+  useGetWaiterOrderByIdQuery,
   useUpdateOrderStatusMutation,
   useUpdateOrderMutation,
   useDeleteOrderMutation,

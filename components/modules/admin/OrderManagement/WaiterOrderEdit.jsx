@@ -13,7 +13,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import {
-  useGetOrderByIdQuery,
+  useGetWaiterOrderByIdQuery,
   useUpdateOrderMutation,
 } from "@/store/admin/order";
 import useWaiterOrder from "@/components/hooks/useWaiterOrder";
@@ -63,7 +63,7 @@ const WaiterOrderEdit = () => {
   const router = useRouter();
   const { successToaster, errorToaster } = useToaster();
 
-  const { data: orderResponse, isLoading: orderLoading } = useGetOrderByIdQuery(
+  const { data: orderResponse, isLoading: orderLoading } = useGetWaiterOrderByIdQuery(
     { id },
     { skip: !id }
   );
