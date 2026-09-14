@@ -4,16 +4,21 @@ import CardLayout from "@/components/common/CardLayout";
 import { useEffect, useState } from "react";
 import { ClipboardList, Printer, X } from "lucide-react";
 import { useSelector } from "react-redux";
-import { useLazyGetOrderTokenListQuery } from "@/store/admin/order";
+import {
+  useLazyGetOrderTokenListQuery,
+  useUpdateTokenStatusMutation,
+} from "@/store/admin/order";
 import StatusProgress, {
   STATUS_BADGE,
+  STATUS_FLOW,
 } from "@/components/common/StatusProgress";
+import useToaster from "@/components/hooks/useToaster";
 
-const STATUS_FLOW = [
-  { key: "cooking", label: "Cooking" },
-  { key: "ready", label: "Ready" },
-  { key: "served", label: "Served" },
-];
+const getNextStatus = (status) => {
+  const index = STATUS_FLOW.findIndex((s) => s.key === status);
+  if (index === -1 || index === STATUS_FLOW.length - 1) return null;
+  return STATUS_FLOW[index + 1].key;
+};
 
 const escapeHtml = (value) =>
   String(value ?? "")
@@ -112,7 +117,34 @@ const TokenPrint = () => {
 
   const [triggerList, { data: orderList, isLoading }] =
     useLazyGetOrderTokenListQuery();
+  const [updateTokenStatus, { isLoading: updatingStatus }] =
+    useUpdateTokenStatusMutation();
+  const { successToaster, errorToaster } = useToaster();
   const [selectedOrder, setSelectedOrder] = useState(null);
+
+  const handleStatusClick = async (token) => {
+    const nextStatus = getNextStatus(token.status);
+    if (!nextStatus) return;
+    try {
+      const res = await updateTokenStatus({
+        id: token.id,
+        status: nextStatus,
+      }).unwrap();
+      successToaster(res?.message || "Token status updated");
+      setSelectedOrder((prev) =>
+        prev
+          ? {
+              ...prev,
+              tokens: (prev.tokens || []).map((t) =>
+                t.id === token.id ? { ...t, status: nextStatus } : t
+              ),
+            }
+          : prev
+      );
+    } catch (err) {
+      errorToaster(err?.data?.message || "Failed to update token status");
+    }
+  };
 
   useEffect(() => {
     if (!businessId) return;
@@ -230,27 +262,42 @@ const TokenPrint = () => {
                 </p>
               ) : (
                 <ul className="divide-y divide-gray-100">
-                  {selectedOrder.tokens.map((token) => (
-                    <li
-                      key={token.id}
-                      className="flex items-center justify-between gap-3 py-2.5"
-                    >
-                      <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
-                        {token.productName}
-                        <span className="ml-1 text-xs text-gray-400">
-                          ×{token.quantity}
-                        </span>
-                      </span>
-                      <span
-                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize ${
-                          STATUS_BADGE[token.status] ||
-                          "bg-gray-50 text-gray-600 border-gray-200"
-                        }`}
+                  {selectedOrder.tokens.map((token) => {
+                    const nextStatus = getNextStatus(token.status);
+                    return (
+                      <li
+                        key={token.id}
+                        className="flex items-center justify-between gap-3 py-2.5"
                       >
-                        {token.status}
-                      </span>
-                    </li>
-                  ))}
+                        <span className="font-['DM_Sans',sans-serif] text-sm text-[#1f2937]">
+                          {token.productName}
+                          <span className="ml-1 text-xs text-gray-400">
+                            ×{token.quantity}
+                          </span>
+                        </span>
+                        <button
+                          type="button"
+                          disabled={!nextStatus || updatingStatus}
+                          onClick={() => handleStatusClick(token)}
+                          title={
+                            nextStatus
+                              ? `Mark as ${nextStatus}`
+                              : "Already served"
+                          }
+                          className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize transition-colors ${
+                            STATUS_BADGE[token.status] ||
+                            "bg-gray-50 text-gray-600 border-gray-200"
+                          } ${
+                            nextStatus
+                              ? "cursor-pointer hover:opacity-80"
+                              : "cursor-not-allowed opacity-70"
+                          }`}
+                        >
+                          {token.status}
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>

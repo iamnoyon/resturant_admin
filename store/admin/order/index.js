@@ -49,6 +49,14 @@ export const orderSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    updateTokenStatus: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `/tokens/${id}/status`,
+        method: "PATCH",
+        body: { status },
+      }),
+      invalidatesTags: ["Orders"],
+    }),
     updateOrderStatus: builder.mutation({
       query: ({ id, data }) => ({
         url: `/orders/${id}`,
@@ -83,6 +91,7 @@ export const {
   useLazyGetOrderTokenListQuery,
   useGetOrderByIdQuery,
   useGetWaiterOrderByIdQuery,
+  useUpdateTokenStatusMutation,
   useUpdateOrderStatusMutation,
   useUpdateOrderMutation,
   useDeleteOrderMutation,
