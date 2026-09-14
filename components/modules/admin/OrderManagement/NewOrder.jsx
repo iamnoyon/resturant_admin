@@ -210,6 +210,7 @@ const NewOrder = () => {
     try {
       const res = await createOrder(payload).unwrap();
       if (res?.success) {
+        successToaster(res?.message || "Order placed successfully!");
         const newReceiptData = {
           restaurant: {
             name: business?.businessName || "Engineer's Restaurant",
@@ -229,7 +230,6 @@ const NewOrder = () => {
           tax: vat,
           total: grandTotal.toFixed(2),
         };
-        successToaster(res?.message || "Order placed successfully!");
         downloadReceipt(newReceiptData);
         clearCart();
       }

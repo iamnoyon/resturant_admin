@@ -3,17 +3,19 @@
 
 import CardLayout from "@/components/common/CardLayout";
 import { useMemo, useState } from "react";
-import { Trash2, List, Plus } from "lucide-react";
 import ReactTable from "@/components/common/ReactTable/ReactTable";
+import ThreeDotMenu from "@/components/common/ThreeDotMenu";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
 import useToaster from "@/components/hooks/useToaster";
 import useDebounce from "@/components/hooks/useDebounce";
+import useDownloadReceipt from "@/components/Receipt/useDownloadReceipt";
 import {
   useLazyGetOrderListQuery,
   useUpdateOrderStatusMutation,
   useDeleteOrderMutation,
+  useLazyGetOrderInvoiceQuery,
 } from "@/store/admin/order";
 
 const columnHelper = createColumnHelper();
@@ -30,6 +32,8 @@ const OrderList = ({ onEditOrder }) => {
     useLazyGetOrderListQuery();
   const [updateOrderStatus] = useUpdateOrderStatusMutation();
   const [deleteOrder] = useDeleteOrderMutation();
+  const [triggerInvoice] = useLazyGetOrderInvoiceQuery();
+  const downloadReceipt = useDownloadReceipt();
 
   useEffect(() => {
     triggerList({
@@ -38,6 +42,40 @@ const OrderList = ({ onEditOrder }) => {
       search: debouncedSearch,
     });
   }, [pageAndLimit, debouncedSearch]);
+
+  const handlePrintInvoice = async (order) => {
+    try {
+      const res = await triggerInvoice({ orderId: order?.orderId }).unwrap();
+      downloadReceipt(res?.data ?? res);
+    } catch (err) {
+      errorToaster(err?.data?.message || "Failed to fetch invoice");
+    }
+  };
+
+  const handleDeleteOrder = (order) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteOrder(order?.id)
+          .unwrap()
+          .then((res) => {
+            if (res?.success) {
+              successToaster(res?.message);
+            }
+          })
+          .catch((err) => {
+            errorToaster(err?.data?.message || "Failed to delete order");
+          });
+      }
+    });
+  };
 
   const columns = useMemo(() => {
     const cols = [
@@ -157,42 +195,20 @@ const OrderList = ({ onEditOrder }) => {
             const isPaid = order.billStatus === "paid";
 
             return (
-              <div className="flex items-center gap-1">
-                <Trash2
-                  size={16}
-                  className={`mr-2 ${isPaid ? "cursor-not-allowed opacity-30" : "cursor-pointer"}`}
-                  onClick={
-                    isPaid
-                      ? undefined
-                      : () =>
-                          Swal.fire({
-                            title: "Are you sure?",
-                            text: "You won't be able to revert this!",
-                            icon: "warning",
-                            showCancelButton: true,
-                            confirmButtonColor: "#d33",
-                            cancelButtonColor: "#3085d6",
-                            confirmButtonText: "Yes, delete it!",
-                          }).then((result) => {
-                            if (result.isConfirmed) {
-                              deleteOrder(order?.id)
-                                .unwrap()
-                                .then((res) => {
-                                  if (res?.success) {
-                                    successToaster(res?.message);
-                                  }
-                                })
-                                .catch((err) => {
-                                  errorToaster(
-                                    err?.data?.message ||
-                                      "Failed to delete order",
-                                  );
-                                });
-                            }
-                          })
-                  }
-                />
-              </div>
+              <ThreeDotMenu
+                object={order}
+                actions={[
+                  {
+                    label: "Print Invoice",
+                    onClick: handlePrintInvoice,
+                  },
+                  {
+                    label: "Delete",
+                    onClick: handleDeleteOrder,
+                    isDisabled: isPaid,
+                  },
+                ]}
+              />
             );
           },
         }),
