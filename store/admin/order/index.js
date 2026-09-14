@@ -28,9 +28,9 @@ export const orderSlice = apiSlice.injectEndpoints({
       transformResponse: (response) => transformListResponse(response),
       providesTags: ["Orders"],
     }),
-    getWaiterOrderList: builder.query({
+    getOrderTokenList: builder.query({
       query: (params) => ({
-        url: "/orders/waiter",
+        url: "/tokens",
         method: "GET",
         params,
       }),
@@ -80,7 +80,7 @@ export const {
   useCreateOrderMutation,
   useCreateWaiterOrderMutation,
   useLazyGetOrderListQuery,
-  useLazyGetWaiterOrderListQuery,
+  useLazyGetOrderTokenListQuery,
   useGetOrderByIdQuery,
   useGetWaiterOrderByIdQuery,
   useUpdateOrderStatusMutation,

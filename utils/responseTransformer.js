@@ -38,16 +38,16 @@
 export const transformListResponse = (response) => {
   const data = response?.data;
 
-  // Shape B: data is the array directly, meta holds pagination
-  if (Array.isArray(data) && response?.meta) {
+  // Shape B: data is the array directly, meta (optional) holds pagination
+  if (Array.isArray(data)) {
     return {
       dataSource: data ?? [],
-      totalRecords: response.meta?.total ?? 0,
+      totalRecords: response.meta?.total ?? data.length,
       pageAndLimit: {
         page: response.meta?.page ?? 1,
         limit: response.meta?.limit ?? 10,
       },
-      paginationOn: (response.meta?.total ?? 0) > 0,
+      paginationOn: (response.meta?.total ?? data.length) > 0,
     };
   }
 
