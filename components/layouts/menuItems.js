@@ -57,6 +57,12 @@ export const menuItems = [
     requiredPermissions: ["order:waiter-create"],
   },
   {
+    name: "Token",
+    icon: ClipboardList,
+    path: "/token",
+    activePath: ["/token"],
+  },
+  {
     name: "Menu Management",
     icon: Dock,
     path: "#",
