@@ -61,6 +61,7 @@ export const menuItems = [
     icon: ClipboardList,
     path: "/token",
     activePath: ["/token"],
+    requiredPermissions: ["token:read"],
   },
   {
     name: "Menus",
