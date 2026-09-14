@@ -5,7 +5,7 @@ export default function useDownloadReceipt() {
     return useCallback((receiptData) => {
         if (typeof window === "undefined") return;
 
-        const printWindow = window.open("", "_blank", "width=400,height=600");
+        const printWindow = window.open("", "_blank", "width=400");
         if (!printWindow) return;
 
         const { restaurant, invoiceNo, date, items, tax, discount, total } = receiptData;
@@ -30,15 +30,23 @@ export default function useDownloadReceipt() {
                 <title>Invoice</title>
                 <style>
                     * { margin: 0; padding: 0; box-sizing: border-box; }
-                    body {
-                        font-family: ui-monospace, "Courier New", monospace;
-                        font-size: 12px;
+                    html, body {
+                        width: auto;
                         color: #000;
                         background: #fff;
-                        width: 80mm;
-                        margin: 0 auto;
                     }
-                    .receipt { margin: 0 auto; padding: 2px 4px 8px; }
+                    body {
+                        font-family: Consolas, "Courier New", monospace;
+                        font-size: 12px;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .receipt {
+                        width: 100%;
+                        max-width: 72mm;
+                        margin: 0 auto;
+                        padding: 2px 0 8px;
+                    }
                     .receipt-header { text-align: center; }
                     .receipt-header img {
                         display: block; margin: 0 auto 6px;
@@ -49,7 +57,9 @@ export default function useDownloadReceipt() {
                     .dashed { border-top: 1px dashed #000; margin: 6px 0; }
                     .solid { border-top: 1px solid #000; margin: 6px 0; }
                     .receipt-meta { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; }
-                    .receipt-row { display: flex; justify-content: space-between; margin: 2px 0; font-weight: 700; }
+                    .receipt-row { display: flex; justify-content: space-between; gap: 6px; margin: 2px 0; font-weight: 700; }
+                    .receipt-row > span { min-width: 0; overflow-wrap: break-word; word-break: break-word; }
+                    .receipt-row > span:last-child { flex-shrink: 0; text-align: right; }
                     .receipt-row.total { font-size: 16px; font-weight: 900; }
                     .center { text-align: center; }
                     .thank-you { font-size: 22px; font-weight: 800; letter-spacing: 1px; margin: 8px 0; }
@@ -57,7 +67,18 @@ export default function useDownloadReceipt() {
                     .footer { display: flex; align-items: center; justify-content: center; gap: 2px; font-size: 11px; }
                     .footer-line { display: inline-block; width: 20px; border-top: 1px solid #888; }
                     @media print {
-                        @page { size: 80mm auto; margin: 2mm; }
+                        html, body {
+                            width: 72mm !important;
+                            max-width: 72mm !important;
+                            margin: 0 !important;
+                            padding: 0 !important;
+                        }
+                        .receipt {
+                            width: 72mm !important;
+                            max-width: 72mm !important;
+                            margin: 0 !important;
+                        }
+                        @page { size: 72mm auto; margin: 0; }
                     }
                 </style>
             </head>

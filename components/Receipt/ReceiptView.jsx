@@ -9,8 +9,8 @@ export default function ReceiptView({
     const { restaurant, invoiceNo, date, items, tax, discount, total } = data;
 
     const paperStyle = `
-        .receipt { width: ${paperWidth}; }
-        @page { size: ${paperWidth} auto; }
+        .receipt { width: 100%; max-width: ${paperWidth}; }
+        @page { size: auto; margin: 0; }
     `;
 
     return (
