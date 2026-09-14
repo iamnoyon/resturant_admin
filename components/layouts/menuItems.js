@@ -14,6 +14,7 @@ import {
   PanelTopDashed,
   Dock,
   ShieldCheck,
+  ClipboardList,
 } from "lucide-react";
 import { FaChrome } from "react-icons/fa";
 import { AiFillProduct } from "react-icons/ai";
@@ -47,6 +48,13 @@ export const menuItems = [
     path: "/order",
     activePath: ["/order"],
     requiredPermissions: ["order:create", "order:read"],
+  },
+  {
+    name: "Waiter Order",
+    icon: ClipboardList,
+    path: "/waiter-order",
+    activePath: ["/waiter-order"],
+    requiredPermissions: ["order:waiter-create"],
   },
   {
     name: "Menu Management",

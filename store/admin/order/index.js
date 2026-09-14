@@ -11,9 +11,26 @@ export const orderSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Orders"],
     }),
+    createWaiterOrder: builder.mutation({
+      query: (data) => ({
+        url: "/orders/waiter",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Orders"],
+    }),
     getOrderList: builder.query({
       query: (params) => ({
         url: "/orders",
+        method: "GET",
+        params,
+      }),
+      transformResponse: (response) => transformListResponse(response),
+      providesTags: ["Orders"],
+    }),
+    getWaiterOrderList: builder.query({
+      query: (params) => ({
+        url: "/orders/waiter",
         method: "GET",
         params,
       }),
@@ -34,6 +51,14 @@ export const orderSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Orders"],
     }),
+    updateOrder: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/orders/waiter/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Orders"],
+    }),
     deleteOrder: builder.mutation({
       query: (id) => ({
         url: `/orders/${id}`,
@@ -47,8 +72,11 @@ export const orderSlice = apiSlice.injectEndpoints({
 
 export const {
   useCreateOrderMutation,
+  useCreateWaiterOrderMutation,
   useLazyGetOrderListQuery,
+  useLazyGetWaiterOrderListQuery,
   useGetOrderByIdQuery,
   useUpdateOrderStatusMutation,
+  useUpdateOrderMutation,
   useDeleteOrderMutation,
 } = orderSlice;
