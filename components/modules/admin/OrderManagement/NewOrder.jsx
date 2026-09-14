@@ -230,7 +230,7 @@ const NewOrder = () => {
           tax: vat,
           total: grandTotal.toFixed(2),
         };
-        downloadReceipt(newReceiptData);
+        // downloadReceipt(newReceiptData);
         clearCart();
       }
     } catch (err) {

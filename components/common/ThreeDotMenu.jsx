@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 const ThreeDotMenu = ({
   object,
@@ -6,7 +7,6 @@ const ThreeDotMenu = ({
   isDisabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [openAbove, setOpenAbove] = useState(false);
 
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
@@ -57,7 +57,6 @@ const ThreeDotMenu = ({
         top: openUp ? rect.top - estimatedMenuHeight - 4 : rect.bottom + 4,
         left: rect.right - 192,
       });
-      setOpenAbove(openUp);
     }
   }, [isOpen, actions]);
 
@@ -89,36 +88,38 @@ const ThreeDotMenu = ({
       </button>
 
       {/* Dropdown */}
-      {isOpen && (
-        <div
-          ref={menuRef}
-          className="fixed w-48 bg-white border border-gray-200 rounded-lg shadow-md z-[9999]"
-          style={{ top: menuPos.top, left: menuPos.left }}
-        >
-          <div className="py-1">
-            {actions.length > 0 ? (
-              actions.map((action, index) => (
-                <button
-                  key={index}
-                  onClick={(e) => handleActionClick(action, e)}
-                  disabled={action.isDisabled}
-                  className={`w-full text-left px-4 py-2 text-sm transition-colors ${
-                    action.isDisabled
-                      ? "text-gray-400 bg-gray-50 cursor-not-allowed"
-                      : "text-gray-700 hover:bg-gray-100 cursor-pointer"
-                  }`}
-                >
-                  {action.label}
-                </button>
-              ))
-            ) : (
-              <div className="px-4 py-2 text-sm text-gray-500">
-                No actions available
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {isOpen && typeof document !== "undefined" &&
+        createPortal(
+          <div
+            ref={menuRef}
+            className="fixed w-48 bg-white border border-gray-200 rounded-lg shadow-md z-[9999]"
+            style={{ top: menuPos.top, left: menuPos.left }}
+          >
+            <div className="py-1">
+              {actions.length > 0 ? (
+                actions.map((action, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => handleActionClick(action, e)}
+                    disabled={action.isDisabled}
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                      action.isDisabled
+                        ? "text-gray-400 bg-gray-50 cursor-not-allowed"
+                        : "text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    }`}
+                  >
+                    {action.label}
+                  </button>
+                ))
+              ) : (
+                <div className="px-4 py-2 text-sm text-gray-500">
+                  No actions available
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 };
