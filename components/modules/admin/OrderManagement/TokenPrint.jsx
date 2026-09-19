@@ -66,7 +66,7 @@ const TokenPrint = () => {
     <div>
       <CardLayout title="Token Print" titleIcon={ClipboardList}>
         {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
             {[1, 2, 3, 4, 5].map((i) => (
               <div
                 key={i}
@@ -80,7 +80,7 @@ const TokenPrint = () => {
             <p className="text-sm">No tokens found</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4">
             {orders.map((order, index) => {
               const tokens = order.tokens || [];
               const tokenNumber = order.orderId
