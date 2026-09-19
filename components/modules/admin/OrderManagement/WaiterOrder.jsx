@@ -466,28 +466,36 @@ const WaiterOrder = () => {
 
           <div className="flex-1 overflow-y-auto px-4 pb-4">
             <div className="grid grid-cols-2 2xl:grid-cols-3 gap-4">
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className={`${productCardClass} cursor-pointer`}
-                  onClick={() => addToCart(product)}
-                >
-                  <div className="relative h-44 bg-gray-100 flex items-center justify-center overflow-hidden">
-                    <FallbackImage
-                      src={product?.imageUrl}
-                      alt={product?.productName}
-                      className="w-full h-full object-cover"
-                    />
-                    <button className="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-[#0A4D99] text-white flex items-center justify-center shadow-lg hover:bg-[#063C76] transition-all cursor-pointer opacity-0 group-hover:opacity-100">
-                      <Plus size={20} />
-                    </button>
-                  </div>
-                  <div className="p-3">
-                    <h4 className="text-sm font-semibold text-gray-800 truncate">{product?.productName}</h4>
-                    <p className="text-sm font-bold text-gray-900 mt-1">৳{product?.soldPrice}</p>
-                  </div>
+              {productsLoading ? (
+                Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)
+              ) : products.length === 0 ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-400">
+                  <p className="text-sm">No products in this category</p>
                 </div>
-              ))}
+              ) : (
+                products.map((product) => (
+                  <div
+                    key={product.id}
+                    className={`${productCardClass} cursor-pointer`}
+                    onClick={() => addToCart(product)}
+                  >
+                    <div className="relative h-44 bg-gray-100 flex items-center justify-center overflow-hidden">
+                      <FallbackImage
+                        src={product?.imageUrl}
+                        alt={product?.productName}
+                        className="w-full h-full object-cover"
+                      />
+                      <button className="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-[#0A4D99] text-white flex items-center justify-center shadow-lg hover:bg-[#063C76] transition-all cursor-pointer opacity-0 group-hover:opacity-100">
+                        <Plus size={20} />
+                      </button>
+                    </div>
+                    <div className="p-3">
+                      <h4 className="text-sm font-semibold text-gray-800 truncate">{product?.productName}</h4>
+                      <p className="text-sm font-bold text-gray-900 mt-1">৳{product?.soldPrice}</p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
