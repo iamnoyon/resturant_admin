@@ -19,7 +19,7 @@ const UserList = () => {
     const router = useRouter()
     const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
     const [searchQuery, setSearchQuery] = useState('');
-    const { successToaster } = useToaster()
+    const { successToaster, errorToaster } = useToaster()
 
 
     // API
@@ -34,6 +34,10 @@ const UserList = () => {
                 if (res?.success == true || res?.status_code == 200) {
                     successToaster(res?.message || 'User status updated successfully!')
                 }
+                errorToaster(res?.message)
+            })
+            .catch(err=>{
+                errorToaster(err?.data?.message)
             })
     }
 

@@ -69,6 +69,10 @@ const ProductCategoryList = () => {
                     setIsModalOpen(false)
                 }
             })
+            .catch(err=>{
+                setIsModalOpen(false)
+                errorToaster(err?.data?.message)
+            })
     }
 
     // Columns definition

@@ -65,6 +65,10 @@ const TableList = () => {
                     setIsModalOpen(false)
                 }
             })
+            .catch(err=>{
+                setIsModalOpen(false)
+                errorToaster(err?.data?.message)
+            })
     }
 
     const columns = useMemo(

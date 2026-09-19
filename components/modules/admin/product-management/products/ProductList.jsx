@@ -81,6 +81,10 @@ const ProductList = () => {
                     setIsModalOpen(false)
                 }
             })
+            .catch(err=>{
+                setIsModalOpen(false)
+                errorToaster(err?.data?.message)
+            })
     }
 
     // stock update
