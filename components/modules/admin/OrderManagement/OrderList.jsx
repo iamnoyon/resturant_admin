@@ -7,6 +7,8 @@ import ReactTable from "@/components/common/ReactTable/ReactTable";
 import ThreeDotMenu from "@/components/common/ThreeDotMenu";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { SquarePen } from "lucide-react";
 import Swal from "sweetalert2";
 import useToaster from "@/components/hooks/useToaster";
 import useDebounce from "@/components/hooks/useDebounce";
@@ -22,7 +24,8 @@ const columnHelper = createColumnHelper();
 
 const isAdmin = true;
 
-const OrderList = ({ onEditOrder }) => {
+const OrderList = ({ onEdit }) => {
+  const router = useRouter();
   const [pageAndLimit, setPageAndLimit] = useState({ page: 1, limit: 10 });
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 500);
@@ -75,6 +78,11 @@ const OrderList = ({ onEditOrder }) => {
           });
       }
     });
+  };
+
+  const handleEditOrder = (order) => {
+    onEdit?.();
+    router.push(`/order?id=${order?.id}`);
   };
 
   const columns = useMemo(() => {
@@ -195,20 +203,28 @@ const OrderList = ({ onEditOrder }) => {
             const isPaid = order.billStatus === "paid";
 
             return (
-              <ThreeDotMenu
-                object={order}
-                actions={[
-                  {
-                    label: "Print Invoice",
-                    onClick: handlePrintInvoice,
-                  },
-                  {
-                    label: "Delete",
-                    onClick: handleDeleteOrder,
-                    isDisabled: isPaid,
-                  },
-                ]}
-              />
+              <div className="flex items-center gap-2">
+                <SquarePen
+                  size={16}
+                  className="cursor-pointer text-[#0A4D99] hover:text-[#063C76]"
+                  onClick={() => handleEditOrder(order)}
+                  title="Edit order"
+                />
+                <ThreeDotMenu
+                  object={order}
+                  actions={[
+                    {
+                      label: "Print Invoice",
+                      onClick: handlePrintInvoice,
+                    },
+                    {
+                      label: "Delete",
+                      onClick: handleDeleteOrder,
+                      isDisabled: isPaid,
+                    },
+                  ]}
+                />
+              </div>
             );
           },
         }),

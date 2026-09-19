@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 import {
   Minus,
@@ -15,8 +16,16 @@ import {
 } from "lucide-react";
 import { useGetTableDropdownQuery } from "@/store/admin/table";
 import { useGetCategoryDropdownQuery } from "@/store/admin/category";
-import { useLazyGetProductsByCategoryQuery } from "@/store/admin/products";
-import { useCreateOrderMutation, useLazyGetOrderListQuery } from "@/store/admin/order";
+import {
+  useLazyGetProductListQuery,
+  useLazyGetProductsByCategoryQuery,
+} from "@/store/admin/products";
+import {
+  useCreateOrderMutation,
+  useGetOrderByIdQuery,
+  useLazyGetOrderListQuery,
+  useUpdateOrderStatusMutation,
+} from "@/store/admin/order";
 import useToaster from "@/components/hooks/useToaster";
 import CustomDrawer from "@/components/common/CustomDrawer";
 import Image from "next/image";
@@ -68,14 +77,17 @@ const FallbackImage = ({ src, alt, className }) => {
 };
 
 const NewOrder = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("id");
+
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [cart, setCart] = useState([]);
   const [discount, setDiscount] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [editDrawerOpen, setEditDrawerOpen] = useState(false);
-  const [editOrderId, setEditOrderId] = useState(null);
+  const [prefilled, setPrefilled] = useState(false);
   const { successToaster, errorToaster } = useToaster();
   const downloadReceipt = useDownloadReceipt();
   const business = useSelector((state) => state?.user?.business);
@@ -85,14 +97,107 @@ const NewOrder = () => {
   const { data: categoryDropdown, isLoading: categoriesLoading } = useGetCategoryDropdownQuery();
   const { data: waiterList } = useGetWaiterListQuery()
   const [triggerProducts, { data: productList, isLoading: productsLoading }] = useLazyGetProductsByCategoryQuery();
+  const [triggerAllProducts, { data: allProductsData }] = useLazyGetProductListQuery();
   const [createOrder, { isLoading: orderLoading }] = useCreateOrderMutation();
+  const [updateOrder] = useUpdateOrderStatusMutation();
   const [triggerOrders] = useLazyGetOrderListQuery();
+  const { data: editOrderResponse } = useGetOrderByIdQuery(
+    { id: editId },
+    { skip: !editId }
+  );
+  const editOrder = editOrderResponse?.data;
 
-  const tables = tableDropdown?.data || [];
-  const categories = categoryDropdown?.data || [];
+  const tables = useMemo(() => tableDropdown?.data || [], [tableDropdown]);
+  const categories = useMemo(() => categoryDropdown?.data || [], [categoryDropdown]);
   const products = productList?.data || [];
 
   const [selectedWaiter, setSelectedWaiter] = useState(null);
+
+  useEffect(() => {
+    if (editId) {
+      triggerAllProducts({ page: 1, limit: 1000 });
+    }
+  }, [editId, triggerAllProducts]);
+
+  useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
+    if (!editId || prefilled || !editOrder) return;
+    if (tablesLoading || categoriesLoading || !allProductsData) return;
+
+    const productList = allProductsData?.dataSource || [];
+    const productMap = productList.reduce((acc, p) => {
+      acc[p.id] = p;
+      return acc;
+    }, {});
+
+    const rawItems =
+      editOrder.orderItems ||
+      editOrder.products ||
+      editOrder.items ||
+      editOrder.orderDetails ||
+      [];
+    const cartItems = rawItems.map((item) => {
+      const product = productMap[item.productId] || {};
+      return {
+        productId: item.productId,
+        productName:
+          product.productName ||
+          item.productName ||
+          item.name ||
+          "Item",
+        price:
+          product.soldPrice ??
+          item.soldPrice ??
+          item.price ??
+          item.unitPrice ??
+          0,
+        imageUrl: product.imageUrl || item.imageUrl || "",
+        qty: item.quantity ?? item.qty ?? 1,
+      };
+    });
+    setCart(cartItems);
+
+    if (editOrder.tableId && tables.length > 0) {
+      const table = tables.find((t) => t.id === editOrder.tableId);
+      if (table) setSelectedTable(table);
+    }
+
+    const waiters = waiterList?.data || [];
+    if (editOrder.waiterId && waiters.length > 0) {
+      const waiter = waiters.find((w) => w.id === editOrder.waiterId);
+      if (waiter) setSelectedWaiter(waiter);
+    }
+
+    if (editOrder.discount !== undefined && editOrder.discount !== null) {
+      setDiscount(String(editOrder.discount));
+    }
+
+    if (categories.length > 0) {
+      const firstProductId = cartItems[0]?.productId;
+      const firstProduct = firstProductId ? productMap[firstProductId] : null;
+      const matchedCategory =
+        (firstProduct &&
+          categories.find((c) => c.id === firstProduct.categoryId)) ||
+        null;
+      setSelectedCategory(matchedCategory || categories[0]);
+    }
+
+    setPrefilled(true);
+  }, [
+    editId,
+    prefilled,
+    editOrder,
+    tablesLoading,
+    categoriesLoading,
+    allProductsData,
+    tables,
+    waiterList,
+    categories,
+  ]);
+
+  useEffect(() => {
+    setPrefilled(false);
+  }, [editId]);
 
   useEffect(() => {
     if (selectedCategory?.id) {
@@ -104,21 +209,16 @@ const NewOrder = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    if (categories.length > 0 && !selectedCategory) {
+    if (!editId && categories.length > 0 && !selectedCategory) {
       setSelectedCategory(categories[0]);
     }
-  }, [categories]);
+  }, [categories, editId]);
 
   useEffect(() => {
     if (drawerOpen) {
       triggerOrders({ page: 1, limit: 20 });
     }
   }, [drawerOpen]);
-
-  const handleEditOrder = (orderId) => {
-    setEditOrderId(orderId);
-    setEditDrawerOpen(true);
-  };
 
   const addToCart = (product) => {
     setCart((prev) => {
@@ -204,37 +304,49 @@ const NewOrder = () => {
       totalBill: subtotal,
       discount: discountValue,
       subTotal: afterDiscount,
-      billStatus: "unpaid",
+      billStatus: editOrder?.billStatus || "unpaid",
     };
 
     try {
-      const res = await createOrder(payload).unwrap();
-      if (res?.success) {
-        successToaster(res?.message || "Order placed successfully!");
-        const newReceiptData = {
-          restaurant: {
-            name: business?.businessName || "Engineer's Restaurant",
-            address: `${business?.area}, ${business?.thana}`,
-            phone: "+880 1700-000000",
-            logo: "/cafe_icon.png",
-          },
-          invoiceNo: `INV-${Date.now()}`,
-          date: new Date().toISOString().split("T")[0],
-          items: cart.map((item) => ({
-            qty: item.qty,
-            name: item.productName,
-            price: item.price,
-          })),
-          taxRate: vat,
-          discount: discountValue,
-          tax: vat,
-          total: grandTotal.toFixed(2),
-        };
-        // downloadReceipt(newReceiptData);
-        clearCart();
+      if (editId) {
+        const res = await updateOrder({ id: editId, data: payload }).unwrap();
+        if (res?.success) {
+          successToaster(res?.message || "Order updated successfully!");
+          clearCart();
+          router.replace("/order");
+        }
+      } else {
+        const res = await createOrder(payload).unwrap();
+        if (res?.success) {
+          successToaster(res?.message || "Order placed successfully!");
+          const newReceiptData = {
+            restaurant: {
+              name: business?.businessName || "Engineer's Restaurant",
+              address: `${business?.area}, ${business?.thana}`,
+              phone: "+880 1700-000000",
+              logo: "/cafe_icon.png",
+            },
+            invoiceNo: `INV-${Date.now()}`,
+            date: new Date().toISOString().split("T")[0],
+            items: cart.map((item) => ({
+              qty: item.qty,
+              name: item.productName,
+              price: item.price,
+            })),
+            taxRate: vat,
+            discount: discountValue,
+            tax: vat,
+            total: grandTotal.toFixed(2),
+          };
+          // downloadReceipt(newReceiptData);
+          clearCart();
+        }
       }
     } catch (err) {
-      errorToaster(err?.data?.message || "Failed to place order");
+      errorToaster(
+        err?.data?.message ||
+          (editId ? "Failed to update order" : "Failed to place order")
+      );
     }
   };
 
@@ -506,18 +618,25 @@ const NewOrder = () => {
       </div>
       <div className="flex gap-3">
         <button
-          onClick={clearCart}
+          onClick={() => {
+            clearCart();
+            if (editId) router.replace("/order");
+          }}
           className="flex-1 py-2 md:py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
         >
           Clear
         </button>
         <button
           onClick={handlePlaceOrder}
-          disabled={orderLoading}
-          className={`flex-[2] py-2 md:py-2.5 rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer flex items-center justify-center gap-2 ${!orderLoading ? "bg-[#042A55] hover:bg-[#063C76]" : "bg-gray-300 cursor-not-allowed"
+          disabled={editId ? false : orderLoading}
+          className={`flex-[2] py-2 md:py-2.5 rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer flex items-center justify-center gap-2 ${!(editId ? false : orderLoading) ? "bg-[#042A55] hover:bg-[#063C76]" : "bg-gray-300 cursor-not-allowed"
             }`}
         >
-          {orderLoading ? "Placing..." : "Proceed to Bill"}
+          {editId
+            ? "Update Order"
+            : orderLoading
+            ? "Placing..."
+            : "Proceed to Bill"}
         </button>
       </div>
     </>
@@ -572,18 +691,25 @@ const NewOrder = () => {
                 {renderBillSummary()}
                 <div className="flex gap-3">
                   <button
-                    onClick={clearCart}
+                    onClick={() => {
+                      clearCart();
+                      if (editId) router.replace("/order");
+                    }}
                     className="flex-1 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
                   >
                     Clear
                   </button>
                   <button
                     onClick={handlePlaceOrder}
-                    disabled={orderLoading}
-                    className={`flex-[2] py-2.5 rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer ${!orderLoading ? "bg-[#042A55] hover:bg-[#063C76]" : "bg-gray-300 cursor-not-allowed"
+                    disabled={editId ? false : orderLoading}
+                    className={`flex-[2] py-2.5 rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer ${!(editId ? false : orderLoading) ? "bg-[#042A55] hover:bg-[#063C76]" : "bg-gray-300 cursor-not-allowed"
                       }`}
                   >
-                    {orderLoading ? "Placing..." : "Proceed to Bill"}
+                    {editId
+                      ? "Update Order"
+                      : orderLoading
+                      ? "Placing..."
+                      : "Proceed to Bill"}
                   </button>
                 </div>
               </div>
@@ -615,7 +741,9 @@ const NewOrder = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-[#043570]">New Order</h2>
+        <h2 className="text-lg font-semibold text-[#043570]">
+          {editId && editOrder ? "Update Order" : "New Order"}
+        </h2>
         <button
           onClick={() => setDrawerOpen(true)}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-[#0A4D99] text-white hover:bg-[#063C76] transition-colors cursor-pointer"
@@ -749,7 +877,7 @@ const NewOrder = () => {
         onClose={() => setDrawerOpen(false)}
         title="Order List"
       >
-        <OrderList onEditOrder={handleEditOrder} />
+        <OrderList onEdit={() => setDrawerOpen(false)} />
       </CustomDrawer>
     </div>
   );
