@@ -213,9 +213,13 @@ const OrderList = ({ onEdit }) => {
               <div className="flex items-center gap-2">
                 <SquarePen
                   size={16}
-                  className="cursor-pointer text-[#0A4D99] hover:text-[#063C76]"
-                  onClick={() => handleEditOrder(order)}
-                  title="Edit order"
+                  className={
+                    isPaid
+                      ? "cursor-not-allowed text-gray-400"
+                      : "cursor-pointer text-[#0A4D99] hover:text-[#063C76]"
+                  }
+                  onClick={isPaid ? undefined : () => handleEditOrder(order)}
+                  title={isPaid ? "Paid order cannot be edited" : "Edit order"}
                 />
                 <ThreeDotMenu
                   object={order}
