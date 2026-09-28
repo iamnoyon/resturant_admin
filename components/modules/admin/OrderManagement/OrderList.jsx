@@ -47,10 +47,17 @@ const OrderList = ({ onEdit }) => {
   }, [pageAndLimit, debouncedSearch]);
 
   const handlePrintInvoice = async (order) => {
+    const printWindow = window.open("", "_blank", "width=420,height=600");
+    if (!printWindow) {
+      errorToaster("Popup blocked. Please allow popups to print invoices.");
+      return;
+    }
+
     try {
       const res = await triggerInvoice({ orderId: order?.orderId }).unwrap();
-      downloadReceipt(res?.data ?? res);
+      downloadReceipt(printWindow, res?.data ?? res);
     } catch (err) {
+      printWindow.close();
       errorToaster(err?.data?.message || "Failed to fetch invoice");
     }
   };

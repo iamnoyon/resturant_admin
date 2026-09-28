@@ -2,27 +2,38 @@
 import { useCallback } from "react";
 
 export default function useDownloadReceipt() {
-    return useCallback((receiptData) => {
-        if (typeof window === "undefined") return;
+    return useCallback((printWindow, receiptData) => {
+        if (typeof window === "undefined" || !printWindow) return;
 
-        const printWindow = window.open("", "_blank", "width=400");
-        if (!printWindow) return;
-
-        const { restaurant, invoiceNo, date, items, tax, discount, total } = receiptData;
+        const restaurant = receiptData?.restaurant || {};
+        const invoiceNo = receiptData?.invoiceNo ?? "";
+        const date = receiptData?.date ?? "";
+        const items = Array.isArray(receiptData?.items) ? receiptData.items : [];
+        const tax = receiptData?.tax ?? 0;
+        const discount = receiptData?.discount ?? 0;
+        const total = receiptData?.total ?? 0;
 
         const itemsHTML = items
             .map(
-                (it) =>
-                    `<div style="margin:4px 0;">
-                        <div style="font-weight:700;color:#000;">${it.name}</div>
+                (it) => `
+                    <div style="margin:4px 0;">
+                        <div style="font-weight:700;color:#000;">${it?.name ?? ""}</div>
                         <div style="display:flex;justify-content:space-between;font-weight:700;color:#000;">
-                            <span>${it.qty}x ${it.price}</span>
-                            <span>${it.qty * it.price}/-</span>
+                            <span>${it?.qty ?? 0}x ${it?.price ?? 0}</span>
+                            <span>${(it?.qty ?? 0) * (it?.price ?? 0)}/-</span>
                         </div>
                     </div>`
             )
             .join("");
 
+        const escape = (v) =>
+            String(v ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+
+        printWindow.document.open();
         printWindow.document.write(`
             <!DOCTYPE html>
             <html>
@@ -85,24 +96,24 @@ export default function useDownloadReceipt() {
             <body>
                 <div class="receipt">
                     <div class="receipt-header">
-                        ${restaurant.logo ? `<img src="${restaurant.logo}" alt="${restaurant.name}" />` : ""}
-                        <h1>${restaurant.name}</h1>
-                        <p class="receipt-info"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>${restaurant.address}</span></p>
-                        <p class="receipt-info"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>${restaurant.phone}</span></p>
+                        ${restaurant.logo ? `<img src="${escape(restaurant.logo)}" alt="${escape(restaurant.name ?? "")}" />` : ""}
+                        <h1>${escape(restaurant.name ?? "")}</h1>
+                        <p class="receipt-info"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>${escape(restaurant.address ?? "")}</span></p>
+                        <p class="receipt-info"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>${escape(restaurant.phone ?? "")}</span></p>
                     </div>
                     <div class="dashed"></div>
                     <div style="font-weight:700;font-size:11px;color:#000;">
-                        <div>Date: ${date}</div>
-                        <div>Invoice: ${invoiceNo}</div>
+                        <div>Date: ${escape(date)}</div>
+                        <div>Invoice: ${escape(invoiceNo)}</div>
                     </div>
                     <div class="dashed"></div>
                     <div>${itemsHTML}</div>
                     <div style="margin-top:16px;">
-                        <div class="receipt-row"><span>Tax (${tax}%)</span><span>${tax}/-</span></div>
-                        <div class="receipt-row"><span>Discount</span><span>-${discount}/-</span></div>
+                        <div class="receipt-row"><span>Tax (${escape(tax)}%)</span><span>${escape(tax)}/-</span></div>
+                        <div class="receipt-row"><span>Discount</span><span>-${escape(discount)}/-</span></div>
                     </div>
                     <div class="solid"></div>
-                    <div class="receipt-row total"><span>Total</span><span>${total}/=</span></div>
+                    <div class="receipt-row total"><span>Total</span><span>${escape(total)}/=</span></div>
                     <div class="center thank-you" style="margin-top:16px;">THANK YOU</div>
                     <div class="center muted">we look forward to serving you again!</div>
                     <div class="center footer" style="margin-top:8px;">
@@ -114,18 +125,25 @@ export default function useDownloadReceipt() {
             </body>
             </html>
         `);
-
         printWindow.document.close();
+
+        const trigger = () => {
+            try {
+                printWindow.focus();
+                printWindow.print();
+                const closeAfter = () => printWindow.close();
+                printWindow.onafterprint = closeAfter;
+            } catch (e) {
+                console.error("Print failed:", e);
+            }
+        };
 
         const images = printWindow.document.querySelectorAll("img");
         if (images.length > 0) {
             let loaded = 0;
             const onDone = () => {
                 loaded++;
-                if (loaded >= images.length) {
-                    printWindow.print();
-                    printWindow.close();
-                }
+                if (loaded >= images.length) trigger();
             };
             images.forEach((img) => {
                 if (img.complete) onDone();
@@ -135,8 +153,7 @@ export default function useDownloadReceipt() {
                 }
             });
         } else {
-            printWindow.print();
-            printWindow.close();
+            trigger();
         }
     }, []);
 }
